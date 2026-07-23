@@ -11,17 +11,68 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <style>
+    :root {
+      --bg-color: #fff5f7;
+      --card-bg: #ffffff;
+      --card-shadow: 0 8px 40px rgba(255, 143, 171, 0.18);
+      --text-main: #5c2434;
+      --text-q: #4a1a2a;
+      --text-sub: #c97d93;
+      --bar-bg: #ffe5ec;
+      --bar-fill: linear-gradient(90deg, #ffaec0, #ff6b8a);
+      --choice-bg: #ffffff;
+      --choice-border: #ffd6e0;
+      --choice-text: #5c2434;
+      --choice-hover-bg: #fff0f3;
+      --choice-hover-border: #ff8faa;
+      --msg-bg: #fff8fa;
+      --msg-border: #ffe5ec;
+      --msg-text: #6b3347;
+      --score-bg: linear-gradient(135deg, #fff0f3, #ffe5ec);
+      --accent: #d63370;
+      --accent-bright: #ff5c85;
+      --toggle-bg: #fff0f3;
+      --toggle-border: #ffd6e0;
+      --petal-opacity: 0.35;
+    }
+
+    body.dark-mode {
+      --bg-color: #121016;
+      --card-bg: #1a1622;
+      --card-shadow: 0 12px 45px rgba(0, 0, 0, 0.55);
+      --text-main: #f0e6ed;
+      --text-q: #f3eaf0;
+      --text-sub: #c49bb0;
+      --bar-bg: #2d2336;
+      --bar-fill: linear-gradient(90deg, #ff8faa, #ff477e);
+      --choice-bg: #221c2c;
+      --choice-border: #362a45;
+      --choice-text: #f0e6ed;
+      --choice-hover-bg: #2d233c;
+      --choice-hover-border: #ff8faa;
+      --msg-bg: #201929;
+      --msg-border: #362a45;
+      --msg-text: #e8dbe3;
+      --score-bg: linear-gradient(135deg, #281f33, #1e1728);
+      --accent: #ff6b95;
+      --accent-bright: #ff477e;
+      --toggle-bg: #281f33;
+      --toggle-border: #362a45;
+      --petal-opacity: 0.2;
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Mitr', sans-serif;
-      background: #fff5f7;
+      background: var(--bg-color);
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 1.5rem;
-      color: #5c2434;
+      color: var(--text-main);
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     /* Soft floating petals */
@@ -30,11 +81,12 @@
       pointer-events: none;
       z-index: 0;
       font-size: 1rem;
-      opacity: 0.3;
+      opacity: var(--petal-opacity);
       animation: drift linear infinite;
+      transition: opacity 0.3s ease;
     }
     @keyframes drift {
-      0%   { transform: translateY(105vh) rotate(0deg); opacity: 0.35; }
+      0%   { transform: translateY(105vh) rotate(0deg); opacity: var(--petal-opacity); }
       100% { transform: translateY(-8vh) rotate(180deg); opacity: 0; }
     }
 
@@ -42,13 +94,36 @@
     .card {
       position: relative;
       z-index: 10;
-      background: #fff;
+      background: var(--card-bg);
       border-radius: 28px;
-      box-shadow: 0 8px 40px rgba(255, 143, 171, 0.18);
+      box-shadow: var(--card-shadow);
       width: 100%;
       max-width: 460px;
       padding: 2.5rem 2rem 2rem;
       text-align: center;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    /* Dark mode toggle button */
+    .theme-toggle {
+      position: absolute;
+      top: 1.2rem;
+      right: 1.2rem;
+      background: var(--toggle-bg);
+      border: 1.5px solid var(--toggle-border);
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      color: var(--accent);
+    }
+    .theme-toggle:hover {
+      transform: scale(1.1) rotate(15deg);
     }
 
     /* Progress */
@@ -58,19 +133,20 @@
     .step-label {
       font-size: 0.82rem;
       font-weight: 400;
-      color: #c97d93;
+      color: var(--text-sub);
       margin-bottom: 0.5rem;
     }
     .bar-bg {
       height: 6px;
-      background: #ffe5ec;
+      background: var(--bar-bg);
       border-radius: 99px;
       overflow: hidden;
+      transition: background-color 0.3s ease;
     }
     .bar-fill {
       height: 100%;
       width: 10%;
-      background: linear-gradient(90deg, #ffaec0, #ff6b8a);
+      background: var(--bar-fill);
       border-radius: 99px;
       transition: width 0.45s ease;
     }
@@ -87,7 +163,7 @@
     .q-text {
       font-size: 1.15rem;
       font-weight: 500;
-      color: #4a1a2a;
+      color: var(--text-q);
       margin-bottom: 1.8rem;
       line-height: 1.5;
     }
@@ -102,21 +178,21 @@
       display: flex;
       align-items: center;
       gap: 0.9rem;
-      background: #fff;
-      border: 1.5px solid #ffd6e0;
+      background: var(--choice-bg);
+      border: 1.5px solid var(--choice-border);
       border-radius: 16px;
       padding: 1rem 1.2rem;
       font-family: inherit;
       font-size: 1rem;
       font-weight: 400;
-      color: #5c2434;
+      color: var(--choice-text);
       cursor: pointer;
       transition: all 0.2s ease;
       text-align: left;
     }
     .choice:hover {
-      background: #fff0f3;
-      border-color: #ff8faa;
+      background: var(--choice-hover-bg);
+      border-color: var(--choice-hover-border);
       transform: translateX(4px);
     }
     .choice:active {
@@ -152,44 +228,46 @@
     .r-title {
       font-size: 1.5rem;
       font-weight: 600;
-      color: #d63370;
+      color: var(--accent);
       margin-bottom: 0.3rem;
     }
 
     .r-subtitle {
       font-size: 0.9rem;
-      color: #c97d93;
+      color: var(--text-sub);
       margin-bottom: 1.5rem;
     }
 
     .r-msg {
-      background: #fff8fa;
-      border: 1px solid #ffe5ec;
+      background: var(--msg-bg);
+      border: 1px solid var(--msg-border);
       border-radius: 18px;
       padding: 1.4rem 1.2rem;
       font-size: 0.95rem;
       line-height: 1.75;
-      color: #6b3347;
+      color: var(--msg-text);
       text-align: left;
       margin-bottom: 1.5rem;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
     }
-    .r-msg b { color: #d63370; }
+    .r-msg b { color: var(--accent); }
 
     .r-score-box {
-      background: linear-gradient(135deg, #fff0f3, #ffe5ec);
+      background: var(--score-bg);
       border-radius: 18px;
       padding: 1.1rem;
       margin-bottom: 1.5rem;
+      transition: background 0.3s ease;
     }
     .r-score-label {
       font-size: 0.8rem;
-      color: #c97d93;
+      color: var(--text-sub);
       margin-bottom: 0.3rem;
     }
     .r-score-num {
       font-size: 2rem;
       font-weight: 600;
-      color: #d63370;
+      color: var(--accent);
     }
 
     .r-actions {
@@ -216,16 +294,16 @@
     .btn:active { transform: scale(0.97); }
 
     .btn-primary {
-      background: linear-gradient(135deg, #ff8faa, #ff5c85);
+      background: linear-gradient(135deg, #ff8faa, var(--accent-bright));
       color: #fff;
       box-shadow: 0 4px 16px rgba(255, 92, 133, 0.3);
     }
     .btn-ghost {
       background: transparent;
-      color: #c97d93;
-      border: 1.5px solid #ffd6e0;
+      color: var(--text-sub);
+      border: 1.5px solid var(--choice-border);
     }
-    .btn-ghost:hover { background: #fff0f3; color: #d63370; }
+    .btn-ghost:hover { background: var(--choice-hover-bg); color: var(--accent); }
 
     .btn-tiny {
       font-size: 0.78rem;
@@ -240,11 +318,11 @@
       gap: 0.35rem;
       margin-top: 1.5rem;
       font-size: 0.82rem;
-      color: #c97d93;
+      color: var(--text-sub);
       text-decoration: none;
       transition: color 0.2s;
     }
-    .back:hover { color: #d63370; }
+    .back:hover { color: var(--accent); }
 
     @media (max-width: 480px) {
       .card { padding: 2rem 1.4rem 1.6rem; }
@@ -257,6 +335,8 @@
 <div id="petals"></div>
 
 <div class="card">
+  <!-- Dark Mode Toggle Button -->
+  <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="สลับ Dark / Light Mode">🌙</button>
 
   <!-- Progress -->
   <div class="progress-wrap" id="progressWrap">
@@ -312,6 +392,33 @@
 </div>
 
 <script>
+  // Theme Toggle Logic
+  const themeToggle = document.getElementById('themeToggle');
+  
+  function applyTheme(isDark) {
+    if (isDark) {
+      document.body.classList.add('dark-mode');
+      themeToggle.textContent = '☀️';
+    } else {
+      document.body.classList.remove('dark-mode');
+      themeToggle.textContent = '🌙';
+    }
+  }
+
+  function toggleTheme() {
+    const isDark = !document.body.classList.contains('dark-mode');
+    applyTheme(isDark);
+    localStorage.setItem('cuteQuizDarkTheme', isDark ? 'true' : 'false');
+  }
+
+  // Load saved theme or system preference
+  const savedTheme = localStorage.getItem('cuteQuizDarkTheme');
+  if (savedTheme !== null) {
+    applyTheme(savedTheme === 'true');
+  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    applyTheme(true);
+  }
+
   // Questions
   const Q = [
     { emoji: '☕', text: 'เช้าวันใหม่ อยากจิบอะไร?',
