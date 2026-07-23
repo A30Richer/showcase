@@ -16,12 +16,37 @@
 
   <style>
     :root {
-      --bg-white: #fafafa;
-      --red-primary: #e63946;
-      --red-dark: #b7094c;
-      --red-soft: rgba(230, 57, 70, 0.08);
+      --bg-color: #fafafa;
+      --card-bg: #ffffff;
+      --card-border: #111111;
+      --card-shadow: #e63946;
       --text-dark: #111111;
       --text-muted: #666666;
+      --red-primary: #e63946;
+      --red-dark: #b7094c;
+      --stat-bg: rgba(255, 255, 255, 0.85);
+      --stat-border: #e2e2e2;
+      --bar-bg: #f0f0f0;
+      --toggle-bg: #ffffff;
+      --toggle-border: #111111;
+      --particle-opacity: 0.35;
+    }
+
+    body.dark-mode {
+      --bg-color: #0d0d11;
+      --card-bg: #16161e;
+      --card-border: #2e2e42;
+      --card-shadow: #e63946;
+      --text-dark: #f4f4f6;
+      --text-muted: #9e9eb4;
+      --red-primary: #ff4757;
+      --red-dark: #d63031;
+      --stat-bg: #1c1c28;
+      --stat-border: #2e2e42;
+      --bar-bg: #222230;
+      --toggle-bg: #1c1c28;
+      --toggle-border: #383852;
+      --particle-opacity: 0.2;
     }
 
     * {
@@ -32,7 +57,7 @@
 
     body {
       font-family: 'Space Grotesk', 'Mitr', sans-serif;
-      background-color: var(--bg-white);
+      background-color: var(--bg-color);
       color: var(--text-dark);
       min-height: 100vh;
       display: flex;
@@ -43,6 +68,7 @@
       overflow-x: hidden;
       position: relative;
       user-select: none;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     /* Artistic Duotone Background Image Overlay */
@@ -78,20 +104,45 @@
       text-align: center;
     }
 
+    /* Dark Mode Toggle Button */
+    .theme-toggle {
+      position: absolute;
+      top: -1.2rem;
+      right: 0;
+      background: var(--toggle-bg);
+      border: 2px solid var(--toggle-border);
+      border-radius: 50%;
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      color: var(--red-primary);
+      box-shadow: 3px 3px 0px var(--card-border);
+      z-index: 20;
+    }
+    .theme-toggle:hover {
+      transform: translate(-2px, -2px) rotate(15deg);
+      box-shadow: 5px 5px 0px var(--card-border);
+    }
+
     /* Date Tag Badge */
     .date-tag {
       display: inline-flex;
       align-items: center;
       gap: 0.6rem;
-      background: var(--text-dark);
-      color: #ffffff;
+      background: var(--card-border);
+      color: var(--bg-color);
       padding: 0.5rem 1.2rem;
       border-radius: 99px;
       font-size: 0.88rem;
       font-weight: 600;
       letter-spacing: 1px;
       margin-bottom: 2.5rem;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
       animation: fadeInDown 0.8s ease forwards;
     }
 
@@ -105,7 +156,7 @@
       grid-template-columns: repeat(4, 1fr);
       gap: 1.25rem;
       width: 100%;
-      margin-bottom: 3rem;
+      margin-bottom: 2.5rem;
     }
 
     @media (max-width: 640px) {
@@ -116,8 +167,8 @@
     }
 
     .counter-card {
-      background: #ffffff;
-      border: 2px solid var(--text-dark);
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
       border-radius: 20px;
       padding: 1.75rem 1rem;
       display: flex;
@@ -125,13 +176,13 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      box-shadow: 6px 6px 0px var(--red-primary);
+      box-shadow: 6px 6px 0px var(--card-shadow);
       transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     .counter-card:hover {
       transform: translate(-3px, -3px);
-      box-shadow: 10px 10px 0px var(--text-dark);
+      box-shadow: 10px 10px 0px var(--card-border);
     }
 
     .num-val {
@@ -156,57 +207,74 @@
       margin-top: 0.6rem;
     }
 
-    /* Live Milliseconds Bar */
-    .ms-bar-container {
+    /* Subtle Minute Progress Cycle Bar */
+    .minute-cycle-wrap {
       width: 100%;
-      background: #ffffff;
-      border: 2px solid var(--text-dark);
-      border-radius: 99px;
-      padding: 4px;
-      margin-bottom: 3rem;
-      box-shadow: 4px 4px 0px var(--text-dark);
+      max-width: 480px;
+      margin-bottom: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
     }
 
-    .ms-bar-fill {
-      height: 10px;
+    .minute-cycle-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .minute-bar-bg {
+      width: 100%;
+      height: 6px;
+      background: var(--bar-bg);
+      border-radius: 99px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .minute-bar-fill {
+      height: 100%;
+      width: 0%;
       background: var(--red-primary);
       border-radius: 99px;
-      width: 50%;
-      transition: width 0.05s linear;
+      transition: width 0.3s ease;
     }
 
-    /* Artistic Stats Grid */
+    /* Artistic Stats Grid (2 Clean Items) */
     .art-stats {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 1.25rem;
       width: 100%;
       margin-bottom: 2.5rem;
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 480px) {
       .art-stats {
         grid-template-columns: 1fr;
       }
     }
 
     .stat-item {
-      background: rgba(255, 255, 255, 0.8);
-      border: 1.5px dashed #dddddd;
-      border-radius: 16px;
-      padding: 1.25rem;
+      background: var(--stat-bg);
+      border: 1.5px dashed var(--stat-border);
+      border-radius: 18px;
+      padding: 1.35rem 1rem;
       text-align: center;
-      transition: border-color 0.2s ease;
+      transition: border-color 0.2s ease, background 0.3s ease;
     }
 
     .stat-item:hover {
       border-color: var(--red-primary);
-      background: #ffffff;
     }
 
     .stat-val {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.5rem;
+      font-size: 1.65rem;
       font-weight: 700;
       color: var(--red-primary);
       margin-bottom: 0.2rem;
@@ -221,7 +289,7 @@
     .heart-action-btn {
       background: var(--red-primary);
       color: #ffffff;
-      border: 2px solid var(--text-dark);
+      border: 2px solid var(--card-border);
       border-radius: 99px;
       padding: 1rem 2.2rem;
       font-family: inherit;
@@ -231,36 +299,19 @@
       display: inline-flex;
       align-items: center;
       gap: 0.6rem;
-      box-shadow: 5px 5px 0px var(--text-dark);
+      box-shadow: 5px 5px 0px var(--card-border);
       transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     .heart-action-btn:hover {
       transform: translate(-2px, -2px);
-      box-shadow: 8px 8px 0px var(--text-dark);
+      box-shadow: 8px 8px 0px var(--card-border);
       background: var(--red-dark);
     }
 
     .heart-action-btn:active {
       transform: translate(2px, 2px);
-      box-shadow: 2px 2px 0px var(--text-dark);
-    }
-
-    /* Back Link */
-    .back-nav {
-      margin-top: 2rem;
-      color: var(--text-muted);
-      text-decoration: none;
-      font-size: 0.88rem;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      transition: color 0.2s ease;
-    }
-
-    .back-nav:hover {
-      color: var(--red-primary);
+      box-shadow: 2px 2px 0px var(--card-border);
     }
 
     @keyframes fadeInDown {
@@ -279,6 +330,9 @@
 
   <!-- Editorial Main Container -->
   <div class="editorial-wrapper">
+
+    <!-- Dark Mode Toggle Button -->
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="สลับ Dark / Light Mode">🌙</button>
 
     <!-- Date Badge Tag -->
     <div class="date-tag">
@@ -306,12 +360,18 @@
       </div>
     </div>
 
-    <!-- Live Milliseconds Bar -->
-    <div class="ms-bar-container" title="Live Milliseconds Ticker">
-      <div class="ms-bar-fill" id="msBarFill"></div>
+    <!-- Minimal Minute Cycle Progress Bar -->
+    <div class="minute-cycle-wrap">
+      <div class="minute-cycle-label">
+        <span>Minute Cycle</span>
+        <span id="minuteSecLabel">0s / 60s</span>
+      </div>
+      <div class="minute-bar-bg">
+        <div class="minute-bar-fill" id="minuteBarFill"></div>
+      </div>
     </div>
 
-    <!-- Fun Artistic Stats -->
+    <!-- Artistic Stats Grid (Heartbeats & Total Seconds) -->
     <div class="art-stats">
       <div class="stat-item">
         <div class="stat-val" id="heartbeatsVal">0</div>
@@ -321,10 +381,6 @@
         <div class="stat-val" id="secondsVal">0</div>
         <div class="stat-desc">⏱️ Total Seconds</div>
       </div>
-      <div class="stat-item">
-        <div class="stat-val" id="coffeesVal">0</div>
-        <div class="stat-desc">☕ Coffee Cups Together</div>
-      </div>
     </div>
 
     <!-- Interactive Heart Button -->
@@ -332,14 +388,36 @@
       <i class="fa-solid fa-heart"></i> TAP TO SEND LOVE
     </button>
 
-    <!-- Back to Showcase Portal -->
-    <a href="index.html" class="back-nav">
-      <i class="fa-solid fa-arrow-left"></i> SHOWCASE PORTAL
-    </a>
-
   </div>
 
   <script>
+    // Theme Toggle Logic
+    const themeToggle = document.getElementById('themeToggle');
+    
+    function applyTheme(isDark) {
+      if (isDark) {
+        document.body.classList.add('dark-mode');
+        themeToggle.textContent = '☀️';
+      } else {
+        document.body.classList.remove('dark-mode');
+        themeToggle.textContent = '🌙';
+      }
+    }
+
+    function toggleTheme() {
+      const isDark = !document.body.classList.contains('dark-mode');
+      applyTheme(isDark);
+      localStorage.setItem('loveCounterDarkTheme', isDark ? 'true' : 'false');
+    }
+
+    // Load saved theme or system preference
+    const savedTheme = localStorage.getItem('loveCounterDarkTheme');
+    if (savedTheme !== null) {
+      applyTheme(savedTheme === 'true');
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      applyTheme(true);
+    }
+
     // Start Date: 12 June 2026 (02:00:00 AM)
     const START_DATE = new Date("2026-06-12T02:00:00");
 
@@ -348,10 +426,10 @@
     const hoursVal = document.getElementById("hoursVal");
     const minsVal = document.getElementById("minsVal");
     const secsVal = document.getElementById("secsVal");
-    const msBarFill = document.getElementById("msBarFill");
+    const minuteBarFill = document.getElementById("minuteBarFill");
+    const minuteSecLabel = document.getElementById("minuteSecLabel");
     const heartbeatsVal = document.getElementById("heartbeatsVal");
     const secondsVal = document.getElementById("secondsVal");
-    const coffeesVal = document.getElementById("coffeesVal");
 
     // Update Counter Loop
     function updateCounter() {
@@ -363,23 +441,22 @@
       const hours = Math.floor((secondsTotal % (3600 * 24)) / 3600);
       const mins = Math.floor((secondsTotal % 3600) / 60);
       const secs = secondsTotal % 60;
-      const ms = diffMs % 1000;
 
       daysVal.textContent = String(days).padStart(2, '0');
       hoursVal.textContent = String(hours).padStart(2, '0');
       minsVal.textContent = String(mins).padStart(2, '0');
       secsVal.textContent = String(secs).padStart(2, '0');
 
-      // Live ms bar fill
-      msBarFill.style.width = (ms / 10) + '%';
+      // Minimal 60-second minute cycle bar
+      const secProgress = (secs / 60) * 100;
+      minuteBarFill.style.width = secProgress + '%';
+      minuteSecLabel.textContent = `${secs}s / 60s`;
 
       // Fun stats calculation (approx 70 bpm)
       const heartbeats = Math.floor(secondsTotal * 1.166);
-      const coffees = Math.floor(days * 2.5);
 
       heartbeatsVal.textContent = heartbeats.toLocaleString();
       secondsVal.textContent = secondsTotal.toLocaleString();
-      coffeesVal.textContent = coffees.toLocaleString();
 
       requestAnimationFrame(updateCounter);
     }
@@ -393,7 +470,7 @@
         particleCount: 50,
         spread: 60,
         origin: { x: x, y: y },
-        colors: ['#e63946', '#b7094c', '#ffffff', '#111111']
+        colors: ['#e63946', '#ff4757', '#ffffff', '#b7094c']
       });
     }
 
