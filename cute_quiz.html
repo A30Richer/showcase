@@ -3,604 +3,426 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>💖 แบบทดสอบระดับความน่ารักของคุณ 💖</title>
-  
-  <!-- Google Fonts: Mitr, Itim & Outfit -->
+  <title>💖 แบบทดสอบความน่ารัก</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Itim&family=Mitr:wght@300;400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
-  
-  <!-- FontAwesome Icons & Canvas Confetti -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <style>
-    :root {
-      --bg-pink: #fff0f5;
-      --pink-soft: #ffe5ec;
-      --pink-medium: #ffb3c1;
-      --pink-bright: #ff477e;
-      --pink-dark: #ff0a54;
-      --pink-deep: #a4133c;
-      --card-glass: rgba(255, 255, 255, 0.88);
-      --card-border: rgba(255, 182, 193, 0.6);
-      --shadow-pink: 0 15px 35px rgba(255, 71, 126, 0.2);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Itim', 'Mitr', sans-serif;
-      background: linear-gradient(135deg, #fff0f5 0%, #ffe5ec 40%, #ffccd5 100%);
+      font-family: 'Mitr', sans-serif;
+      background: #fff5f7;
       min-height: 100vh;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 1.5rem;
-      color: var(--pink-deep);
-      overflow-x: hidden;
-      position: relative;
+      color: #5c2434;
     }
 
-    /* Floating Hearts Background Background */
-    .bg-hearts {
+    /* Soft floating petals */
+    .petal {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
       pointer-events: none;
       z-index: 0;
-      overflow: hidden;
+      font-size: 1rem;
+      opacity: 0.3;
+      animation: drift linear infinite;
+    }
+    @keyframes drift {
+      0%   { transform: translateY(105vh) rotate(0deg); opacity: 0.35; }
+      100% { transform: translateY(-8vh) rotate(180deg); opacity: 0; }
     }
 
-    .heart-float {
-      position: absolute;
-      color: rgba(255, 71, 126, 0.25);
-      animation: floatUp 8s infinite linear;
-      font-size: 1.5rem;
-    }
-
-    @keyframes floatUp {
-      0% {
-        transform: translateY(105vh) rotate(0deg) scale(0.8);
-        opacity: 0.8;
-      }
-      100% {
-        transform: translateY(-10vh) rotate(360deg) scale(1.3);
-        opacity: 0;
-      }
-    }
-
-    /* Quiz Container Card */
-    .quiz-card {
+    /* Card */
+    .card {
       position: relative;
       z-index: 10;
-      background: var(--card-glass);
-      backdrop-filter: blur(16px);
-      border: 2px solid var(--card-border);
-      border-radius: 30px;
-      box-shadow: var(--shadow-pink);
+      background: #fff;
+      border-radius: 28px;
+      box-shadow: 0 8px 40px rgba(255, 143, 171, 0.18);
       width: 100%;
-      max-width: 580px;
-      padding: 2.5rem 2rem;
+      max-width: 460px;
+      padding: 2.5rem 2rem 2rem;
       text-align: center;
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    /* Header & Progress Bar */
-    .quiz-header {
+    /* Progress */
+    .progress-wrap {
       margin-bottom: 2rem;
     }
-
-    .quiz-title {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: var(--pink-dark);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      margin-bottom: 0.8rem;
-      text-shadow: 0 2px 4px rgba(255, 10, 84, 0.1);
+    .step-label {
+      font-size: 0.82rem;
+      font-weight: 400;
+      color: #c97d93;
+      margin-bottom: 0.5rem;
     }
-
-    .progress-container {
-      background: rgba(255, 179, 193, 0.4);
-      height: 12px;
-      border-radius: 50px;
+    .bar-bg {
+      height: 6px;
+      background: #ffe5ec;
+      border-radius: 99px;
       overflow: hidden;
-      margin-top: 0.5rem;
-      position: relative;
-      border: 1px solid rgba(255, 71, 126, 0.2);
     }
-
-    .progress-bar {
+    .bar-fill {
       height: 100%;
       width: 10%;
-      background: linear-gradient(90deg, var(--pink-bright), var(--pink-dark));
-      border-radius: 50px;
-      transition: width 0.4s ease;
-      box-shadow: 0 0 10px var(--pink-bright);
+      background: linear-gradient(90deg, #ffaec0, #ff6b8a);
+      border-radius: 99px;
+      transition: width 0.45s ease;
     }
 
-    .step-counter {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--pink-bright);
-      margin-top: 0.4rem;
+    /* Question */
+    .q-screen { animation: fadeUp 0.35s ease; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* Question Screen */
-    .question-box {
-      display: block;
-      animation: fadeIn 0.4s ease forwards;
-    }
+    .q-emoji { font-size: 2.8rem; margin-bottom: 0.8rem; }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(12px) scale(0.98); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    .question-text {
-      font-size: 1.45rem;
-      font-weight: 600;
-      color: #333;
-      margin-bottom: 2rem;
-      line-height: 1.4;
-    }
-
-    .options-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.25rem;
-    }
-
-    @media (max-width: 480px) {
-      .options-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .option-btn {
-      background: #ffffff;
-      border: 2px solid var(--pink-medium);
-      border-radius: 22px;
-      padding: 1.25rem 1rem;
-      font-family: inherit;
+    .q-text {
       font-size: 1.15rem;
-      font-weight: 600;
-      color: var(--pink-deep);
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.6rem;
-      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 0 4px 12px rgba(255, 71, 126, 0.08);
-    }
-
-    .option-btn i, .option-btn .emoji {
-      font-size: 2.2rem;
-      transition: transform 0.3s ease;
-    }
-
-    .option-btn:hover {
-      background: linear-gradient(135deg, var(--pink-soft), #fff);
-      border-color: var(--pink-bright);
-      transform: translateY(-5px) scale(1.03);
-      box-shadow: 0 10px 20px rgba(255, 71, 126, 0.2);
-      color: var(--pink-dark);
-    }
-
-    .option-btn:hover i, .option-btn:hover .emoji {
-      transform: scale(1.2) rotate(6deg);
-    }
-
-    /* Result Screen (คำชมอวยเวอร์ๆ) */
-    .result-box {
-      display: none;
-      animation: bounceIn 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-    }
-
-    @keyframes bounceIn {
-      0% { opacity: 0; transform: scale(0.6); }
-      70% { transform: scale(1.05); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-
-    .result-crown {
-      font-size: 3.5rem;
-      color: #ffb703;
-      margin-bottom: 0.5rem;
-      animation: heartbeat 1.5s infinite;
-    }
-
-    @keyframes heartbeat {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.15); }
-    }
-
-    .result-badge {
-      display: inline-block;
-      background: linear-gradient(135deg, var(--pink-bright), var(--pink-dark));
-      color: #fff;
-      font-size: 1.1rem;
-      font-weight: 700;
-      padding: 0.4rem 1.4rem;
-      border-radius: 50px;
-      margin-bottom: 1.25rem;
-      box-shadow: 0 4px 15px rgba(255, 10, 84, 0.35);
-    }
-
-    .result-title {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--pink-dark);
-      margin-bottom: 1rem;
-      line-height: 1.3;
-    }
-
-    .result-desc {
-      background: rgba(255, 255, 255, 0.95);
-      border: 2px dashed var(--pink-bright);
-      border-radius: 20px;
-      padding: 1.5rem;
-      font-size: 1.1rem;
-      line-height: 1.75;
-      color: #444;
-      text-align: left;
+      font-weight: 500;
+      color: #4a1a2a;
       margin-bottom: 1.8rem;
-      box-shadow: inset 0 0 10px rgba(255, 71, 126, 0.05);
+      line-height: 1.5;
     }
 
-    .result-desc strong {
-      color: var(--pink-dark);
-      font-size: 1.2rem;
-    }
-
-    .cute-counter-box {
-      background: linear-gradient(135deg, #fff, var(--pink-soft));
-      border: 2px solid var(--pink-medium);
-      border-radius: 20px;
-      padding: 1.2rem;
-      margin-bottom: 1.5rem;
+    .choices {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 0.5rem;
+      gap: 0.85rem;
     }
 
-    .cute-score {
-      font-size: 2.5rem;
-      font-weight: 800;
-      color: var(--pink-dark);
-      font-family: 'Outfit', sans-serif;
-    }
-
-    .action-btns {
+    .choice {
       display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
+      align-items: center;
+      gap: 0.9rem;
+      background: #fff;
+      border: 1.5px solid #ffd6e0;
+      border-radius: 16px;
+      padding: 1rem 1.2rem;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 400;
+      color: #5c2434;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+    .choice:hover {
+      background: #fff0f3;
+      border-color: #ff8faa;
+      transform: translateX(4px);
+    }
+    .choice:active {
+      transform: scale(0.98);
+    }
+    .choice .c-icon {
+      font-size: 1.6rem;
+      flex-shrink: 0;
+      width: 2.2rem;
+      text-align: center;
+    }
+
+    /* Result */
+    .r-screen {
+      display: none;
+      animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.85); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    .r-crown {
+      font-size: 3rem;
+      margin-bottom: 0.4rem;
+      animation: float 2.5s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-6px); }
+    }
+
+    .r-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #d63370;
+      margin-bottom: 0.3rem;
+    }
+
+    .r-subtitle {
+      font-size: 0.9rem;
+      color: #c97d93;
+      margin-bottom: 1.5rem;
+    }
+
+    .r-msg {
+      background: #fff8fa;
+      border: 1px solid #ffe5ec;
+      border-radius: 18px;
+      padding: 1.4rem 1.2rem;
+      font-size: 0.95rem;
+      line-height: 1.75;
+      color: #6b3347;
+      text-align: left;
+      margin-bottom: 1.5rem;
+    }
+    .r-msg b { color: #d63370; }
+
+    .r-score-box {
+      background: linear-gradient(135deg, #fff0f3, #ffe5ec);
+      border-radius: 18px;
+      padding: 1.1rem;
+      margin-bottom: 1.5rem;
+    }
+    .r-score-label {
+      font-size: 0.8rem;
+      color: #c97d93;
+      margin-bottom: 0.3rem;
+    }
+    .r-score-num {
+      font-size: 2rem;
+      font-weight: 600;
+      color: #d63370;
+    }
+
+    .r-actions {
+      display: flex;
+      gap: 0.75rem;
       justify-content: center;
+      flex-wrap: wrap;
     }
 
-    .btn-pink {
-      background: linear-gradient(135deg, var(--pink-bright), var(--pink-dark));
-      color: #fff;
+    .btn {
       border: none;
-      border-radius: 50px;
-      padding: 0.85rem 1.8rem;
+      border-radius: 99px;
+      padding: 0.7rem 1.4rem;
       font-family: inherit;
-      font-size: 1.1rem;
-      font-weight: 600;
+      font-size: 0.9rem;
+      font-weight: 500;
       cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      box-shadow: 0 6px 20px rgba(255, 10, 84, 0.3);
-      transition: all 0.25s ease;
-    }
-
-    .btn-pink:hover {
-      transform: translateY(-3px) scale(1.04);
-      box-shadow: 0 10px 25px rgba(255, 10, 84, 0.45);
-    }
-
-    .btn-secondary {
-      background: #ffffff;
-      color: var(--pink-deep);
-      border: 2px solid var(--pink-medium);
-      border-radius: 50px;
-      padding: 0.85rem 1.6rem;
-      font-family: inherit;
-      font-size: 1.05rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: all 0.25s ease;
-    }
-
-    .btn-secondary:hover {
-      background: var(--pink-soft);
-      border-color: var(--pink-bright);
-      transform: translateY(-3px);
-    }
-
-    .back-home {
-      margin-top: 1.5rem;
+      transition: all 0.2s ease;
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
-      color: var(--pink-deep);
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 0.95rem;
-      opacity: 0.8;
-      transition: opacity 0.2s ease;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn:active { transform: scale(0.97); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #ff8faa, #ff5c85);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(255, 92, 133, 0.3);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: #c97d93;
+      border: 1.5px solid #ffd6e0;
+    }
+    .btn-ghost:hover { background: #fff0f3; color: #d63370; }
+
+    .btn-tiny {
+      font-size: 0.78rem;
+      padding: 0.45rem 1rem;
+      margin-top: 0.5rem;
     }
 
-    .back-home:hover {
-      opacity: 1;
+    /* Back link */
+    .back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin-top: 1.5rem;
+      font-size: 0.82rem;
+      color: #c97d93;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .back:hover { color: #d63370; }
+
+    @media (max-width: 480px) {
+      .card { padding: 2rem 1.4rem 1.6rem; }
+      .q-text { font-size: 1.05rem; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Floating Hearts Particles -->
-  <div class="bg-hearts" id="bgHearts"></div>
+<div id="petals"></div>
 
-  <!-- Quiz Card -->
-  <div class="quiz-card">
+<div class="card">
 
-    <!-- Header & Progress -->
-    <div class="quiz-header" id="quizHeader">
-      <div class="quiz-title">
-        <i class="fa-solid fa-heart"></i>
-        <span>แบบทดสอบทายใจสไตล์คุณ</span>
-        <i class="fa-solid fa-sparkles" style="color:#ffb703;"></i>
-      </div>
-      <div class="progress-container">
-        <div class="progress-bar" id="progressBar"></div>
-      </div>
-      <div class="step-counter" id="stepCounter">คำถามข้อที่ 1 / 10</div>
-    </div>
-
-    <!-- Question Box -->
-    <div class="question-box" id="questionBox">
-      <div class="question-text" id="questionText">ข้อที่ 1: คุณชอบเครื่องดื่มแบบไหนมากกว่ากัน?</div>
-      <div class="options-grid" id="optionsGrid">
-        <!-- JS Dynamic Options -->
-      </div>
-    </div>
-
-    <!-- Result Box (คำชมอวยเวอร์ๆ) -->
-    <div class="result-box" id="resultBox">
-      <div class="result-crown">👑</div>
-      <div class="result-badge">✨ ผลลัพธ์ระดับจักรวาล ✨</div>
-      <h2 class="result-title">คุณน่ารักที่สุดในโลกใบนี้! 💖</h2>
-
-      <div class="result-desc">
-        <p style="margin-bottom: 0.8rem;">
-          ไม่ว่าจะเลือกตอบข้อไหน ผลการวิเคราะห์จากหัวใจก็นิยามเป็นคำอื่นไม่ได้เลยนอกจากคำว่า <strong>"น่ารักเกินไปแล้ว!"</strong> ✨🌸
-        </p>
-        <p style="margin-bottom: 0.8rem;">
-          คุณมีความสดใสระดับร้อยเปอร์เซ็นต์ที่สามารถเปลี่ยนวันมืดมนให้กลายเป็นวันที่สว่างไสวเต็มไปด้วยรอยยิ้มได้ในวินาทีเดียว! รอยยิ้มของคุณมีพลังงานบวกมหาศาล ความน่าเอ็นดูของคุณมีอิทธิพลต่อหัวใจทุกคนที่ได้พบเห็น ละลายหัวใจทุกคนที่เข้าใกล้แบบไม่มีข้อยกเว้น 💕
-        </p>
-        <p>
-          ขอประกาศให้โลกรู้เลยว่า คุณคือผลงานศิลปะระดับมาสเตอร์พีซของจักรวาล น่ารักที่สุด น่าเอ็นดูที่สุด น่าถนอมที่สุดในโลกเลยนะ! 🎀สะกดคำว่า <strong>'น่ารัก'</strong> ได้เปลืองที่สุดในโลกแล้วคนนี้! 🥰✨
-        </p>
-      </div>
-
-      <div class="cute-counter-box">
-        <span style="font-size: 0.95rem; font-weight: 600; color: var(--pink-deep);">💖 ระดับความน่ารักสะสมของคุณ</span>
-        <div class="cute-score" id="cuteScore">999,999,999+ %</div>
-        <button class="btn-pink" style="padding: 0.4rem 1.2rem; font-size: 0.95rem;" onclick="boostCuteScore()">
-          <i class="fa-solid fa-wand-magic-sparkles"></i> กดปุ่มเพิ่มความน่ารักอีก!
-        </button>
-      </div>
-
-      <div class="action-btns">
-        <button class="btn-pink" onclick="fireHeartsConfetti()">
-          <i class="fa-solid fa-heart-pulse"></i> ฉลองความน่ารัก! 🎉
-        </button>
-        <button class="btn-secondary" onclick="resetQuiz()">
-          <i class="fa-solid fa-rotate-right"></i> เล่นอีกรอบ
-        </button>
-      </div>
-    </div>
-
-    <!-- Back to Showcase Portal Link -->
-    <a href="index.html" class="back-home">
-      <i class="fa-solid fa-arrow-left"></i> กลับสู่หน้า Showcase Portal
-    </a>
+  <!-- Progress -->
+  <div class="progress-wrap" id="progressWrap">
+    <div class="step-label" id="stepLabel">1 / 10</div>
+    <div class="bar-bg"><div class="bar-fill" id="barFill"></div></div>
   </div>
 
-  <script>
-    // 10 Questions Array
-    const questions = [
-      {
-        text: "ข้อที่ 1: เช้าวันใหม่ คุณอยากจิบเครื่องดื่มอะไร?",
-        options: [
-          { label: "กาแฟหอมนุ่ม กลมกล่อม ☕", emoji: "☕" },
-          { label: "ชานมละมุน หวานกำลังดี 🧋", emoji: "🧋" }
-        ]
-      },
-      {
-        text: "ข้อที่ 2: สัตว์เลี้ยงที่เห็นแล้วหัวใจฟูที่สุด?",
-        options: [
-          { label: "น้องหมาสุดขี้อ้อน 🐶", emoji: "🐶" },
-          { label: "น้องแมวจอมซน 🐱", emoji: "🐱" }
-        ]
-      },
-      {
-        text: "ข้อที่ 3: ช่วงเวลาที่คุณชอบมากที่สุดในวัน?",
-        options: [
-          { label: "ตื่นเช้าดูพระอาทิตย์ขึ้น 🌅", emoji: "🌅" },
-          { label: "นอนดึกฟังเพลงดูดวงดาว 🌌", emoji: "🌌" }
-        ]
-      },
-      {
-        text: "ข้อที่ 4: ของหวานที่ช่วยฮีลใจวันเหนื่อยๆ?",
-        options: [
-          { label: "ไอศกรีมวานิลลาหอมหวาน 🍦", emoji: "🍦" },
-          { label: "เค้กสตรอว์เบอร์รีฉ่ำๆ 🍰", emoji: "🍰" }
-        ]
-      },
-      {
-        text: "ข้อที่ 5: สถานที่เที่ยววันหยุดสุดฟิน?",
-        options: [
-          { label: "ไปเที่ยวทะเล รับลมเย็นๆ 🏖️", emoji: "🏖️" },
-          { label: "ไปนอนกอดเขา ดูหมอกขาว ⛰️", emoji: "⛰️" }
-        ]
-      },
-      {
-        text: "ข้อที่ 6: แนวเพลงที่คุณมักเปิดฟังซ้ำๆ?",
-        options: [
-          { label: "เพลงป๊อปจังหวะสดใส เต้นตาม 🎵", emoji: "🎵" },
-          { label: "เพลงอคูสติกฟีลลิ่งอบอุ่น 🎸", emoji: "🎸" }
-        ]
-      },
-      {
-        text: "ข้อที่ 7: ฟีลลิ่งในวันฝนตกที่คุณชอบ?",
-        options: [
-          { label: "ซุกตัวในผ้าห่มฟังเสียงฝน 🌧️", emoji: "🌧️" },
-          { label: "มองหยดน้ำเกาะกระจกชิลๆ ☕", emoji: "☕" }
-        ]
-      },
-      {
-        text: "ข้อที่ 8: สิ่งของที่คุณชอบพกติดตัว?",
-        options: [
-          { label: "ตุ๊กตานุ่มฟู หรือ พวงกุญแจน่ารัก 🧸", emoji: "🧸" },
-          { label: "ขนมอร่อยๆ เอาไว้เคี้ยวเล่น 🍭", emoji: "🍭" }
-        ]
-      },
-      {
-        text: "ข้อที่ 9: เสน่ห์ประจำตัวของคุณคืออะไร?",
-        options: [
-          { label: "รอยยิ้มสดใสที่ทำให้คนรอบข้างยิ้มตาม 💖", emoji: "💖" },
-          { label: "แววตาสุดอบอุ่นและใส่ใจ 🌟", emoji: "🌟" }
-        ]
-      },
-      {
-        text: "ข้อที่ 10: ถ้าให้พร 1 ข้อกับตัวเอง อยากได้อะไร?",
-        options: [
-          { label: "มีความสุขในทุกๆ วันและยิ้มเยอะๆ ✨", emoji: "✨" },
-          { label: "มีแต่คนรักและเอ็นดูตลอดไป 🎀", emoji: "🎀" }
-        ]
-      }
-    ];
+  <!-- Question Screen -->
+  <div class="q-screen" id="qScreen">
+    <div class="q-emoji" id="qEmoji">☕</div>
+    <div class="q-text" id="qText">เช้าวันใหม่ อยากจิบอะไร?</div>
+    <div class="choices" id="choices"></div>
+  </div>
 
-    let currentQuestionIndex = 0;
-    let cuteScoreCount = 999999999;
+  <!-- Result Screen -->
+  <div class="r-screen" id="rScreen">
+    <div class="r-crown">👑</div>
+    <div class="r-title">คุณน่ารักที่สุดในโลก!</div>
+    <div class="r-subtitle">✨ ผลวิเคราะห์จากหัวใจ ✨</div>
 
-    // DOM Elements
-    const questionBox = document.getElementById('questionBox');
-    const questionText = document.getElementById('questionText');
-    const optionsGrid = document.getElementById('optionsGrid');
-    const progressBar = document.getElementById('progressBar');
-    const stepCounter = document.getElementById('stepCounter');
-    const resultBox = document.getElementById('resultBox');
-    const quizHeader = document.getElementById('quizHeader');
+    <div class="r-msg">
+      <p style="margin-bottom:0.7rem;">
+        ไม่ว่าจะเลือกตอบอะไร ผลลัพธ์ก็เป็นคำเดียวกันนั่นแหละ… 
+        <b>น่ารักเกินไปแล้ว!</b> 🌸
+      </p>
+      <p style="margin-bottom:0.7rem;">
+        คุณมีความสดใสที่เปลี่ยนวันมืดมนให้สว่างไสวได้ในพริบตา 
+        รอยยิ้มของคุณมีพลังงานบวกมหาศาล 
+        ละลายหัวใจทุกคนที่ได้เห็นแบบไม่มีข้อยกเว้น 💕
+      </p>
+      <p>
+        ขอประกาศให้จักรวาลรู้ว่า คุณคือมาสเตอร์พีซที่น่ารักที่สุด 
+        น่าเอ็นดูที่สุด น่าถนอมที่สุดในโลกเลยนะ! 
+        สะกดคำว่า <b>'น่ารัก'</b> ได้เปลืองที่สุดในโลกแล้วคนนี้ 🎀
+      </p>
+    </div>
 
-    // Create Background Floating Hearts
-    function createFloatingHearts() {
-      const container = document.getElementById('bgHearts');
-      const heartIcons = ['💖', '🌸', '✨', '💕', '🎀', '🌺', '🌷'];
-      
-      for (let i = 0; i < 22; i++) {
-        const heart = document.createElement('div');
-        heart.className = 'heart-float';
-        heart.textContent = heartIcons[Math.floor(Math.random() * heartIcons.length)];
-        heart.style.left = Math.random() * 100 + 'vw';
-        heart.style.animationDuration = (Math.random() * 5 + 6) + 's';
-        heart.style.animationDelay = (Math.random() * 5) + 's';
-        container.appendChild(heart);
-      }
-    }
+    <div class="r-score-box">
+      <div class="r-score-label">💖 ระดับความน่ารักของคุณ</div>
+      <div class="r-score-num" id="scoreNum">999,999,999+ %</div>
+      <button class="btn btn-ghost btn-tiny" onclick="boostScore()">
+        ✨ กดเพิ่มความน่ารักอีก!
+      </button>
+    </div>
 
-    // Render Question
-    function loadQuestion() {
-      const q = questions[currentQuestionIndex];
-      questionText.textContent = q.text;
-      
-      // Update Progress
-      const progressPercent = ((currentQuestionIndex + 1) / questions.length) * 100;
-      progressBar.style.width = progressPercent + '%';
-      stepCounter.textContent = `คำถามข้อที่ ${currentQuestionIndex + 1} / ${questions.length}`;
+    <div class="r-actions">
+      <button class="btn btn-primary" onclick="celebrate()">🎉 ฉลองเลย!</button>
+      <button class="btn btn-ghost" onclick="restart()">เล่นอีกรอบ</button>
+    </div>
+  </div>
 
-      // Render Options
-      optionsGrid.innerHTML = '';
-      q.options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = 'option-btn';
-        btn.innerHTML = `
-          <span class="emoji">${opt.emoji}</span>
-          <span>${opt.label}</span>
-        `;
-        btn.onclick = () => selectOption();
-        optionsGrid.appendChild(btn);
+  <a href="index.html" class="back">← กลับหน้า Showcase</a>
+</div>
+
+<script>
+  // Questions
+  const Q = [
+    { emoji: '☕', text: 'เช้าวันใหม่ อยากจิบอะไร?',
+      a: ['☕', 'กาแฟหอมๆ กลมกล่อม'], b: ['🧋', 'ชานมหวานละมุน'] },
+    { emoji: '🐾', text: 'เห็นตัวไหนแล้วหัวใจฟู?',
+      a: ['🐶', 'น้องหมาขี้อ้อน'], b: ['🐱', 'น้องแมวจอมซน'] },
+    { emoji: '🌤️', text: 'ช่วงเวลาที่ชอบมากที่สุด?',
+      a: ['🌅', 'ตื่นเช้าดูพระอาทิตย์ขึ้น'], b: ['🌌', 'นอนดึกดูดวงดาว'] },
+    { emoji: '🍰', text: 'ของหวานฮีลใจวันเหนื่อยๆ?',
+      a: ['🍦', 'ไอศกรีมวานิลลา'], b: ['🍰', 'เค้กสตรอว์เบอร์รี'] },
+    { emoji: '✈️', text: 'วันหยุดอยากไปเที่ยวแบบไหน?',
+      a: ['🏖️', 'ทะเล รับลมเย็นสบาย'], b: ['⛰️', 'ภูเขา ดูหมอกยามเช้า'] },
+    { emoji: '🎵', text: 'แนวเพลงที่เปิดฟังซ้ำบ่อยๆ?',
+      a: ['🎵', 'ป๊อปสดใส เต้นตามได้'], b: ['🎸', 'อคูสติก อบอุ่นชิลล์'] },
+    { emoji: '🌧️', text: 'วันฝนตกชอบทำอะไร?',
+      a: ['🛌', 'ซุกผ้าห่ม ฟังเสียงฝน'], b: ['☕', 'จิบเครื่องดื่มอุ่นๆ ดูฝน'] },
+    { emoji: '🧸', text: 'สิ่งที่ชอบพกติดตัว?',
+      a: ['🧸', 'ตุ๊กตาหรือพวงกุญแจน่ารัก'], b: ['🍭', 'ขนมอร่อยๆ เคี้ยวเพลิน'] },
+    { emoji: '💫', text: 'เสน่ห์ประจำตัวของคุณ?',
+      a: ['😊', 'รอยยิ้มสดใส ใครเห็นก็ยิ้มตาม'], b: ['🌟', 'แววตาอบอุ่น ใส่ใจทุกคน'] },
+    { emoji: '🎁', text: 'ถ้ามีพร 1 ข้อให้ตัวเอง?',
+      a: ['✨', 'มีความสุขทุกวัน ยิ้มเยอะๆ'], b: ['🎀', 'มีแต่คนรักและเอ็นดูตลอดไป'] },
+  ];
+
+  let idx = 0;
+  let score = 999999999;
+
+  const qScreen    = document.getElementById('qScreen');
+  const rScreen    = document.getElementById('rScreen');
+  const progressWrap = document.getElementById('progressWrap');
+  const stepLabel  = document.getElementById('stepLabel');
+  const barFill    = document.getElementById('barFill');
+  const qEmoji     = document.getElementById('qEmoji');
+  const qText      = document.getElementById('qText');
+  const choices    = document.getElementById('choices');
+
+  function render() {
+    const q = Q[idx];
+    qEmoji.textContent = q.emoji;
+    qText.textContent  = q.text;
+    stepLabel.textContent = `${idx + 1} / ${Q.length}`;
+    barFill.style.width   = `${((idx + 1) / Q.length) * 100}%`;
+
+    choices.innerHTML = '';
+    [q.a, q.b].forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'choice';
+      btn.innerHTML = `<span class="c-icon">${opt[0]}</span><span>${opt[1]}</span>`;
+      btn.onclick = next;
+      choices.appendChild(btn);
+    });
+  }
+
+  function next() {
+    idx++;
+    if (idx < Q.length) {
+      qScreen.style.animation = 'none';
+      requestAnimationFrame(() => {
+        qScreen.style.animation = 'fadeUp 0.35s ease';
+        render();
       });
+    } else {
+      showResult();
     }
+  }
 
-    // Option Click Handler
-    function selectOption() {
-      currentQuestionIndex++;
-      if (currentQuestionIndex < questions.length) {
-        questionBox.style.animation = 'none';
-        setTimeout(() => {
-          questionBox.style.animation = 'fadeIn 0.4s ease forwards';
-          loadQuestion();
-        }, 10);
-      } else {
-        showResult();
-      }
+  function showResult() {
+    progressWrap.style.display = 'none';
+    qScreen.style.display = 'none';
+    rScreen.style.display = 'block';
+    celebrate();
+  }
+
+  function celebrate() {
+    confetti({ particleCount: 60, spread: 70, origin: { y: 0.65 },
+      colors: ['#ff8faa','#ff5c85','#ffd6e0','#fff','#ffb3c1'] });
+  }
+
+  function boostScore() {
+    score += 1000000;
+    document.getElementById('scoreNum').textContent =
+      score.toLocaleString() + '+ %';
+    confetti({ particleCount: 30, spread: 50, origin: { y: 0.7 },
+      colors: ['#ff8faa','#ffd6e0','#fff'] });
+  }
+
+  function restart() {
+    idx = 0;
+    progressWrap.style.display = 'block';
+    qScreen.style.display = 'block';
+    rScreen.style.display = 'none';
+    render();
+  }
+
+  // Soft floating petals
+  (function createPetals() {
+    const c = document.getElementById('petals');
+    const icons = ['🌸','✿','❀','♡','·'];
+    for (let i = 0; i < 14; i++) {
+      const el = document.createElement('div');
+      el.className = 'petal';
+      el.textContent = icons[i % icons.length];
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.animationDuration = (8 + Math.random() * 6) + 's';
+      el.style.animationDelay = (Math.random() * 6) + 's';
+      el.style.fontSize = (0.7 + Math.random() * 0.6) + 'rem';
+      c.appendChild(el);
     }
+  })();
 
-    // Show Result & Fire Confetti
-    function showResult() {
-      quizHeader.style.display = 'none';
-      questionBox.style.display = 'none';
-      resultBox.style.display = 'block';
-      fireHeartsConfetti();
-    }
-
-    // Confetti Effects
-    function fireHeartsConfetti() {
-      confetti({
-        particleCount: 80,
-        spread: 90,
-        origin: { y: 0.6 },
-        colors: ['#ff477e', '#ff0a54', '#ffccd5', '#ffb3c1', '#ffffff']
-      });
-    }
-
-    // Boost Cute Score Counter
-    function boostCuteScore() {
-      cuteScoreCount += 1000000;
-      document.getElementById('cuteScore').textContent = cuteScoreCount.toLocaleString() + '+ %';
-      fireHeartsConfetti();
-    }
-
-    // Reset Quiz
-    function resetQuiz() {
-      currentQuestionIndex = 0;
-      quizHeader.style.display = 'block';
-      questionBox.style.display = 'block';
-      resultBox.style.display = 'none';
-      loadQuestion();
-    }
-
-    // Init Page
-    createFloatingHearts();
-    loadQuestion();
-  </script>
+  render();
+</script>
 </body>
 </html>
