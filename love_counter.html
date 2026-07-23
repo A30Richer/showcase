@@ -27,8 +27,6 @@
       --stat-bg: rgba(255, 255, 255, 0.85);
       --stat-border: #e2e2e2;
       --bar-bg: #f0f0f0;
-      --toggle-bg: #ffffff;
-      --toggle-border: #111111;
       --particle-opacity: 0.35;
     }
 
@@ -44,8 +42,6 @@
       --stat-bg: #1c1c28;
       --stat-border: #2e2e42;
       --bar-bg: #222230;
-      --toggle-bg: #1c1c28;
-      --toggle-border: #383852;
       --particle-opacity: 0.2;
     }
 
@@ -64,7 +60,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 2rem 1.5rem;
+      padding: 2.5rem 1.5rem;
       overflow-x: hidden;
       position: relative;
       user-select: none;
@@ -102,31 +98,6 @@
       flex-direction: column;
       align-items: center;
       text-align: center;
-    }
-
-    /* Dark Mode Toggle Button */
-    .theme-toggle {
-      position: absolute;
-      top: -1.2rem;
-      right: 0;
-      background: var(--toggle-bg);
-      border: 2px solid var(--toggle-border);
-      border-radius: 50%;
-      width: 42px;
-      height: 42px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.15rem;
-      cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      color: var(--red-primary);
-      box-shadow: 3px 3px 0px var(--card-border);
-      z-index: 20;
-    }
-    .theme-toggle:hover {
-      transform: translate(-2px, -2px) rotate(15deg);
-      box-shadow: 5px 5px 0px var(--card-border);
     }
 
     /* Date Tag Badge */
@@ -244,7 +215,7 @@
       transition: width 0.3s ease;
     }
 
-    /* Artistic Stats Grid (2 Clean Items) */
+    /* Artistic Stats Grid (Swapped: Total Seconds FIRST, Heartbeats SECOND) */
     .art-stats {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -314,6 +285,69 @@
       box-shadow: 2px 2px 0px var(--card-border);
     }
 
+    /* Physical Swiss Light Switch at the Bottom */
+    .light-switch-wrapper {
+      margin-top: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .switch-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .light-switch-plate {
+      width: 72px;
+      height: 38px;
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: 99px;
+      padding: 3px;
+      display: flex;
+      align-items: center;
+      position: relative;
+      box-shadow: 4px 4px 0px var(--card-border);
+      transition: all 0.25s ease;
+    }
+
+    .light-switch-plate:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 6px 6px 0px var(--card-border);
+    }
+
+    .switch-button {
+      width: 28px;
+      height: 28px;
+      background: var(--red-primary);
+      border: 2px solid var(--card-border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55), background-color 0.3s ease;
+      box-shadow: 1px 1px 0px var(--card-border);
+    }
+
+    body.dark-mode .switch-button {
+      transform: translateX(34px);
+      background: #ff4757;
+    }
+
+    .switch-text {
+      font-size: 0.62rem;
+      font-weight: 900;
+      color: #ffffff;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
     @keyframes fadeInDown {
       from { opacity: 0; transform: translateY(-15px); }
       to { opacity: 1; transform: translateY(0); }
@@ -330,9 +364,6 @@
 
   <!-- Editorial Main Container -->
   <div class="editorial-wrapper">
-
-    <!-- Dark Mode Toggle Button -->
-    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="สลับ Dark / Light Mode">🌙</button>
 
     <!-- Date Badge Tag -->
     <div class="date-tag">
@@ -371,15 +402,15 @@
       </div>
     </div>
 
-    <!-- Artistic Stats Grid (Heartbeats & Total Seconds) -->
+    <!-- Swapped Artistic Stats Grid (Total Seconds FIRST, Heartbeats SECOND) -->
     <div class="art-stats">
-      <div class="stat-item">
-        <div class="stat-val" id="heartbeatsVal">0</div>
-        <div class="stat-desc">❤️ Heartbeats Shared</div>
-      </div>
       <div class="stat-item">
         <div class="stat-val" id="secondsVal">0</div>
         <div class="stat-desc">⏱️ Total Seconds</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-val" id="heartbeatsVal">0</div>
+        <div class="stat-desc">❤️ Heartbeats Shared</div>
       </div>
     </div>
 
@@ -388,19 +419,28 @@
       <i class="fa-solid fa-heart"></i> TAP TO SEND LOVE
     </button>
 
+    <!-- Physical Swiss Light Switch at the Bottom -->
+    <div class="light-switch-wrapper" onclick="toggleTheme()" title="สลับเปิด/ปิดไฟ (Dark Mode)">
+      <span class="switch-label">LIGHT SWITCH</span>
+      <div class="light-switch-plate">
+        <div class="switch-button" id="switchButton">
+          <span class="switch-text" id="switchText">OFF</span>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <script>
     // Theme Toggle Logic
-    const themeToggle = document.getElementById('themeToggle');
-    
     function applyTheme(isDark) {
+      const switchText = document.getElementById('switchText');
       if (isDark) {
         document.body.classList.add('dark-mode');
-        themeToggle.textContent = '☀️';
+        if (switchText) switchText.textContent = 'ON';
       } else {
         document.body.classList.remove('dark-mode');
-        themeToggle.textContent = '🌙';
+        if (switchText) switchText.textContent = 'OFF';
       }
     }
 
@@ -524,7 +564,7 @@
 
     // Click anywhere for ripples
     window.addEventListener('click', (e) => {
-      if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'A') {
+      if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'A' && !e.target.closest('.light-switch-wrapper')) {
         confetti({
           particleCount: 15,
           spread: 40,
