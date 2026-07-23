@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Showcase Portal · A30 Innovation Hub</title>
+  <meta name="description" content="ประตูสู่ศูนย์รวมโปรเจกต์ แบ่งหมวดหมู่ 📊 Chart, 📑 Present, และ 🎮 Playground">
+
+  <!-- Google Fonts & Lucide Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --bg-dark: #07090e;
+      --bg-surface: #0e131f;
+      --card-bg: rgba(17, 24, 39, 0.75);
+      --card-hover-bg: rgba(26, 36, 56, 0.9);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --card-border-hover: rgba(245, 158, 11, 0.4);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --text-dim: #6b7280;
+      --accent-gold: #f59e0b;
+      --accent-gold-glow: rgba(245, 158, 11, 0.25);
+      --accent-emerald: #10b981;
+      --accent-blue: #3b82f6;
+      --accent-purple: #8b5cf6;
+      --accent-pink: #ec4899;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(245, 158, 11, 0.07) 0%, transparent 45%),
+        radial-gradient(circle at 85% 65%, rgba(59, 130, 246, 0.07) 0%, transparent 45%),
+        radial-gradient(circle at 50% 90%, rgba(236, 72, 153, 0.05) 0%, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    h1, h2, h3, .brand-title {
+      font-family: 'Outfit', sans-serif;
+    }
+
+    /* Header Navbar */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(7, 9, 14, 0.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .nav-container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--accent-gold), var(--accent-emerald));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #000;
+      box-shadow: 0 0 20px var(--accent-gold-glow);
+    }
+
+    .brand-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-title span {
+      background: linear-gradient(135deg, var(--accent-gold), var(--accent-emerald));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--accent-emerald);
+      padding: 0.35rem 0.9rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .dot-live {
+      width: 7px;
+      height: 7px;
+      background-color: var(--accent-emerald);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent-emerald);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.2); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    /* Hero Section */
+    .hero {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 4rem 1.5rem 2rem 1.5rem;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      color: var(--accent-gold);
+      padding: 0.4rem 1.1rem;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, #ffffff 40%, var(--accent-gold) 85%, var(--accent-emerald) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      line-height: 1.7;
+      max-width: 720px;
+      margin: 0 auto 1.5rem auto;
+    }
+
+    /* Filter & Search Controls */
+    .portal-controls {
+      max-width: 1240px;
+      margin: 0 auto 2.5rem auto;
+      padding: 0 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .category-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    .pill {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 0.6rem 1.25rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .pill:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .pill.active {
+      background: var(--accent-gold);
+      color: #000;
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 18px var(--accent-gold-glow);
+    }
+
+    .search-box {
+      position: relative;
+      min-width: 260px;
+    }
+
+    .search-box input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      padding: 0.6rem 1rem 0.6rem 2.5rem;
+      border-radius: 50px;
+      color: #fff;
+      font-size: 0.9rem;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .search-box input:focus {
+      border-color: var(--accent-gold);
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 0.9rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Cards Portal Grid */
+    .portal-grid-section {
+      max-width: 1240px;
+      margin: 0 auto 4rem auto;
+      padding: 0 1.5rem;
+      flex: 1;
+    }
+
+    .portal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 1.75rem;
+    }
+
+    .portal-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      backdrop-filter: blur(12px);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .portal-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--card-accent, var(--accent-gold)), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .portal-card:hover {
+      transform: translateY(-6px);
+      background: var(--card-hover-bg);
+      border-color: var(--card-border-hover);
+      box-shadow: 0 20px 35px rgba(0, 0, 0, 0.45);
+    }
+
+    .portal-card:hover::before {
+      opacity: 1;
+    }
+
+    .card-top {
+      margin-bottom: 1.25rem;
+    }
+
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.1rem;
+    }
+
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--card-accent, var(--accent-gold));
+    }
+
+    .card-num-badge {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 0.28rem 0.8rem;
+      border-radius: 50px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--card-accent, var(--accent-gold));
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .card-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.6rem;
+      line-height: 1.3;
+    }
+
+    .card-desc {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .card-subtext {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    .card-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--card-accent, var(--accent-gold));
+      transition: gap 0.2s ease;
+    }
+
+    .portal-card:hover .card-btn {
+      gap: 0.65rem;
+    }
+
+    /* Footer */
+    footer {
+      background: rgba(7, 9, 14, 0.95);
+      border-top: 1px solid var(--card-border);
+      padding: 2rem 1.5rem;
+      margin-top: auto;
+    }
+
+    .footer-container {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+      .portal-grid {
+        grid-template-columns: 1fr;
+      }
+      .portal-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .search-box {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header / Navbar -->
+  <header>
+    <div class="nav-container">
+      <a href="index.html" class="brand">
+        <div class="brand-icon">
+          <i data-lucide="layout-grid"></i>
+        </div>
+        <div class="brand-title">A30 <span>Showcase Portal</span></div>
+      </a>
+      <div class="status-badge">
+        <div class="dot-live"></div>
+        <span id="last-updated-text">กำลังโหลดเวลา Push...</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-badge">
+      <i data-lucide="sparkles" style="width:14px;height:14px;"></i> Multi-Category Project Portal
+    </div>
+    <h1>ประตูสู่ศูนย์รวมนวัตกรรม & โปรเจกต์</h1>
+    <p>เลือกรับชมหมวดหมู่โปรเจกต์ที่สนใจ: กราฟวิเคราะห์การเงิน (Chart), งานนำเสนอและรายงาน (Present) หรือสนามทดลองโชว์เคส (Playground)</p>
+  </section>
+
+  <!-- Filter & Search Controls (1. Chart, 2. Present, 3. Playground) -->
+  <div class="portal-controls">
+    <div class="category-pills">
+      <button class="pill active" data-category="all"><i data-lucide="layers" style="width:16px;height:16px;"></i> ทั้งหมด (All)</button>
+      <button class="pill" data-category="chart"><i data-lucide="candlestick-chart" style="width:16px;height:16px;"></i> 1. Chart</button>
+      <button class="pill" data-category="present"><i data-lucide="presentation" style="width:16px;height:16px;"></i> 2. Present</button>
+      <button class="pill" data-category="playground"><i data-lucide="gamepad-2" style="width:16px;height:16px;"></i> 3. Playground</button>
+    </div>
+    <div class="search-box">
+      <i data-lucide="search"></i>
+      <input type="text" id="projectSearch" placeholder="ค้นหาโปรเจกต์ในหมวดหมู่...">
+    </div>
+  </div>
+
+  <!-- Cards Portal Grid -->
+  <section class="portal-grid-section">
+    <div class="portal-grid" id="portalGrid">
+
+      <!-- ════════หมวด 1: CHART ════════ -->
+      
+      <!-- Card 1.1: Intermarket Analytics Chart -->
+      <a href="reports/market-monitor.html" class="portal-card" data-cat="chart" style="--card-accent: var(--accent-emerald);">
+        <div class="card-top">
+          <div class="card-meta">
+            <div class="card-icon">
+              <i data-lucide="line-chart"></i>
+            </div>
+            <div class="card-num-badge">1. CHART</div>
+          </div>
+          <h2 class="card-title">Intermarket & Correlation Chart Engine</h2>
+          <p class="card-desc">กราฟวิเคราะห์ความสัมพันธ์สหสัมพันธ์ระหว่าง ทองคำ (XAUUSD), พันธบัตร US10Y Proxy, ดัชนี DXY และน้ำมันดิบ พร้อมสัญญาณวิเคราะห์สด</p>
+        </div>
+        <div class="card-footer">
+          <span class="card-subtext">Live Data Chart</span>
+          <span class="card-btn">เปิดดูกราฟวิเคราะห์ <i data-lucide="arrow-right" style="width:16px;height:16px;"></i></span>
+        </div>
+      </a>
+
+      <!-- Card 1.2: Volume Profile Chart -->
+      <a href="reports/vp-breakout.html" class="portal-card" data-cat="chart" style="--card-accent: var(--accent-emerald);">
+        <div class="card-top">
+          <div class="card-meta">
+            <div class="card-icon">
+              <i data-lucide="candlestick-chart"></i>
+            </div>
+            <div class="card-num-badge">1. CHART</div>
+          </div>
+          <h2 class="card-title">Volume Profile & Zone Breakout Charts</h2>
+          <p class="card-desc">กราฟวิเคราะห์โซน VAH, VAL, POC และโครงสร้างการกระจายโวลุ่มสำหรับการเทรดตามกรอบการเบรกเอาต์ในกรอบเวลา 15m</p>
+        </div>
+        <div class="card-footer">
+          <span class="card-subtext">Volume Analysis</span>
+          <span class="card-btn">เปิดดูกราฟ Volume <i data-lucide="arrow-right" style="width:16px;height:16px;"></i></span>
+        </div>
+      </a>
+
+      <!-- ════════ หมวด 2: PRESENT ════════ -->
+
+      <!-- Card 2.1: Quantitative Trading Hub Presentation -->
+      <a href="main.html" class="portal-card" data-cat="present" style="--card-accent: var(--accent-gold);">
+        <div class="card-top">
+          <div class="card-meta">
+            <div class="card-icon">
+              <i data-lucide="presentation"></i>
+            </div>
+            <div class="card-num-badge">2. PRESENT</div>
+          </div>
+          <h2 class="card-title">Quantitative EA & Backtest Presentation Hub</h2>
+          <p class="card-desc">หน้างานนำเสนอหลักรวบรวมผลงานบอตเทรดเชิงปริมาณ ย้อนหลังสถิติ Win Rate, Profit Factor, Equity Curve และสเปกกลยุทธ์ฉบับสมบูรณ์</p>
+        </div>
+        <div class="card-footer">
+          <span class="card-subtext">Main Presentation</span>
+          <span class="card-btn">เข้าชมงานนำเสนอ <i data-lucide="arrow-right" style="width:16px;height:16px;"></i></span>
+        </div>
+      </a>
+
+      <!-- Card 2.2: Gold Small Account Presentation -->
+      <a href="reports/gold-small-account.html" class="portal-card" data-cat="present" style="--card-accent: var(--accent-gold);">
+        <div class="card-top">
+          <div class="card-meta">
+            <div class="card-icon">
+              <i data-lucide="file-text"></i>
+            </div>
+            <div class="card-num-badge">2. PRESENT</div>
+          </div>
+          <h2 class="card-title">Gold $100 Micro Account EA Presentation</h2>
+          <p class="card-desc">สไลด์รายงานสรุปผลการนำเสนอกลยุทธ์ปั้นพอร์ตทองคำขนาดเล็ก $100 เน้นความเสี่ยงต่ำ คุม Max Drawdown และบริหารเงินทุนอย่างมีประสิทธิภาพ</p>
+        </div>
+        <div class="card-footer">
+          <span class="card-subtext">Strategy Report</span>
+          <span class="card-btn">อ่านรายงานนำเสนอ <i data-lucide="arrow-right" style="width:16px;height:16px;"></i></span>
+        </div>
+      </a>
+
+      <!-- ════════ หมวด 3: PLAYGROUND ════════ -->
+
+      <!-- Card 3.1: Cute Quiz App -->
+      <a href="cute_quiz.html" class="portal-card" data-cat="playground" style="--card-accent: var(--accent-pink);">
+        <div class="card-top">
+          <div class="card-meta">
+            <div class="card-icon" style="color:var(--accent-pink);">
+              <i data-lucide="heart"></i>
+            </div>
+            <div class="card-num-badge" style="color:var(--accent-pink); border-color:rgba(236,72,153,0.3);">3. PLAYGROUND</div>
+          </div>
+          <h2 class="card-title">💖 แบบทดสอบทายใจระดับความน่ารัก</h2>
+          <p class="card-desc">แบบทดสอบสไตล์คุณ 10 ข้อ (กาแฟ, ชา, หมา, แมว ฯลฯ) พร้อมสรุปผลลัพธ์คำชมอวยเวอร์ๆ น่ารักที่สุดในโลก และเอฟเฟกต์หัวใจฟรุ้งฟริ้ง</p>
+        </div>
+        <div class="card-footer">
+          <span class="card-subtext">Interactive Quiz · Pink Theme</span>
+          <span class="card-btn" style="color:var(--accent-pink);">เริ่มเล่นแบบทดสอบ <i data-lucide="arrow-right" style="width:16px;height:16px;"></i></span>
+        </div>
+      </a>
+
+
+      <!-- Card 3.2: Future Multi-Style Web Playground (Placeholder) -->
+      <div class="portal-card" data-cat="playground" style="--card-accent: var(--accent-pink); opacity: 0.85; cursor: default;">
+        <div class="card-top">
+          <div class="card-meta">
+            <div class="card-icon">
+              <i data-lucide="sparkles"></i>
+            </div>
+            <div class="card-num-badge">3. PLAYGROUND</div>
+          </div>
+          <h2 class="card-title">Future Multi-Style Web & UI Lab</h2>
+          <p class="card-desc">สนามทดลองโชว์เคสสำหรับรองรับการพัฒนาโปรเจกต์เว็บแอปพลิเคชัน อินเทอร์เฟซ UI รูปแบบใหม่ๆ และนวัตกรรมมัลติสไตล์ในอนาคต</p>
+        </div>
+        <div class="card-footer">
+          <span class="card-subtext">Upcoming Lab</span>
+          <span class="card-btn" style="color:var(--accent-pink);">🔒 พร้อมรองรับโปรเจกต์อนาคต</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-left">
+        <i data-lucide="shield-check" style="width:16px;height:16px;color:var(--accent-emerald);"></i>
+        <span>A30 Showcase Portal · Continuous Engineering</span>
+      </div>
+      <div>
+        <span>Built with Antigravity AI Engine</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Fetch Last Push Commit Date from GitHub API automatically
+    fetch('https://api.github.com/repos/A30Richer/showcase/commits/main')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.commit) {
+          const pushDate = new Date(data.commit.committer.date);
+          const formatted = pushDate.toLocaleString('th-TH', { 
+            day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' 
+          });
+          document.getElementById('last-updated-text').textContent = 'Push ล่าสุด: ' + formatted;
+        }
+      })
+      .catch(err => {
+        console.error('Error fetching commit date:', err);
+        document.getElementById('last-updated-text').textContent = 'Portal Online';
+      });
+
+    // Category Filter & Real-time Search Logic
+    const pills = document.querySelectorAll('.pill');
+    const cards = document.querySelectorAll('.portal-card');
+    const searchInput = document.getElementById('projectSearch');
+
+    let currentCategory = 'all';
+
+    function filterProjects() {
+      const query = searchInput.value.toLowerCase().trim();
+
+      cards.forEach(card => {
+        const cat = card.getAttribute('data-cat');
+        const text = card.textContent.toLowerCase();
+
+        const matchesCat = (currentCategory === 'all' || cat === currentCategory);
+        const matchesSearch = (query === '' || text.includes(query));
+
+        if (matchesCat && matchesSearch) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    pills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        pills.forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        currentCategory = pill.getAttribute('data-category');
+        filterProjects();
+      });
+    });
+
+    searchInput.addEventListener('input', filterProjects);
+  </script>
+</body>
+</html>

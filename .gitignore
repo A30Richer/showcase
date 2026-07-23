@@ -1,0 +1,9 @@
+# Ignore sensitive files
+.env*
+*.key
+*.pem
+
+# OS / Editor files
+.DS_Store
+.vscode/
+.idea/

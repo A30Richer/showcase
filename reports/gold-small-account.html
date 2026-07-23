@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gold (XAUUSD) $100 Micro Account EA (SL=$10) — Strategy & Trade Log Report</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --bg-dark: #0b0f17;
+      --card-bg: #111827;
+      --card-border: #1f2937;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --accent-emerald: #10b981;
+      --accent-gold: #f59e0b;
+      --accent-blue: #3b82f6;
+      --accent-red: #ef4444;
+      --accent-purple: #8b5cf6;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: var(--text-main); line-height: 1.6; }
+    h1, h2, h3, .brand { font-family: 'Outfit', sans-serif; }
+    header { position: sticky; top: 0; z-index: 100; background: rgba(11, 15, 23, 0.88); backdrop-filter: blur(12px); border-bottom: 1px solid var(--card-border); }
+    .nav-container { max-width: 1200px; margin: 0 auto; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+    .brand { display: flex; align-items: center; gap: 0.75rem; font-size: 1.25rem; font-weight: 700; color: #fff; text-decoration: none; }
+    .brand-icon { width: 38px; height: 38px; background: linear-gradient(135deg, var(--accent-gold), var(--accent-emerald)); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #000; }
+    nav ul { display: flex; list-style: none; gap: 1.25rem; }
+    nav a { color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 0.92rem; padding: 0.4rem 0.8rem; border-radius: 8px; transition: all 0.2s ease; }
+    nav a:hover, nav a.active { color: #fff; background: var(--card-border); }
+    .container { max-width: 1200px; margin: 3rem auto; padding: 0 1.5rem; }
+    .back-link { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--accent-gold); text-decoration: none; font-weight: 600; font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .title { font-size: 2.4rem; font-weight: 800; margin-bottom: 0.5rem; color: #fff; }
+    .subtitle { color: var(--text-muted); font-size: 1.05rem; margin-bottom: 2.5rem; }
+    
+    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-bottom: 3rem; }
+    .metric-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 1.5rem; }
+    .metric-label { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+    .metric-val { font-size: 2rem; font-weight: 800; color: #fff; }
+    .metric-val.green { color: var(--accent-emerald); }
+    .metric-val.gold { color: var(--accent-gold); }
+    
+    /* Strategy Section */
+    .strategy-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 18px; padding: 2rem; margin-bottom: 3rem; }
+    .strategy-title { font-size: 1.4rem; font-weight: 700; color: var(--accent-gold); margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.75rem; }
+    .strategy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+    .strategy-card { background: #192231; border: 1px solid var(--card-border); border-radius: 14px; padding: 1.25rem; }
+    .strategy-card-title { font-weight: 700; color: #fff; margin-bottom: 0.5rem; font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem; }
+    .strategy-card-desc { color: var(--text-muted); font-size: 0.9rem; }
+    .highlight-buy { color: var(--accent-emerald); font-weight: 700; }
+    .highlight-sell { color: var(--accent-red); font-weight: 700; }
+
+    /* Table Box */
+    .table-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 18px; overflow: hidden; margin-bottom: 3rem; padding: 1.75rem; }
+    .table-title { font-size: 1.3rem; font-weight: 700; color: #fff; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.6rem; }
+    
+    .data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.92rem; }
+    .data-table th { background: #1f2937; color: #f3f4f6; font-weight: 600; padding: 0.85rem 1rem; border-bottom: 2px solid var(--card-border); }
+    .data-table td { padding: 0.9rem 1rem; border-bottom: 1px solid var(--card-border); color: #e5e7eb; }
+    .data-table tr:hover td { background: rgba(31, 41, 55, 0.5); }
+    
+    .badge-win { background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: 700; font-size: 0.82rem; }
+    .badge-loss { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: 700; font-size: 0.82rem; }
+
+    .chart-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 18px; overflow: hidden; margin-bottom: 3rem; padding: 1.5rem; }
+    .chart-box img { width: 100%; height: auto; border-radius: 12px; }
+    .chart-title { font-size: 1.3rem; font-weight: 700; color: #fff; margin-bottom: 1rem; }
+    
+    footer { border-top: 1px solid var(--card-border); padding: 2.5rem 1.5rem; text-align: center; color: var(--text-muted); font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav-container">
+      <a href="../main.html" class="brand">
+        <div class="brand-icon"><i data-lucide="cpu"></i></div>
+        <span>Quantitative EA Showcase</span>
+      </a>
+      <nav>
+        <ul>
+          <li><a href="../main.html">Main Hub</a></li>
+          <li><a href="gold-small-account.html" class="active">$100 Micro EA (SL=$10)</a></li>
+          <li><a href="vp-breakout.html">VP Breakout EA</a></li>
+          <li><a href="gold-high-profit.html">Gold Trend EA</a></li>
+          <li><a href="us100-daytrade.html">US100 EA</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <a href="../main.html" class="back-link"><i data-lucide="arrow-left"></i> Back to Main Hub</a>
+    <h1 class="title">Gold (XAUUSD) $100 Micro Account EA Strategy Report</h1>
+    <p class="subtitle">Technical Strategy Architecture, Entry/Exit Rules, & Trade-by-Trade Breakdown ($100 Capital, 0.01 Lot, SL=$10, TP=$20)</p>
+
+    <!-- Key Parameters -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-label">Initial Capital</div>
+        <div class="metric-val gold">$100.00</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Fixed Lot Size</div>
+        <div class="metric-val">0.01 Lot</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Stop Loss (SL)</div>
+        <div class="metric-val">$10.00 (100 pips)</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Take Profit (TP)</div>
+        <div class="metric-val green">$20.00 (R:R 1:2.0)</div>
+      </div>
+    </div>
+
+    <!-- Technical Strategy Architecture -->
+    <div class="strategy-box">
+      <div class="strategy-title">
+        <i data-lucide="cpu" style="color: var(--accent-gold);"></i>
+        เทคนิคการเทรดและเงื่อนไขการเข้า-ออกออเดอร์ (Technical Strategy Rules)
+      </div>
+
+      <div class="strategy-grid">
+        <!-- Card 1: Trend Filter -->
+        <div class="strategy-card">
+          <div class="strategy-card-title">
+            <i data-lucide="compass" style="color: var(--accent-blue);"></i> 1. ตัวกรองเทรนด์ใหญ่ (Trend Filter)
+          </div>
+          <div class="strategy-card-desc">
+            ใช้เส้น <strong>EMA 50</strong> และ <strong>EMA 200</strong> Cross Alignment:<br>
+            • หาก <span class="highlight-buy">EMA 50 > EMA 200</span> ➔ เทรนด์ขาขึ้น อนุญาตให้เปิดเฉพาะ <span class="highlight-buy">BUY</span> เท่านั้น<br>
+            • หาก <span class="highlight-sell">EMA 50 < EMA 200</span> ➔ เทรนด์ขาลง อนุญาตให้เปิดเฉพาะ <span class="highlight-sell">SELL</span> เท่านั้น
+          </div>
+        </div>
+
+        <!-- Card 2: Entry Triggers -->
+        <div class="strategy-card">
+          <div class="strategy-card-title">
+            <i data-lucide="target" style="color: var(--accent-emerald);"></i> 2. จุดเข้าเทรด (Entry Trigger)
+          </div>
+          <div class="strategy-card-desc">
+            เข้าเทรดเมื่อราคาย่อตัวสัมผัส EMA 50 (Pullback Rebound):<br>
+            • <span class="highlight-buy">BUY Entry</span>: ราคาย่อลงแตะ/ใกล้ EMA 50 (<code style="color:#10b981;">Low <= EMA 50</code>) แล้วปิดแท่งเด้งกลับขึ้นเหนือ EMA 50<br>
+            • <span class="highlight-sell">SELL Entry</span>: ราคาดีดขึ้นแตะ/ใกล้ EMA 50 (<code style="color:#ef4444;">High >= EMA 50</code>) แล้วปิดแท่งย่อลงใต้ EMA 50
+          </div>
+        </div>
+
+        <!-- Card 3: Exit Triggers -->
+        <div class="strategy-card">
+          <div class="strategy-card-title">
+            <i data-lucide="shield-alert" style="color: var(--accent-gold);"></i> 3. จุดออกเทรด (Exit Triggers SL / TP)
+          </div>
+          <div class="strategy-card-desc">
+            กำหนดระยะตัดขาดทุนและทำกำไรชัดเจน (R:R = 1:2.0):<br>
+            • <strong>Stop Loss (SL)</strong>: ปรับเป็น <strong>$10.00</strong> จากจุดเข้า (100 pips บน 0.01 lot) ป้องกันโดนสะบัดหลอก<br>
+            • <strong>Take Profit (TP)</strong>: ปรับเป็น <strong>$20.00</strong> จากจุดเข้า (200 pips บน 0.01 lot) เก็บกำไรคำใหญ่ 2 เท่า
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detailed Performance Breakdown Table -->
+    <div class="table-box">
+      <div class="table-title">
+        <i data-lucide="table" style="color: var(--accent-gold);"></i>
+        ตารางสรุปผลการทดสอบ Backtest 3 ช่วงเวลาอย่างละเอียด (3-Period Performance Table)
+      </div>
+      <div style="overflow-x: auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Test Period</th>
+              <th>Date Range</th>
+              <th>Net Profit ($)</th>
+              <th>Net Profit (%)</th>
+              <th>Win Rate (%)</th>
+              <th>Wins / Losses</th>
+              <th>Profit Factor</th>
+              <th>Max Drawdown</th>
+              <th>Result Badge</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Test #1: Last Week (Recent 7 Days)</strong></td>
+              <td>2026-07-20 ➔ 2026-07-22</td>
+              <td style="color:#10b981; font-weight:bold;">+$40.00</td>
+              <td style="color:#10b981; font-weight:bold;">+40.0%</td>
+              <td>60.0%</td>
+              <td>3 Wins / 2 Losses</td>
+              <td><strong>3.00</strong></td>
+              <td>16.7%</td>
+              <td><span class="badge-win">PROFITABLE (+40%)</span></td>
+            </tr>
+            <tr>
+              <td><strong>Test #2: Random Period 1 (Past 30 Days)</strong></td>
+              <td>2026-06-11 ➔ 2026-06-22</td>
+              <td style="color:#10b981; font-weight:bold;">+$110.00</td>
+              <td style="color:#10b981; font-weight:bold;">+110.0%</td>
+              <td>48.0%</td>
+              <td>12 Wins / 13 Losses</td>
+              <td><strong>1.85</strong></td>
+              <td>30.8%</td>
+              <td><span class="badge-win">2X CAPITAL (+110%)</span></td>
+            </tr>
+            <tr>
+              <td><strong>Test #3: Random Period 2 (Past 60 Days)</strong></td>
+              <td>2026-05-19 ➔ 2026-05-29</td>
+              <td style="color:#ef4444; font-weight:bold;">-$30.00</td>
+              <td style="color:#ef4444; font-weight:bold;">-30.0%</td>
+              <td>29.2%</td>
+              <td>7 Wins / 17 Losses</td>
+              <td>0.82</td>
+              <td>108.3%</td>
+              <td><span class="badge-loss">DRAWDOWN</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Trade Log Table (Test #1 Last Week) -->
+    <div class="table-box">
+      <div class="table-title">
+        <i data-lucide="list-checks" style="color: var(--accent-emerald);"></i>
+        ตารางรายชื่อออเดอร์เข้า-ออกของสัปดาห์ล่าสุด (Test #1 Last Week Trade Log)
+      </div>
+      <div style="overflow-x: auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Trade #</th>
+              <th>Type</th>
+              <th>จุดเข้าเทรด (Entry Price)</th>
+              <th>เวลาเข้าเทรด (UTC)</th>
+              <th>จุดออกเทรด (Exit Price)</th>
+              <th>เวลาออกเทรด (UTC)</th>
+              <th>กำไร/ขาดทุน ($)</th>
+              <th>เหตุผลการปิดออเดอร์</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Trade 01</strong></td>
+              <td><span class="highlight-buy">BUY</span></td>
+              <td>$4,025.90</td>
+              <td>07-20 07:30</td>
+              <td>$4,045.90</td>
+              <td>07-20 11:30</td>
+              <td style="color:#10b981; font-weight:bold;">+$20.00</td>
+              <td><span class="badge-win">Take Profit</span></td>
+            </tr>
+            <tr>
+              <td><strong>Trade 02</strong></td>
+              <td><span class="highlight-buy">BUY</span></td>
+              <td>$4,018.90</td>
+              <td>07-20 15:00</td>
+              <td>$4,008.90</td>
+              <td>07-20 16:30</td>
+              <td style="color:#ef4444; font-weight:bold;">-$10.00</td>
+              <td><span class="badge-loss">Stop Loss</span></td>
+            </tr>
+            <tr>
+              <td><strong>Trade 03</strong></td>
+              <td><span class="highlight-buy">BUY</span></td>
+              <td>$4,017.40</td>
+              <td>07-20 19:15</td>
+              <td>$4,007.40</td>
+              <td>07-20 22:30</td>
+              <td style="color:#ef4444; font-weight:bold;">-$10.00</td>
+              <td><span class="badge-loss">Stop Loss</span></td>
+            </tr>
+            <tr>
+              <td><strong>Trade 04</strong></td>
+              <td><span class="highlight-buy">BUY</span></td>
+              <td>$4,014.40</td>
+              <td>07-20 23:45</td>
+              <td>$4,034.40</td>
+              <td>07-21 01:00</td>
+              <td style="color:#10b981; font-weight:bold;">+$20.00</td>
+              <td><span class="badge-win">Take Profit</span></td>
+            </tr>
+            <tr>
+              <td><strong>Trade 05</strong></td>
+              <td><span class="highlight-buy">BUY</span></td>
+              <td>$4,058.00</td>
+              <td>07-21 12:30</td>
+              <td>$4,078.00</td>
+              <td>07-21 14:30</td>
+              <td style="color:#10b981; font-weight:bold;">+$20.00</td>
+              <td><span class="badge-win">Take Profit</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 3-Panel Backtest Chart -->
+    <div class="chart-box">
+      <div class="chart-title">3-Period Empirical Backtest Visual Chart (Includes Last Week)</div>
+      <img src="../assets/images/gold_micro_100_backtest_chart.png" alt="3-Panel Backtest Chart with SL=$10">
+    </div>
+
+  </div>
+
+  <footer>
+    <p>© 2026 Quantitative EA Showcase Hub — Gold $100 Micro Account EA Strategy & Trade Log Report</p>
+  </footer>
+  <script>lucide.createIcons();</script>
+</body>
+</html>
