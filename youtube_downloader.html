@@ -662,25 +662,11 @@
           <div class="download-btn-group" id="btnGroup">
             <div class="dl-btn-row">
               <a href="#" id="directDlBtn" class="dl-btn dl-btn-primary" target="_blank" rel="noopener">
-                <i data-lucide="download" style="width:18px;height:18px;"></i> ดาวน์โหลดไฟล์ทันที (Server 1)
+                <i data-lucide="download" style="width:18px;height:18px;"></i> ⬇️ ดาวน์โหลดไฟล์ลงเครื่องตรง (Pure Local Engine)
               </a>
               <button class="dl-btn dl-btn-secondary" onclick="copyDlLink()">
                 <i data-lucide="copy" style="width:18px;height:18px;"></i> คัดลอกลิงก์
               </button>
-            </div>
-
-            <!-- Alternative Download Converter Servers -->
-            <div class="servers-title">🌐 เซิร์ฟเวอร์ทางเลือกสำหรับการดาวน์โหลด (กรณี Server 1 ติดขัด):</div>
-            <div class="server-list" id="serverList">
-              <a href="#" id="serverBtn1" target="_blank" rel="noopener" class="server-chip">
-                ⚡ Server 1 (SSYouTube)
-              </a>
-              <a href="#" id="serverBtn2" target="_blank" rel="noopener" class="server-chip">
-                🚀 Server 2 (YouTubePP)
-              </a>
-              <a href="#" id="serverBtn3" target="_blank" rel="noopener" class="server-chip">
-                💎 Server 3 (Y2Mate)
-              </a>
             </div>
           </div>
         </div>
@@ -829,19 +815,22 @@
         document.getElementById('videoTitle').textContent = `YouTube Video (${videoId})`;
       }
 
-      // Generate Reliable Download Server Links
-      const server1 = `https://ssyoutube.com/watch?v=${videoId}`;
-      const server2 = `https://www.youtubepp.com/watch?v=${videoId}`;
-      const server3 = `https://y2mate.is/watch?v=${videoId}`;
+      // Fetch Local Server Download Endpoint
+      try {
+        const localRes = await fetch(`/api/yt-download?url=${encodeURIComponent(url)}&format=${format}&quality=${quality}`);
+        if (localRes.ok) {
+          const localData = await localRes.json();
+          if (localData.local_download_url) {
+            currentDlLink = localData.local_download_url;
+            directDlBtn.href = localData.local_download_url;
+          }
+        }
+      } catch (e) {
+        currentDlLink = '#';
+        directDlBtn.href = '#';
+      }
 
-      currentDlLink = server1;
-      directDlBtn.href = server1;
-
-      document.getElementById('serverBtn1').href = server1;
-      document.getElementById('serverBtn2').href = server2;
-      document.getElementById('serverBtn3').href = server3;
-
-      document.getElementById('statusMessage').textContent = '✅ แปลงไฟล์สำเร็จ! เลือกดาวน์โหลดผ่านเซิร์ฟเวอร์ด้านล่างได้ทันที';
+      document.getElementById('statusMessage').textContent = '✅ แปลงไฟล์สำเร็จ! พร้อมสำหรับการดาวน์โหลดตรงลงเครื่อง';
       processBtn.disabled = false;
       processBtn.innerHTML = `<i data-lucide="download-cloud" style="width:20px;height:20px;"></i> แปลงไฟล์ & รับลิงก์ดาวน์โหลด`;
       lucide.createIcons();
