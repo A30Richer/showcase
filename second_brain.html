@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧠 Obsidian Second Brain & Knowledge Graph</title>
+
+  <!-- Google Fonts: Space Grotesk, Mitr & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Mitr:wght@300;400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome & D3.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+
+  <style>
+    :root {
+      --bg-dark: #0f111a;
+      --sidebar-bg: #161824;
+      --card-bg: #1e2132;
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent-purple: #9d4edd;
+      --accent-violet: #7b2cbf;
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #34d399;
+      --accent-amber: #fbbf24;
+      --text-main: #f1f5f9;
+      --text-sub: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', 'Mitr', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Navbar */
+    .top-nav {
+      height: 56px;
+      background: var(--sidebar-bg);
+      border-bottom: 1px solid var(--card-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.25rem;
+      z-index: 20;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--text-main);
+      text-decoration: none;
+    }
+
+    .brand i { color: var(--accent-purple); font-size: 1.25rem; }
+
+    .nav-stats {
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.82rem;
+      color: var(--text-sub);
+    }
+
+    .stat-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .stat-badge span { color: var(--accent-purple); font-weight: 700; }
+
+    .back-btn {
+      color: var(--text-sub);
+      text-decoration: none;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: color 0.2s;
+    }
+    .back-btn:hover { color: var(--accent-cyan); }
+
+    /* Main Container Layout */
+    .app-body {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 56px);
+      overflow: hidden;
+    }
+
+    /* Sidebar File Explorer */
+    .sidebar {
+      width: 280px;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--card-border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    .search-box {
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .search-input-wrap {
+      position: relative;
+    }
+
+    .search-input-wrap i {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-sub);
+      font-size: 0.85rem;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 0.45rem 0.75rem 0.45rem 2.2rem;
+      color: var(--text-main);
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-input:focus { border-color: var(--accent-purple); }
+
+    .file-tree {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.6rem;
+    }
+
+    .folder-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--text-sub);
+      text-transform: uppercase;
+      padding: 0.4rem 0.6rem;
+      margin-top: 0.4rem;
+    }
+
+    .tree-item {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.45rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      color: var(--text-sub);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .tree-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+    }
+
+    .tree-item.active {
+      background: rgba(157, 78, 221, 0.18);
+      color: #ffffff;
+      font-weight: 500;
+    }
+
+    .tree-item i { font-size: 0.9rem; color: var(--accent-purple); }
+
+    /* Middle Pane: Markdown Note Reader */
+    .note-pane {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-dark);
+      overflow-y: auto;
+      padding: 2rem 2.5rem;
+    }
+
+    .note-header {
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 1rem;
+    }
+
+    .note-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 0.5rem;
+    }
+
+    .note-tags {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      background: rgba(157, 78, 221, 0.15);
+      color: #c77dff;
+      border: 1px solid rgba(157, 78, 221, 0.3);
+      padding: 0.2rem 0.6rem;
+      border-radius: 99px;
+      font-size: 0.78rem;
+      font-weight: 500;
+    }
+
+    .note-body {
+      font-size: 0.98rem;
+      line-height: 1.75;
+      color: #cbd5e1;
+    }
+
+    .note-body h2 {
+      font-size: 1.3rem;
+      color: #ffffff;
+      margin: 1.5rem 0 0.8rem;
+    }
+
+    .note-body p { margin-bottom: 1rem; }
+
+    .wikilink {
+      color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.1);
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: 500;
+      cursor: pointer;
+      border-bottom: 1px dashed var(--accent-cyan);
+      transition: background 0.2s;
+    }
+    .wikilink:hover { background: rgba(56, 189, 248, 0.25); }
+
+    /* Right Pane: Interactive Knowledge Graph */
+    .graph-pane {
+      width: 420px;
+      background: var(--sidebar-bg);
+      border-left: 1px solid var(--card-border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .graph-header {
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid var(--card-border);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-sub);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    #graphCanvas {
+      width: 100%;
+      flex: 1;
+      cursor: grab;
+    }
+    #graphCanvas:active { cursor: grabbing; }
+
+    @media (max-width: 1024px) {
+      .graph-pane { display: none; }
+    }
+    @media (max-width: 768px) {
+      .sidebar { width: 220px; }
+      .note-pane { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <div class="top-nav">
+    <a href="index.html" class="brand">
+      <i class="fa-solid fa-brain"></i>
+      <span>OBSIDIAN SECOND BRAIN</span>
+    </a>
+
+    <div class="nav-stats">
+      <div class="stat-badge"><i class="fa-solid fa-file-lines"></i> Notes: <span id="statNotes">5</span></div>
+      <div class="stat-badge"><i class="fa-solid fa-diagram-project"></i> Links: <span id="statLinks">8</span></div>
+      <div class="stat-badge"><i class="fa-solid fa-tags"></i> Tags: <span>#project, #concept</span></div>
+    </div>
+
+    <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Showcase Portal</a>
+  </div>
+
+  <!-- App Body Container -->
+  <div class="app-body">
+
+    <!-- Sidebar: Obsidian Vault File Explorer -->
+    <div class="sidebar">
+      <div class="search-box">
+        <div class="search-input-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" class="search-input" id="searchInput" placeholder="Search notes or tags..." oninput="filterNotes()">
+        </div>
+      </div>
+
+      <div class="file-tree" id="fileTree">
+        <!-- Tree items dynamically rendered -->
+      </div>
+    </div>
+
+    <!-- Middle Pane: Obsidian Markdown Note Reader -->
+    <div class="note-pane">
+      <div class="note-header">
+        <h1 class="note-title" id="noteTitle">Loading...</h1>
+        <div class="note-tags" id="noteTags"></div>
+      </div>
+      <div class="note-body" id="noteBody"></div>
+    </div>
+
+    <!-- Right Pane: Interactive 2D Knowledge Graph -->
+    <div class="graph-pane">
+      <div class="graph-header">
+        <span><i class="fa-solid fa-circle-nodes" style="color:var(--accent-purple);"></i> KNOWLEDGE GRAPH</span>
+        <span style="font-size:0.75rem; color:var(--text-sub);">Interactive D3 Engine</span>
+      </div>
+      <div id="graphCanvas"></div>
+    </div>
+
+  </div>
+
+  <script>
+    // Sample Obsidian Vault Database
+    const VAULT = [
+      {
+        id: 'second-brain',
+        title: 'Obsidian Second Brain Architecture',
+        folder: '00 - CORE',
+        tags: ['#system', '#architecture', '#second-brain'],
+        content: `
+          <h2>📌 ความหมายของ Second Brain</h2>
+          <p>ระบบ Second Brain คือการจัดเก็บความรู้และความคิดให้อยู่ในรูปแบบคลังดิจิทัลที่เชื่อมโยงกันอย่างเป็นระบบ ช่วยเสริมความจำและประมวลผลความคิดได้อย่างรวดเร็ว</p>
+
+          <h2>🔗 การเชื่อมโยงข้อมูล (Bi-directional Links)</h2>
+          <p>องค์ประกอบสำคัญของ Obsidian คือการใช้ <span class="wikilink" onclick="openNote('agentic-ai')">[[Agentic AI Workflows]]</span> และ <span class="wikilink" onclick="openNote('quant-trading')">[[Quantitative Trading Engine]]</span> เพื่อสร้างโครงข่ายความคิดสองทาง</p>
+
+          <h2>🛠️ โครงสร้างไฟล์ใน Vault</h2>
+          <p>คลังความรู้นี้ถูกจัดกลุ่มด้วย <span class="wikilink" onclick="openNote('system-arch')">[[System Architecture Dashboard]]</span> เพื่อให้ดึงข้อมูลผ่าน API ได้โดยตรง</p>
+        `
+      },
+      {
+        id: 'agentic-ai',
+        title: 'Agentic AI Workflows',
+        folder: '01 - PROJECTS',
+        tags: ['#ai', '#project', '#workflow'],
+        content: `
+          <h2>🤖 AI Autonomous Agents</h2>
+          <p>ระบบ Agentic AI ได้รับการออกแบบให้สามารถวางแผน ทวนสอบโค้ด และสั่งรันเครื่องมือผ่าน Subagent ล่วงหน้าได้อย่างอัตโนมัติ</p>
+
+          <h2>🔗 หัวข้อที่เกี่ยวข้อง</h2>
+          <p>เชื่อมโยงกับแนวคิดหลักของ <span class="wikilink" onclick="openNote('second-brain')">[[Obsidian Second Brain Architecture]]</span> และการวิเคราะห์ข้อมูล <span class="wikilink" onclick="openNote('daily-note')">[[Daily Note - 2026-07-24]]</span></p>
+        `
+      },
+      {
+        id: 'quant-trading',
+        title: 'Quantitative Trading Engine',
+        folder: '01 - PROJECTS',
+        tags: ['#trading', '#finance', '#quant'],
+        content: `
+          <h2>📈 ระบบเทรดเชิงปริมาณ</h2>
+          <p>การวิเคราะห์สถิติราคา Win Rate, Profit Factor และ Equity Curve ของกลยุทธ์ทองคำและดัชนี US100</p>
+
+          <h2>🔗 ลิงก์เชื่อมโยง</h2>
+          <p>สามารถดูภาพรวมสถาปัตยกรรมได้ใน <span class="wikilink" onclick="openNote('system-arch')">[[System Architecture Dashboard]]</span></p>
+        `
+      },
+      {
+        id: 'system-arch',
+        title: 'System Architecture Dashboard',
+        folder: '02 - CONCEPTS',
+        tags: ['#system', '#dashboard'],
+        content: `
+          <h2>🌐 โครงสร้างแดชบอร์ด</h2>
+          <p>แดชบอร์ดหลักทำหน้าที่รวมศูนย์ API ควบคุมบอต การรันสคริปต์ และแสดงผลการทำงานร่วมกับ <span class="wikilink" onclick="openNote('second-brain')">[[Obsidian Second Brain Architecture]]</span></p>
+        `
+      },
+      {
+        id: 'daily-note',
+        title: 'Daily Note - 2026-07-24',
+        folder: '03 - DAILY',
+        tags: ['#daily', '#log'],
+        content: `
+          <h2>📝 บันทึกประจำวัน</h2>
+          <p>- ทดลองการเชื่อมต่อ Obsidian Second Brain เข้ากับ Dashboard หน้าเว็บสำเร็จ<br>- สรุปการเชื่อมโยงระบบ <span class="wikilink" onclick="openNote('agentic-ai')">[[Agentic AI Workflows]]</span> และ <span class="wikilink" onclick="openNote('quant-trading')">[[Quantitative Trading Engine]]</span></p>
+        `
+      }
+    ];
+
+    let currentNoteId = 'second-brain';
+
+    // Render File Tree Sidebar
+    function renderFileTree(filteredVault = VAULT) {
+      const treeContainer = document.getElementById('fileTree');
+      treeContainer.innerHTML = '';
+
+      const folders = {};
+      filteredVault.forEach(note => {
+        if (!folders[note.folder]) folders[note.folder] = [];
+        folders[note.folder].push(note);
+      });
+
+      for (const [folderName, notes] of Object.entries(folders)) {
+        const folderEl = document.createElement('div');
+        folderEl.className = 'folder-title';
+        folderEl.textContent = folderName;
+        treeContainer.appendChild(folderEl);
+
+        notes.forEach(note => {
+          const itemEl = document.createElement('div');
+          itemEl.className = `tree-item ${note.id === currentNoteId ? 'active' : ''}`;
+          itemEl.innerHTML = `<i class="fa-regular fa-file-code"></i><span>${note.title}</span>`;
+          itemEl.onclick = () => openNote(note.id);
+          treeContainer.appendChild(itemEl);
+        });
+      }
+    }
+
+    // Open Note Reader
+    function openNote(noteId) {
+      const note = VAULT.find(n => n.id === noteId);
+      if (!note) return;
+
+      currentNoteId = noteId;
+      document.getElementById('noteTitle').textContent = note.title;
+      document.getElementById('noteBody').innerHTML = note.content;
+
+      const tagsContainer = document.getElementById('noteTags');
+      tagsContainer.innerHTML = '';
+      note.tags.forEach(t => {
+        const span = document.createElement('span');
+        span.className = 'tag';
+        span.textContent = t;
+        tagsContainer.appendChild(span);
+      });
+
+      renderFileTree();
+      highlightGraphNode(noteId);
+    }
+
+    // Filter Notes Search
+    function filterNotes() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = VAULT.filter(n => 
+        n.title.toLowerCase().includes(q) || 
+        n.tags.some(t => t.toLowerCase().includes(q))
+      );
+      renderFileTree(filtered);
+    }
+
+    // Render D3 Knowledge Graph
+    function initGraph() {
+      const container = document.getElementById('graphCanvas');
+      const width = container.clientWidth || 400;
+      const height = container.clientHeight || 500;
+
+      const nodes = VAULT.map(n => ({ id: n.id, name: n.title }));
+      const links = [
+        { source: 'second-brain', target: 'agentic-ai' },
+        { source: 'second-brain', target: 'quant-trading' },
+        { source: 'second-brain', target: 'system-arch' },
+        { source: 'agentic-ai', target: 'daily-note' },
+        { source: 'quant-trading', target: 'system-arch' },
+        { source: 'daily-note', target: 'agentic-ai' },
+        { source: 'daily-note', target: 'quant-trading' }
+      ];
+
+      document.getElementById('statNotes').textContent = nodes.length;
+      document.getElementById('statLinks').textContent = links.length;
+
+      const svg = d3.select('#graphCanvas').append('svg')
+        .attr('width', width)
+        .attr('height', height);
+
+      const simulation = d3.forceSimulation(nodes)
+        .force('link', d3.forceLink(links).id(d => d.id).distance(85))
+        .force('charge', d3.forceManyBody().strength(-180))
+        .force('center', d3.forceCenter(width / 2, height / 2));
+
+      const link = svg.append('g')
+        .selectAll('line')
+        .data(links)
+        .enter().append('line')
+        .attr('stroke', 'rgba(255, 255, 255, 0.15)')
+        .attr('stroke-width', 1.5);
+
+      const node = svg.append('g')
+        .selectAll('circle')
+        .data(nodes)
+        .enter().append('circle')
+        .attr('r', 9)
+        .attr('fill', d => d.id === currentNoteId ? '#38bdf8' : '#9d4edd')
+        .attr('cursor', 'pointer')
+        .on('click', (e, d) => openNote(d.id));
+
+      const label = svg.append('g')
+        .selectAll('text')
+        .data(nodes)
+        .enter().append('text')
+        .text(d => d.name)
+        .attr('font-size', '10px')
+        .attr('fill', '#cbd5e1')
+        .attr('dx', 13)
+        .attr('dy', 4);
+
+      simulation.on('tick', () => {
+        link.attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+            .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+        node.attr('cx', d => d.x).attr('cy', d => d.y);
+        label.attr('x', d => d.x).attr('y', d => d.y);
+      });
+
+      window.highlightGraphNode = (noteId) => {
+        node.attr('fill', d => d.id === noteId ? '#38bdf8' : '#9d4edd')
+            .attr('r', d => d.id === noteId ? 12 : 9);
+      };
+    }
+
+    // Initialize
+    renderFileTree();
+    openNote('second-brain');
+    initGraph();
+  </script>
+</body>
+</html>
