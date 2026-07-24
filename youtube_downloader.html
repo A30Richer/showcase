@@ -845,6 +845,11 @@
           if (localData.success && localData.local_download_url) {
             currentDlLink = localData.local_download_url;
             directDlBtn.href = localData.local_download_url;
+            if (localData.local_filename) {
+              directDlBtn.setAttribute('download', localData.local_filename);
+            } else {
+              directDlBtn.setAttribute('download', `${localData.title || 'audio'}.${format}`);
+            }
             fileSizeLabel.textContent = `📁 ขนาดไฟล์: ${localData.file_size || 'สมบูรณ์'}`;
 
             if (format === 'mp3') {
