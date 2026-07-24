@@ -659,7 +659,17 @@
             <div class="progress-fill" id="progressFill"></div>
           </div>
 
-          <div class="download-btn-group" id="btnGroup">
+          <!-- HTML5 Media Preview Player Box -->
+          <div id="mediaPlayerBox" style="display:none; margin-top:14px; background:var(--bg-dark); padding:14px; border-radius:var(--radius-sm); border:1px solid var(--border);">
+            <div style="font-size:0.82rem; font-weight:700; color:var(--text); margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+              <span>🎧 ตัวอย่างไฟล์ผลลัพธ์ (Preview Player):</span>
+              <span id="fileSizeLabel" style="font-size:0.78rem; color:var(--green); font-weight:600;"></span>
+            </div>
+            <audio id="audioPreviewPlayer" controls style="width:100%; display:none; border-radius:6px; outline:none;"></audio>
+            <video id="videoPreviewPlayer" controls style="width:100%; max-height:280px; display:none; border-radius:6px; background:#000; outline:none;"></video>
+          </div>
+
+          <div class="download-btn-group" id="btnGroup" style="display:none; margin-top:16px;">
             <div class="dl-btn-row">
               <a href="#" id="directDlBtn" class="dl-btn dl-btn-primary" target="_blank" rel="noopener">
                 <i data-lucide="download" style="width:18px;height:18px;"></i> ⬇️ ดาวน์โหลดไฟล์ลงเครื่องตรง (Pure Local Engine)
@@ -815,22 +825,48 @@
         document.getElementById('videoTitle').textContent = `YouTube Video (${videoId})`;
       }
 
-      // Fetch Local Server Download Endpoint
+      const url = ytUrlInput.value.trim();
+      const mediaPlayerBox = document.getElementById('mediaPlayerBox');
+      const audioPlayer = document.getElementById('audioPreviewPlayer');
+      const videoPlayer = document.getElementById('videoPreviewPlayer');
+      const fileSizeLabel = document.getElementById('fileSizeLabel');
+      const btnGroup = document.getElementById('btnGroup');
+
+      mediaPlayerBox.style.display = 'none';
+      btnGroup.style.display = 'none';
+      audioPlayer.style.display = 'none';
+      videoPlayer.style.display = 'none';
+
+      // Fetch Local Server Download Endpoint & Metadata
       try {
         const localRes = await fetch(`/api/yt-download?url=${encodeURIComponent(url)}&format=${format}&quality=${quality}`);
         if (localRes.ok) {
           const localData = await localRes.json();
-          if (localData.local_download_url) {
+          if (localData.success && localData.local_download_url) {
             currentDlLink = localData.local_download_url;
             directDlBtn.href = localData.local_download_url;
+            fileSizeLabel.textContent = `📁 ขนาดไฟล์: ${localData.file_size || 'สมบูรณ์'}`;
+
+            if (format === 'mp3') {
+              audioPlayer.src = localData.local_download_url;
+              audioPlayer.style.display = 'block';
+            } else {
+              videoPlayer.src = localData.local_download_url;
+              videoPlayer.style.display = 'block';
+            }
+            mediaPlayerBox.style.display = 'block';
+            btnGroup.style.display = 'flex';
+            document.getElementById('statusMessage').textContent = '✅ แปลงไฟล์สำเร็จ! ทดลองฟัง/ชมไฟล์ตัวอย่างด้านล่างก่อนกดดาวน์โหลด';
+          } else {
+            document.getElementById('statusMessage').textContent = '❌ เกิดข้อผิดพลาด: ' + (localData.error || 'ไม่สามารถแปลงไฟล์ได้');
           }
         }
       } catch (e) {
         currentDlLink = '#';
         directDlBtn.href = '#';
+        document.getElementById('statusMessage').textContent = '❌ การเชื่อมต่อเซิร์ฟเวอร์ล้มเหลว';
       }
 
-      document.getElementById('statusMessage').textContent = '✅ แปลงไฟล์สำเร็จ! พร้อมสำหรับการดาวน์โหลดตรงลงเครื่อง';
       processBtn.disabled = false;
       processBtn.innerHTML = `<i data-lucide="download-cloud" style="width:20px;height:20px;"></i> แปลงไฟล์ & รับลิงก์ดาวน์โหลด`;
       lucide.createIcons();
