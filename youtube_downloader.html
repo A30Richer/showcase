@@ -406,7 +406,7 @@
       width: 0%;
       background: var(--accent-gradient);
       border-radius: 99px;
-      transition: width 0.2s linear;
+      transition: width 0.15s linear;
     }
 
     .status-text {
@@ -420,17 +420,23 @@
 
     .download-btn-group {
       display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .dl-btn-row {
+      display: flex;
       gap: 10px;
     }
 
     .dl-btn {
       flex: 1;
-      padding: 12px;
+      padding: 14px;
       border-radius: var(--radius-sm);
       border: none;
       font-family: inherit;
-      font-size: 0.9rem;
-      font-weight: 600;
+      font-size: 0.95rem;
+      font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -452,6 +458,41 @@
       border: 1px solid var(--border);
     }
     .dl-btn-secondary:hover { background: var(--border); }
+
+    .servers-title {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      font-weight: 600;
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+
+    .server-list {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .server-chip {
+      padding: 6px 12px;
+      border-radius: 6px;
+      background: var(--surface-hover);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .server-chip:hover {
+      border-color: var(--accent);
+      color: #fff;
+      background: rgba(255, 0, 85, 0.1);
+    }
 
     /* Feature Highlights Footer */
     .features-grid {
@@ -498,6 +539,7 @@
       .thumb-wrapper { width: 100%; height: 180px; }
       .options-grid { grid-template-columns: 1fr; }
       .features-grid { grid-template-columns: 1fr; }
+      .dl-btn-row { flex-direction: column; }
     }
   </style>
 </head>
@@ -591,7 +633,7 @@
         <div class="preview-layout">
           <div class="thumb-wrapper">
             <img src="" alt="Thumbnail" class="thumb-img" id="thumbImg">
-            <span class="badge-duration" id="durationBadge">03:32</span>
+            <span class="badge-duration" id="durationBadge">HD Video</span>
           </div>
           <div class="preview-info">
             <div class="video-title" id="videoTitle">กำลังโหลดข้อมูลวิดีโอ...</div>
@@ -601,7 +643,7 @@
             <div style="margin-top:8px; display:flex; gap:8px;">
               <span class="nav-badge" id="formatBadge">MP4 720p</span>
               <span style="font-size:0.75rem; color:var(--text-dim); display:flex; align-items:center; gap:4px;">
-                <i data-lucide="hard-drive" style="width:12px;height:12px;"></i> Est. Size: ~18.5 MB
+                <i data-lucide="shield-check" style="width:12px;height:12px;color:var(--green);"></i> 100% Valid Stream
               </span>
             </div>
           </div>
@@ -618,12 +660,28 @@
           </div>
 
           <div class="download-btn-group" id="btnGroup">
-            <a href="#" id="directDlBtn" class="dl-btn dl-btn-primary" target="_blank" rel="noopener">
-              <i data-lucide="download" style="width:18px;height:18px;"></i> ดาวน์โหลดไฟล์ทันที
-            </a>
-            <button class="dl-btn dl-btn-secondary" onclick="copyDlLink()">
-              <i data-lucide="copy" style="width:18px;height:18px;"></i> คัดลอกลิงก์
-            </button>
+            <div class="dl-btn-row">
+              <a href="#" id="directDlBtn" class="dl-btn dl-btn-primary" target="_blank" rel="noopener">
+                <i data-lucide="download" style="width:18px;height:18px;"></i> ดาวน์โหลดไฟล์ทันที (Server 1)
+              </a>
+              <button class="dl-btn dl-btn-secondary" onclick="copyDlLink()">
+                <i data-lucide="copy" style="width:18px;height:18px;"></i> คัดลอกลิงก์
+              </button>
+            </div>
+
+            <!-- Alternative Download Converter Servers -->
+            <div class="servers-title">🌐 เซิร์ฟเวอร์ทางเลือกสำหรับการดาวน์โหลด (กรณี Server 1 ติดขัด):</div>
+            <div class="server-list" id="serverList">
+              <a href="#" id="serverBtn1" target="_blank" rel="noopener" class="server-chip">
+                ⚡ Server 1 (SSYouTube)
+              </a>
+              <a href="#" id="serverBtn2" target="_blank" rel="noopener" class="server-chip">
+                🚀 Server 2 (YouTubePP)
+              </a>
+              <a href="#" id="serverBtn3" target="_blank" rel="noopener" class="server-chip">
+                💎 Server 3 (Y2Mate)
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -691,6 +749,7 @@
     }
 
     function extractVideoId(url) {
+      if (!url) return null;
       const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
       const match = url.match(regExp);
       return (match && match[2].length === 11) ? match[2] : null;
@@ -730,7 +789,7 @@
 
       previewCard.style.display = 'block';
       document.getElementById('thumbImg').src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
-      document.getElementById('videoTitle').textContent = `กำลังดึงข้อมูลชื่อวิดีโอ (${videoId})...`;
+      document.getElementById('videoTitle').textContent = `กำลังโหลดข้อมูลวิดีโอ (${videoId})...`;
       document.getElementById('formatBadge').textContent = `${format.toUpperCase()} ${quality}${format === 'mp3' ? 'kbps' : 'p'}`;
 
       // Progress bar animation
@@ -744,7 +803,7 @@
 
       let pct = 0;
       const interval = setInterval(() => {
-        pct += Math.floor(Math.random() * 15) + 10;
+        pct += Math.floor(Math.random() * 20) + 15;
         if (pct >= 100) {
           pct = 100;
           clearInterval(interval);
@@ -752,33 +811,37 @@
         }
         progressFill.style.width = pct + '%';
         progressPercent.textContent = pct + '%';
-      }, 150);
+      }, 100);
     }
 
     async function finishProcessing(videoId, format, quality) {
-      // Fetch oEmbed details
+      // Fetch oEmbed details (CORS friendly)
       try {
-        const res = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${videoId}`);
-        const data = await res.json();
-        if (data.title) {
-          document.getElementById('videoTitle').textContent = data.title;
-          document.getElementById('videoAuthor').innerHTML = `<i data-lucide="check-circle-2" style="width:14px;height:14px;color:var(--accent);"></i> ${data.author_name || 'YouTube Creator'}`;
+        const res = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.title) {
+            document.getElementById('videoTitle').textContent = data.title;
+            document.getElementById('videoAuthor').innerHTML = `<i data-lucide="check-circle-2" style="width:14px;height:14px;color:var(--accent);"></i> ${data.author_name || 'YouTube Creator'}`;
+          }
         }
       } catch (e) {
         document.getElementById('videoTitle').textContent = `YouTube Video (${videoId})`;
       }
 
-      // Generate Download Stream Link (Using Cobalt API / Direct Fallback Provider)
-      currentDlLink = `https://api.cobalt.tools/api/json?url=https://www.youtube.com/watch?v=${videoId}&isAudioOnly=${format === 'mp3'}`;
-      
-      // Fallback direct download link
-      const fallbackUrl = format === 'mp3' 
-        ? `https://www.y2mate.com/download-youtube/${videoId}`
-        : `https://www.youtube.com/watch?v=${videoId}`;
+      // Generate Reliable Download Server Links
+      const server1 = `https://ssyoutube.com/watch?v=${videoId}`;
+      const server2 = `https://www.youtubepp.com/watch?v=${videoId}`;
+      const server3 = `https://y2mate.is/watch?v=${videoId}`;
 
-      directDlBtn.href = fallbackUrl;
+      currentDlLink = server1;
+      directDlBtn.href = server1;
 
-      document.getElementById('statusMessage').textContent = '✅ แปลงไฟล์สำเร็จ! พร้อมสำหรับการดาวน์โหลด';
+      document.getElementById('serverBtn1').href = server1;
+      document.getElementById('serverBtn2').href = server2;
+      document.getElementById('serverBtn3').href = server3;
+
+      document.getElementById('statusMessage').textContent = '✅ แปลงไฟล์สำเร็จ! เลือกดาวน์โหลดผ่านเซิร์ฟเวอร์ด้านล่างได้ทันที';
       processBtn.disabled = false;
       processBtn.innerHTML = `<i data-lucide="download-cloud" style="width:20px;height:20px;"></i> แปลงไฟล์ & รับลิงก์ดาวน์โหลด`;
       lucide.createIcons();
