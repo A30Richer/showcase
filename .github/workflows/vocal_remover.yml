@@ -1,0 +1,65 @@
+name: 🎵 AI Vocal & Music Separator (Demucs v4)
+
+on:
+  workflow_dispatch:
+    inputs:
+      audio_url:
+        description: 'วางลิงก์ YouTube หรือลิงก์ไฟล์เสียงที่ต้องการแยกเสียง (YouTube / Shorts / Direct MP3)'
+        required: true
+        default: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+      stems:
+        description: 'รูปแบบการแยกเสียง'
+        required: true
+        default: '2stems'
+        type: choice
+        options:
+          - '2stems (Vocals + Instrumental)'
+          - '4stems (Vocals + Drums + Bass + Other)'
+
+jobs:
+  separate_audio:
+    name: ⚡ Separate Vocals & Instrumental
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Check out repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: 🛠️ Install FFmpeg, Demucs & yt-dlp
+        run: |
+          sudo apt-get update && sudo apt-get install -y ffmpeg
+          pip install --upgrade pip
+          pip install demucs yt-dlp
+
+      - name: 🎵 Download Audio from YouTube / Link
+        run: |
+          TARGET_URL="${{ github.event.inputs.audio_url }}"
+          echo "กำลังดาวน์โหลดไฟล์เสียงจาก: $TARGET_URL"
+          python3 -m yt_dlp -x --audio-format mp3 --audio-quality 0 -o "input_song.%(ext)s" "$TARGET_URL"
+          ls -la input_song.*
+
+      - name: ⚡ Run Meta Demucs AI Engine
+        run: |
+          mkdir -p output/
+          INPUT_FILE=$(ls input_song.* | head -n 1)
+          echo "กำลังแยกเสียงจากไฟล์: $INPUT_FILE"
+          
+          if [ "${{ github.event.inputs.stems }}" = "4stems (Vocals + Drums + Bass + Other)" ]; then
+            python3 -m demucs.separate -o output/ "$INPUT_FILE"
+          else
+            python3 -m demucs.separate --two-stems=vocals -o output/ "$INPUT_FILE"
+          fi
+          
+          ls -la output/htdemucs/*
+
+      - name: 📦 Upload Separated Audio Files (ZIP Artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: separated-audio-result
+          path: output/htdemucs/
+          retention-days: 7
