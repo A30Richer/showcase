@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shopee Storefront Vouchers Showcase — ระบบสแกนและสอดส่องโค้ดส่วนลดหน้าร้าน</title>
+  <title>Shopee Storefront Vouchers Showcase — ระบบสแกนและสอดส่องโค้ดส่วนลดหน้าร้าน & AVC/FSV</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -36,7 +36,7 @@
       background-color: var(--bg-dark);
       background-image: 
         radial-gradient(at 15% 15%, rgba(238, 77, 45, 0.15) 0px, transparent 50%),
-        radial-gradient(at 85% 85%, rgba(16, 185, 129, 0.12) 0px, transparent 50%);
+        radial-gradient(at 85% 85%, rgba(0, 112, 243, 0.15) 0px, transparent 50%);
       color: var(--text-main);
       min-height: 100vh;
       padding: 24px;
@@ -231,6 +231,11 @@
       border-color: rgba(255, 255, 255, 0.2);
     }
 
+    .tab-btn.fsv-tab.active {
+      background: linear-gradient(135deg, #0070f3, #00c6ff);
+      color: #fff;
+    }
+
     .tab-btn.sme-tab.active {
       background: linear-gradient(135deg, #10b981, #059669);
       color: #fff;
@@ -300,6 +305,10 @@
       box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
     }
 
+    .shop-card.is-fsv {
+      border-left: 4px solid #0070f3;
+    }
+
     .shop-card.is-sme {
       border-left: 4px solid #10b981;
     }
@@ -354,6 +363,15 @@
 
     .badge-sme {
       background: #10b981;
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .badge-fsv {
+      background: linear-gradient(135deg, #0070f3, #00c6ff);
       color: #fff;
       font-size: 0.7rem;
       font-weight: 700;
@@ -521,8 +539,8 @@
       <div class="brand">
         <div class="brand-icon">🛍️</div>
         <div class="brand-title">
-          <h1>Shopee Storefront Vouchers</h1>
-          <p>ระบบสแกนส่วนลดหน้าร้านค้า (แบรนด์ใหญ่ & ร้านค้ารายย่อย SME)</p>
+          <h1>Shopee Storefront Vouchers & AVC/FSV Center</h1>
+          <p>ศูนย์รวมและสแกนโค้ดส่วนลดหน้าร้าน & โค้ดส่งฟรี AVC-FSV Real-time</p>
         </div>
       </div>
 
@@ -545,18 +563,18 @@
       </div>
 
       <div class="metric-card">
-        <div class="metric-icon">🏡</div>
+        <div class="metric-icon">🚚</div>
         <div class="metric-info">
-          <h3 id="statSmeShops">0</h3>
-          <p>ร้านค้ารายย่อย / Local SME</p>
+          <h3 id="statFsvVouchers">0</h3>
+          <p>โค้ดส่งฟรี & AVC โค้ดคุ้ม</p>
         </div>
       </div>
 
       <div class="metric-card">
-        <div class="metric-icon">🎟️</div>
+        <div class="metric-icon">🏡</div>
         <div class="metric-info">
-          <h3 id="statTotalVouchers">0</h3>
-          <p>โค้ดส่วนลดที่ใช้งานได้</p>
+          <h3 id="statSmeShops">0</h3>
+          <p>ร้านค้ารายย่อย / Local SME</p>
         </div>
       </div>
 
@@ -576,6 +594,7 @@
         <span class="filter-label">ประเภทร้านค้า:</span>
         <div class="filter-tabs">
           <button class="tab-btn active" onclick="filterShopType('all', this)">ทุกประเภท</button>
+          <button class="tab-btn fsv-tab" onclick="filterShopType('fsv', this)">🚚 โค้ดส่งฟรี & โค้ดคุ้ม (AVC / FSV)</button>
           <button class="tab-btn" onclick="filterShopType('mall', this)">🏬 Shopee Mall</button>
           <button class="tab-btn" onclick="filterShopType('star', this)">⭐ ร้านค้าแนะนำ (Star+)</button>
           <button class="tab-btn sme-tab" onclick="filterShopType('sme', this)">🏡 ร้านค้ารายย่อย (SME / Local)</button>
@@ -586,6 +605,7 @@
       <div class="search-row">
         <div class="filter-tabs">
           <button class="tab-btn active" id="catAllBtn" onclick="filterCategory('all', this)">หมวดหมู่ทั้งหมด</button>
+          <button class="tab-btn" onclick="filterCategory('Free Shipping & AVC', this)">🚚 Free Shipping & AVC</button>
           <button class="tab-btn" onclick="filterCategory('Electronics', this)">⚡ Electronics</button>
           <button class="tab-btn" onclick="filterCategory('Supermarket', this)">🛒 Supermarket</button>
           <button class="tab-btn" onclick="filterCategory('Food & Grocery', this)">🌶️ Food & Grocery</button>
@@ -620,9 +640,80 @@
   <script>
     const FALLBACK_DATA = {
       scan_time: Date.now() / 1000,
-      total_shops: 12,
-      total_vouchers: 15,
+      total_shops: 13,
+      total_vouchers: 20,
       shops: [
+        {
+          shop_id: "3001",
+          shop_name: "AVC & Free Shipping Vouchers Center (ศูนย์โค้ดส่งฟรี & โค้ดคุ้ม)",
+          shop_username: "avc_fsv_official",
+          category: "Free Shipping & AVC",
+          badge: "AVC / FSV",
+          rating: 5.0,
+          avatar: "https://img.icons8.com/color/96/free-shipping.png",
+          vouchers: [
+            {
+              voucher_id: "FSV0MIN",
+              code: "FSVMIN0BAHT",
+              title: "🚚 โค้ดส่งฟรี ขั้นต่ำ ฿0 (AVC-FSV)",
+              discount_type: "shipping",
+              discount_value: 40,
+              max_discount: 40,
+              min_spend: 0,
+              claimed_pct: 91,
+              expiry_days: 1,
+              terms: "โค้ดส่งฟรีพิเศษไม่มีขั้นต่ำ ใช้ได้กับทุกร้านค้าประเภท AVC/FSV"
+            },
+            {
+              voucher_id: "FSV99PAY",
+              code: "FSV99SPAY",
+              title: "🚚 ส่งฟรี ขั้นต่ำ ฿99 (ShopeePay / SPayLater)",
+              discount_type: "shipping",
+              discount_value: 40,
+              max_discount: 40,
+              min_spend: 99,
+              claimed_pct: 75,
+              expiry_days: 3,
+              terms: "ส่งฟรีเมื่อชำระเงินผ่าน ShopeePay หรือ SPayLater"
+            },
+            {
+              voucher_id: "AVC30PCT",
+              code: "AVCCODENUM30",
+              title: "🏷️ โค้ดส่วนลด 30% ร้านโค้ดคุ้ม (AVC)",
+              discount_type: "percentage",
+              discount_value: 30,
+              max_discount: 200,
+              min_spend: 0,
+              claimed_pct: 89,
+              expiry_days: 2,
+              terms: "ส่วนลด 30% สูงสุด 200 บาท สำหรับร้านค้าที่เข้าร่วมโปรแกรมโค้ดคุ้ม"
+            },
+            {
+              voucher_id: "AVCCOIN25",
+              code: "AVCCOIN25PCT",
+              title: "🪙 โค้ดรับเงินคืน 25% Coins ร้านโค้ดคุ้ม",
+              discount_type: "coins",
+              discount_value: 25,
+              max_discount: 500,
+              min_spend: 200,
+              claimed_pct: 82,
+              expiry_days: 4,
+              terms: "รับเงินคืน 25% Coins สูงสุด 500 Coins เมื่อซื้อครบ 200 บาท"
+            },
+            {
+              voucher_id: "FSVMIDNIGHT",
+              code: "FSVMIDNIGHT0",
+              title: "🌙 โค้ดส่งฟรี รอบเที่ยงคืน ขั้นต่ำ ฿0",
+              discount_type: "shipping",
+              discount_value: 50,
+              max_discount: 50,
+              min_spend: 0,
+              claimed_pct: 96,
+              expiry_days: 1,
+              terms: "โค้ดส่งฟรีรอบพิเศษ 00:00 - 02:00 น. สนับสนุนค่าจัดส่งสูงสุด 50 บาท"
+            }
+          ]
+        },
         {
           shop_id: "1001",
           shop_name: "Shopee Official Flagship Store",
@@ -985,10 +1076,11 @@
     function updateStats(data) {
       const shops = data.shops || [];
       const smeCount = shops.filter(s => (s.badge || '').includes('SME') || (s.badge || '').includes('Local')).length;
-      
+      const fsvCount = shops.filter(s => (s.badge || '').includes('FSV') || (s.category || '').includes('Free Shipping')).reduce((acc, s) => acc + s.vouchers.length, 0);
+
       document.getElementById('statTotalShops').innerText = data.total_shops || shops.length;
       document.getElementById('statSmeShops').innerText = smeCount;
-      document.getElementById('statTotalVouchers').innerText = data.total_vouchers || shops.reduce((acc, s) => acc + s.vouchers.length, 0);
+      document.getElementById('statFsvVouchers').innerText = fsvCount || 5;
       
       const scanDate = new Date((data.scan_time || Date.now() / 1000) * 1000);
       document.getElementById('statLastScan').innerText = scanDate.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
@@ -1014,6 +1106,7 @@
 
     function getBadgeClass(badge) {
       if (badge === 'Mall') return 'badge-mall';
+      if ((badge || '').includes('FSV')) return 'badge-fsv';
       if ((badge || '').includes('SME') || (badge || '').includes('Local')) return 'badge-sme';
       return 'badge-star';
     }
@@ -1024,11 +1117,13 @@
 
       let filteredShops = allShopsData.filter(shop => {
         const isSme = (shop.badge || '').includes('SME') || (shop.badge || '').includes('Local');
+        const isFsv = (shop.badge || '').includes('FSV') || (shop.category || '').includes('Free Shipping');
         const isMall = shop.badge === 'Mall';
         const isStar = shop.badge === 'Star+';
 
         let matchType = true;
-        if (currentShopType === 'mall') matchType = isMall;
+        if (currentShopType === 'fsv') matchType = isFsv;
+        else if (currentShopType === 'mall') matchType = isMall;
         else if (currentShopType === 'star') matchType = isStar;
         else if (currentShopType === 'sme') matchType = isSme;
 
@@ -1053,8 +1148,10 @@
 
       container.innerHTML = filteredShops.map(shop => {
         const isSme = (shop.badge || '').includes('SME') || (shop.badge || '').includes('Local');
+        const isFsv = (shop.badge || '').includes('FSV');
+        
         return `
-          <div class="shop-card ${isSme ? 'is-sme' : ''}">
+          <div class="shop-card ${isFsv ? 'is-fsv' : (isSme ? 'is-sme' : '')}">
             <div class="shop-header">
               <img src="${shop.avatar}" class="shop-avatar" alt="${shop.shop_name}">
               <div class="shop-title-group">
