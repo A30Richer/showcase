@@ -36,7 +36,7 @@
       background-color: var(--bg-dark);
       background-image: 
         radial-gradient(at 15% 15%, rgba(238, 77, 45, 0.15) 0px, transparent 50%),
-        radial-gradient(at 85% 85%, rgba(121, 40, 202, 0.12) 0px, transparent 50%);
+        radial-gradient(at 85% 85%, rgba(16, 185, 129, 0.12) 0px, transparent 50%);
       color: var(--text-main);
       min-height: 100vh;
       padding: 24px;
@@ -186,13 +186,25 @@
       backdrop-filter: var(--glass-blur);
       border: 1px solid var(--card-border);
       border-radius: var(--radius-md);
-      padding: 16px 20px;
+      padding: 18px 20px;
       margin-bottom: 28px;
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
       gap: 16px;
-      justify-content: space-between;
+    }
+
+    .filter-row {
+      display: flex;
       align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .filter-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-sub);
+      min-width: 100px;
     }
 
     .filter-tabs {
@@ -219,8 +231,22 @@
       border-color: rgba(255, 255, 255, 0.2);
     }
 
+    .tab-btn.sme-tab.active {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+    }
+
+    .search-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
     .search-box {
       position: relative;
+      flex: 1;
       min-width: 280px;
     }
 
@@ -274,6 +300,10 @@
       box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
     }
 
+    .shop-card.is-sme {
+      border-left: 4px solid #10b981;
+    }
+
     .shop-header {
       display: flex;
       align-items: center;
@@ -322,6 +352,15 @@
       border-radius: 4px;
     }
 
+    .badge-sme {
+      background: #10b981;
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
     .shop-category {
       font-size: 0.8rem;
       color: var(--text-sub);
@@ -346,7 +385,7 @@
     }
 
     .discount-tag {
-      font-size: 1.2rem;
+      font-size: 1.15rem;
       font-weight: 800;
       color: #ff6b00;
     }
@@ -399,7 +438,7 @@
 
     .code-box {
       font-family: monospace;
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 700;
       color: #f59e0b;
       letter-spacing: 1px;
@@ -483,7 +522,7 @@
         <div class="brand-icon">🛍️</div>
         <div class="brand-title">
           <h1>Shopee Storefront Vouchers</h1>
-          <p>ระบบตรวจสอบและสอดส่องโค้ดส่วนลดหน้าร้านค้า Real-time</p>
+          <p>ระบบสแกนส่วนลดหน้าร้านค้า (แบรนด์ใหญ่ & ร้านค้ารายย่อย SME)</p>
         </div>
       </div>
 
@@ -501,7 +540,15 @@
         <div class="metric-icon">🏪</div>
         <div class="metric-info">
           <h3 id="statTotalShops">0</h3>
-          <p>ร้านค้าที่มีส่วนลดเปิดอยู่</p>
+          <p>ร้านค้าทั้งหมดที่มีส่วนลด</p>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">🏡</div>
+        <div class="metric-info">
+          <h3 id="statSmeShops">0</h3>
+          <p>ร้านค้ารายย่อย / Local SME</p>
         </div>
       </div>
 
@@ -510,14 +557,6 @@
         <div class="metric-info">
           <h3 id="statTotalVouchers">0</h3>
           <p>โค้ดส่วนลดที่ใช้งานได้</p>
-        </div>
-      </div>
-
-      <div class="metric-card">
-        <div class="metric-icon">💰</div>
-        <div class="metric-info">
-          <h3 id="statMaxDiscount">฿2,000</h3>
-          <p>มูลค่าส่วนลดสูงสุด</p>
         </div>
       </div>
 
@@ -532,19 +571,34 @@
 
     <!-- Filter & Search Controls -->
     <div class="controls-bar">
-      <div class="filter-tabs">
-        <button class="tab-btn active" onclick="filterCategory('all', this)">หมวดหมู่ทั้งหมด</button>
-        <button class="tab-btn" onclick="filterCategory('Electronics', this)">⚡ Electronics</button>
-        <button class="tab-btn" onclick="filterCategory('Supermarket', this)">🛒 Supermarket</button>
-        <button class="tab-btn" onclick="filterCategory('Fashion', this)">👗 Fashion</button>
-        <button class="tab-btn" onclick="filterCategory('Beauty', this)">💄 Beauty</button>
-        <button class="tab-btn" onclick="filterCategory('Home & Living', this)">🏠 Home & Living</button>
-        <button class="tab-btn" onclick="filterCategory('Digital Services', this)">🤖 Digital Services</button>
+      <!-- Filter Row 1: Shop Type Filter -->
+      <div class="filter-row">
+        <span class="filter-label">ประเภทร้านค้า:</span>
+        <div class="filter-tabs">
+          <button class="tab-btn active" onclick="filterShopType('all', this)">ทุกประเภท</button>
+          <button class="tab-btn" onclick="filterShopType('mall', this)">🏬 Shopee Mall</button>
+          <button class="tab-btn" onclick="filterShopType('star', this)">⭐ ร้านค้าแนะนำ (Star+)</button>
+          <button class="tab-btn sme-tab" onclick="filterShopType('sme', this)">🏡 ร้านค้ารายย่อย (SME / Local)</button>
+        </div>
       </div>
 
-      <div class="search-box">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="searchInput" class="search-input" placeholder="ค้นหาชื่อร้าน หรือโค้ดส่วนลด..." oninput="handleSearch()">
+      <!-- Filter Row 2: Category Filter & Search -->
+      <div class="search-row">
+        <div class="filter-tabs">
+          <button class="tab-btn active" id="catAllBtn" onclick="filterCategory('all', this)">หมวดหมู่ทั้งหมด</button>
+          <button class="tab-btn" onclick="filterCategory('Electronics', this)">⚡ Electronics</button>
+          <button class="tab-btn" onclick="filterCategory('Supermarket', this)">🛒 Supermarket</button>
+          <button class="tab-btn" onclick="filterCategory('Food & Grocery', this)">🌶️ Food & Grocery</button>
+          <button class="tab-btn" onclick="filterCategory('Fashion', this)">👗 Fashion</button>
+          <button class="tab-btn" onclick="filterCategory('Beauty', this)">💄 Beauty</button>
+          <button class="tab-btn" onclick="filterCategory('Home & Living', this)">🏠 Home & Living</button>
+          <button class="tab-btn" onclick="filterCategory('Pet Supplies', this)">🐱 Pet Supplies</button>
+        </div>
+
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" class="search-input" placeholder="ค้นหาชื่อร้าน หรือโค้ดส่วนลด..." oninput="handleSearch()">
+        </div>
       </div>
     </div>
 
@@ -566,8 +620,8 @@
   <script>
     const FALLBACK_DATA = {
       scan_time: Date.now() / 1000,
-      total_shops: 7,
-      total_vouchers: 9,
+      total_shops: 12,
+      total_vouchers: 15,
       shops: [
         {
           shop_id: "1001",
@@ -753,12 +807,140 @@
               terms: "สคริปต์ Gold Micro & High Profit EA สิทธิพิเศษ"
             }
           ]
+        },
+        {
+          shop_id: "2001",
+          shop_name: "ร้านพริกแกงใต้ป้าต้อย (Southern Chili Paste)",
+          shop_username: "paatoy_curry_local",
+          category: "Food & Grocery",
+          badge: "SME / Local",
+          rating: 4.9,
+          avatar: "https://img.icons8.com/color/96/chili-pepper.png",
+          vouchers: [
+            {
+              voucher_id: "PAATOY20",
+              code: "PAATOY20OFF",
+              title: "ลด 20 บาท ไม่มีขั้นต่ำ (พริกแกงโฮมเมด)",
+              discount_type: "fixed",
+              discount_value: 20,
+              max_discount: 20,
+              min_spend: 0,
+              claimed_pct: 82,
+              expiry_days: 3,
+              terms: "พริกแกงเผ็ด แกงส้ม ทำสดใหม่รายวันจากชุมชน"
+            },
+            {
+              voucher_id: "SOUTHERN50",
+              code: "SOUTH50BAHT",
+              title: "ลด 50 บาท เมื่อซื้อครบ 250",
+              discount_type: "fixed",
+              discount_value: 50,
+              max_discount: 50,
+              min_spend: 250,
+              claimed_pct: 65,
+              expiry_days: 5,
+              terms: "ใช้ซื้อสินค้าครบ 250 บาทขึ้นไปในร้านป้าต้อย"
+            }
+          ]
+        },
+        {
+          shop_id: "2002",
+          shop_name: "Craft & Leather Studio (ช่างเชษฐ์เครื่องหนัง)",
+          shop_username: "chett_craft_leather",
+          category: "Fashion & Craft",
+          badge: "SME / Local",
+          rating: 4.9,
+          avatar: "https://img.icons8.com/color/96/belt.png",
+          vouchers: [
+            {
+              voucher_id: "LEATHER100",
+              code: "CHETT100OFF",
+              title: "ลด 100 บาท งานคราฟต์กระเป๋าหนังแท้",
+              discount_type: "fixed",
+              discount_value: 100,
+              max_discount: 100,
+              min_spend: 650,
+              claimed_pct: 58,
+              expiry_days: 4,
+              terms: "กระเป๋าสตางค์ เข็มขัดหนังแท้ตัดเย็บมือทุกชิ้น"
+            }
+          ]
+        },
+        {
+          shop_id: "2003",
+          shop_name: "ร้านน้าสมชายฮาร์ดแวร์ & อุปกรณ์ช่าง",
+          shop_username: "somchai_hardware_local",
+          category: "Home & Tools",
+          badge: "SME / Local",
+          rating: 4.8,
+          avatar: "https://img.icons8.com/color/96/hammer.png",
+          vouchers: [
+            {
+              voucher_id: "SOMCHAI30",
+              code: "SOMCHAI30OFF",
+              title: "ลด 30 บาท เครื่องมือช่าง & น็อตสกรู",
+              discount_type: "fixed",
+              discount_value: 30,
+              max_discount: 30,
+              min_spend: 199,
+              claimed_pct: 73,
+              expiry_days: 2,
+              terms: "สำหรับน็อต ไขควง และอุปกรณ์ซ่อมบ้านทั่วไป"
+            }
+          ]
+        },
+        {
+          shop_id: "2004",
+          shop_name: "ร้านเมล็ดพันธุ์ผักสวนครัวบ้านป้าแจ่ม",
+          shop_username: "pajam_organic_seeds",
+          category: "Gardening",
+          badge: "SME / Local",
+          rating: 4.9,
+          avatar: "https://img.icons8.com/color/96/potted-plant.png",
+          vouchers: [
+            {
+              voucher_id: "GREEN15PCT",
+              code: "PAJAM15SEEDS",
+              title: "ลด 15% เมล็ดพันธุ์ผักอินทรีย์พื้นบ้าน",
+              discount_type: "percentage",
+              discount_value: 15,
+              max_discount: 60,
+              min_spend: 120,
+              claimed_pct: 88,
+              expiry_days: 6,
+              terms: "เมล็ดพันธุ์กะเพรา โหระพา พริกขี้หนูสวน อัตราการงอกสูง"
+            }
+          ]
+        },
+        {
+          shop_id: "2005",
+          shop_name: "ร้านทาสแมวอุปกรณ์สัตว์เลี้ยงรายย่อย",
+          shop_username: "tasmeow_local_pet",
+          category: "Pet Supplies",
+          badge: "SME / Local",
+          rating: 4.8,
+          avatar: "https://img.icons8.com/color/96/cat.png",
+          vouchers: [
+            {
+              voucher_id: "MEOW40OFF",
+              code: "TASMEOW40",
+              title: "ลด 40 บาท อาหารแมว & ที่ลับเล็บ",
+              discount_type: "fixed",
+              discount_value: 40,
+              max_discount: 40,
+              min_spend: 299,
+              claimed_pct: 64,
+              expiry_days: 3,
+              terms: "ของเล่นทำมือ และขนมแมวเลียออร์แกนิก"
+            }
+          ]
         }
       ]
     };
 
     let allShopsData = [];
     let currentCategory = 'all';
+    let currentShopType = 'all';
 
     async function fetchVouchers(forceRefresh = false) {
       const container = document.getElementById('vouchersContainer');
@@ -801,16 +983,27 @@
     }
 
     function updateStats(data) {
-      document.getElementById('statTotalShops').innerText = data.total_shops || 0;
-      document.getElementById('statTotalVouchers').innerText = data.total_vouchers || 0;
+      const shops = data.shops || [];
+      const smeCount = shops.filter(s => (s.badge || '').includes('SME') || (s.badge || '').includes('Local')).length;
+      
+      document.getElementById('statTotalShops').innerText = data.total_shops || shops.length;
+      document.getElementById('statSmeShops').innerText = smeCount;
+      document.getElementById('statTotalVouchers').innerText = data.total_vouchers || shops.reduce((acc, s) => acc + s.vouchers.length, 0);
       
       const scanDate = new Date((data.scan_time || Date.now() / 1000) * 1000);
       document.getElementById('statLastScan').innerText = scanDate.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
     }
 
+    function filterShopType(type, btn) {
+      currentShopType = type;
+      btn.parentElement.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderVouchers();
+    }
+
     function filterCategory(cat, btn) {
       currentCategory = cat;
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.parentElement.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       renderVouchers();
     }
@@ -819,17 +1012,34 @@
       renderVouchers();
     }
 
+    function getBadgeClass(badge) {
+      if (badge === 'Mall') return 'badge-mall';
+      if ((badge || '').includes('SME') || (badge || '').includes('Local')) return 'badge-sme';
+      return 'badge-star';
+    }
+
     function renderVouchers() {
       const container = document.getElementById('vouchersContainer');
       const searchQuery = document.getElementById('searchInput').value.toLowerCase().trim();
 
       let filteredShops = allShopsData.filter(shop => {
-        const matchCategory = (currentCategory === 'all') || (shop.category.toLowerCase() === currentCategory.toLowerCase());
+        const isSme = (shop.badge || '').includes('SME') || (shop.badge || '').includes('Local');
+        const isMall = shop.badge === 'Mall';
+        const isStar = shop.badge === 'Star+';
+
+        let matchType = true;
+        if (currentShopType === 'mall') matchType = isMall;
+        else if (currentShopType === 'star') matchType = isStar;
+        else if (currentShopType === 'sme') matchType = isSme;
+
+        const matchCategory = (currentCategory === 'all') || (shop.category.toLowerCase().includes(currentCategory.toLowerCase()));
+        
         const matchSearch = !searchQuery || 
           shop.shop_name.toLowerCase().includes(searchQuery) ||
           shop.shop_username.toLowerCase().includes(searchQuery) ||
           shop.vouchers.some(v => v.code.toLowerCase().includes(searchQuery) || v.title.toLowerCase().includes(searchQuery));
-        return matchCategory && matchSearch;
+        
+        return matchType && matchCategory && matchSearch;
       });
 
       if (filteredShops.length === 0) {
@@ -841,44 +1051,47 @@
         return;
       }
 
-      container.innerHTML = filteredShops.map(shop => `
-        <div class="shop-card">
-          <div class="shop-header">
-            <img src="${shop.avatar}" class="shop-avatar" alt="${shop.shop_name}">
-            <div class="shop-title-group">
-              <h3>${shop.shop_name}</h3>
-              <div class="shop-meta">
-                <span class="${shop.badge === 'Mall' ? 'badge-mall' : 'badge-star'}">${shop.badge}</span>
-                <span class="shop-category">หมวดหมู่: ${shop.category}</span>
+      container.innerHTML = filteredShops.map(shop => {
+        const isSme = (shop.badge || '').includes('SME') || (shop.badge || '').includes('Local');
+        return `
+          <div class="shop-card ${isSme ? 'is-sme' : ''}">
+            <div class="shop-header">
+              <img src="${shop.avatar}" class="shop-avatar" alt="${shop.shop_name}">
+              <div class="shop-title-group">
+                <h3>${shop.shop_name}</h3>
+                <div class="shop-meta">
+                  <span class="${getBadgeClass(shop.badge)}">${shop.badge}</span>
+                  <span class="shop-category">หมวดหมู่: ${shop.category}</span>
+                </div>
               </div>
             </div>
+
+            ${shop.vouchers.map(v => `
+              <div class="voucher-ticket">
+                <div class="voucher-top">
+                  <span class="discount-tag">${v.title}</span>
+                </div>
+                <p class="voucher-terms">${v.terms}</p>
+                
+                <div class="progress-bar-container">
+                  <div class="progress-info">
+                    <span>ซื้อขั้นต่ำ ฿${v.min_spend.toLocaleString()}</span>
+                    <span>ถูกเก็บไปแล้ว ${v.claimed_pct}%</span>
+                  </div>
+                  <div class="progress-bg">
+                    <div class="progress-fill" style="width: ${v.claimed_pct}%"></div>
+                  </div>
+                </div>
+
+                <div class="voucher-bottom">
+                  <span class="code-box">${v.code}</span>
+                  <button class="btn-copy" onclick="copyCode('${v.code}')">คัดลอกโค้ด</button>
+                </div>
+              </div>
+            `).join('')}
           </div>
-
-          ${shop.vouchers.map(v => `
-            <div class="voucher-ticket">
-              <div class="voucher-top">
-                <span class="discount-tag">${v.title}</span>
-              </div>
-              <p class="voucher-terms">${v.terms}</p>
-              
-              <div class="progress-bar-container">
-                <div class="progress-info">
-                  <span>ซื้อขั้นต่ำ ฿${v.min_spend.toLocaleString()}</span>
-                  <span>ถูกเก็บไปแล้ว ${v.claimed_pct}%</span>
-                </div>
-                <div class="progress-bg">
-                  <div class="progress-fill" style="width: ${v.claimed_pct}%"></div>
-                </div>
-              </div>
-
-              <div class="voucher-bottom">
-                <span class="code-box">${v.code}</span>
-                <button class="btn-copy" onclick="copyCode('${v.code}')">คัดลอกโค้ด</button>
-              </div>
-            </div>
-          `).join('')}
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     function copyCode(code) {
