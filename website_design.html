@@ -3,24 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vibe Coding Showcase — 10 Web Design Challenges</title>
+    <title>10 Web Design Styles Showcase & CSS Token Vault — A30 Hub</title>
+    <meta name="description" content="คลังรวบรวม 10 สไตล์การออกแบบเว็บยอดฮิต (Glassmorphism, Neumorphism, Cyberpunk, Neo-Brutalism, Clean SaaS, Synthwave, Luxury Gold, Bento Grid, Claymorphism, Hacker Terminal) พร้อม Live Demo & CSS Code">
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400&family=Fira+Code:wght@400;600&family=Fredoka:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Orbitron:wght@600;800;900&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;700;800&family=Press+Start+2P&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
     <style>
         :root {
-            --bg: #09090b;
-            --surface-1: #121215;
-            --surface-2: #18181b;
-            --surface-3: #27272a;
-            --border: rgba(255, 255, 255, 0.1);
+            --bg: #07090e;
+            --surface-1: #0e131f;
+            --surface-2: #141b2d;
+            --surface-3: #1e293b;
+            --border: rgba(255, 255, 255, 0.08);
             --border-hover: rgba(167, 139, 250, 0.4);
             
-            --text: #f4f4f5;
-            --text-dim: #a1a1aa;
-            --text-muted: #71717a;
+            --text: #f3f4f6;
+            --text-dim: #9ca3af;
+            --text-muted: #6b7280;
             
             --accent: #a78bfa;
             --accent-glow: rgba(167, 139, 250, 0.25);
@@ -29,8 +34,8 @@
             --amber: #fbbf24;
             --rose: #fb7185;
             
-            --radius-lg: 16px;
-            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-md: 14px;
             --radius-sm: 8px;
             --font-main: 'Outfit', 'Prompt', sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
@@ -47,20 +52,21 @@
             color: var(--text);
             font-family: var(--font-main);
             min-height: 100vh;
-            line-height: 1.5;
+            line-height: 1.6;
             overflow-x: hidden;
             background-image: 
                 radial-gradient(circle at 15% 15%, rgba(167, 139, 250, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 85% 85%, rgba(56, 189, 248, 0.08) 0%, transparent 40%);
+                radial-gradient(circle at 85% 85%, rgba(56, 189, 248, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(251, 113, 133, 0.04) 0%, transparent 50%);
             background-attachment: fixed;
         }
 
-        /* ── Top Navigation Bar ── */
+        /* Navbar */
         .navbar {
             position: sticky;
             top: 0;
             z-index: 100;
-            background: rgba(9, 9, 11, 0.85);
+            background: rgba(7, 9, 14, 0.88);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border);
@@ -75,76 +81,122 @@
             align-items: center;
             gap: 12px;
             font-weight: 800;
-            font-size: 1.15rem;
-            letter-spacing: -0.02em;
+            font-size: 1.1rem;
             color: #fff;
             text-decoration: none;
         }
 
+        .brand-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--accent), var(--cyan));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+        }
+
         .brand-badge {
-            background: linear-gradient(135deg, var(--accent), #8b5cf6);
-            color: #fff;
+            background: rgba(167, 139, 250, 0.15);
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            color: var(--accent);
             font-size: 0.7rem;
             font-weight: 700;
-            padding: 3px 8px;
+            padding: 3px 10px;
             border-radius: 20px;
             text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
-        .nav-stats {
+        .nav-actions {
             display: flex;
-            gap: 16px;
-            font-size: 0.82rem;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
             color: var(--text-dim);
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
         }
 
-        .nav-stat-item span {
+        .btn-back:hover {
+            background: var(--surface-3);
             color: #fff;
-            font-weight: 700;
+            border-color: var(--accent);
         }
 
-        /* ── Container Layout ── */
-        .container {
+        /* Hero Section */
+        .hero {
             max-width: 1280px;
             margin: 0 auto;
-            padding: 32px 20px 60px;
+            padding: 48px 24px 32px;
+            text-align: center;
         }
 
-        /* ── Hero Section ── */
-        .hero {
-            text-align: center;
-            padding: 40px 20px 50px;
-            position: relative;
+        .hero-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(167, 139, 250, 0.1);
+            border: 1px solid rgba(167, 139, 250, 0.25);
+            color: var(--accent);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 20px;
         }
 
         .hero-title {
-            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-size: 2.8rem;
             font-weight: 800;
-            line-height: 1.15;
+            letter-spacing: -0.03em;
+            line-height: 1.2;
+            margin-bottom: 16px;
             background: linear-gradient(135deg, #ffffff 30%, var(--accent) 70%, var(--cyan) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 16px;
         }
 
         .hero-desc {
             font-size: 1.05rem;
             color: var(--text-dim);
-            max-width: 680px;
-            margin: 0 auto 28px;
+            max-width: 760px;
+            margin: 0 auto 32px;
+            line-height: 1.7;
         }
 
-        /* ── Category Filters ── */
-        .filter-bar {
+        /* Category Filter Tabs */
+        .filter-container {
+            max-width: 1280px;
+            margin: 0 auto 36px;
+            padding: 0 24px;
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
+            align-items: center;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 36px;
+            gap: 16px;
         }
 
-        .filter-btn {
-            background: var(--surface-2);
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: var(--surface-1);
             border: 1px solid var(--border);
             color: var(--text-dim);
             padding: 8px 18px;
@@ -155,196 +207,335 @@
             transition: all 0.2s ease;
         }
 
-        .filter-btn:hover {
-            border-color: var(--border-hover);
-            color: #fff;
-        }
-
-        .filter-btn.active {
-            background: linear-gradient(135deg, rgba(167, 139, 250, 0.2), rgba(139, 92, 246, 0.2));
+        .tab-btn:hover, .tab-btn.active {
+            background: var(--accent);
+            color: #000;
             border-color: var(--accent);
-            color: #fff;
             box-shadow: 0 0 16px var(--accent-glow);
         }
 
-        /* ── Cards Grid ── */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 22px;
+        .search-box {
+            position: relative;
+            min-width: 260px;
         }
 
-        .card {
-            background: var(--surface-2);
+        .search-input {
+            width: 100%;
+            background: var(--surface-1);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 9px 16px 9px 40px;
+            color: #fff;
+            font-size: 0.85rem;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            color: var(--text-muted);
+        }
+
+        /* Showcase Grid */
+        .showcase-grid {
+            max-width: 1280px;
+            margin: 0 auto 60px;
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(580px, 1fr));
+            gap: 28px;
+        }
+
+        @media (max-width: 640px) {
+            .showcase-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero-title {
+                font-size: 2rem;
+            }
+        }
+
+        /* Style Card Container */
+        .style-card {
+            background: var(--surface-1);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
-            padding: 24px;
+            overflow: hidden;
+            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
             display: flex;
             flex-direction: column;
+        }
+
+        .style-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
+        }
+
+        .style-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
             justify-content: space-between;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            align-items: center;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .style-title-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .style-num {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-dim);
+            letter-spacing: 0.05em;
+        }
+
+        .style-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .style-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 12px;
+            text-transform: uppercase;
+        }
+
+        .style-body {
+            padding: 24px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .style-desc {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            line-height: 1.6;
+        }
+
+        /* Demo View Canvas */
+        .demo-canvas {
+            border-radius: var(--radius-md);
+            padding: 24px;
+            min-height: 240px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             position: relative;
             overflow: hidden;
         }
 
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, var(--card-accent, var(--accent)), transparent);
-            opacity: 0;
-            transition: opacity 0.25s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-4px);
-            border-color: var(--border-hover);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 20px var(--accent-glow);
-        }
-
-        .card:hover::before {
-            opacity: 1;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 14px;
-        }
-
-        .card-tag {
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 3px 10px;
-            border-radius: 20px;
-            background: rgba(255, 255, 255, 0.06);
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .card-num {
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: var(--accent);
-        }
-
-        .card-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 8px;
+        /* Color Palette Chips */
+        .palette-row {
             display: flex;
             align-items: center;
             gap: 8px;
-        }
-
-        .card-prompt {
-            font-size: 0.82rem;
-            color: var(--text-dim);
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            padding: 10px 12px;
-            margin-bottom: 16px;
-            font-family: var(--font-mono);
-            line-height: 1.45;
-        }
-
-        .card-features {
-            display: flex;
             flex-wrap: wrap;
+        }
+
+        .palette-chip {
+            display: flex;
+            align-items: center;
             gap: 6px;
-            margin-bottom: 20px;
-        }
-
-        .feature-chip {
-            font-size: 0.72rem;
-            background: rgba(255, 255, 255, 0.04);
+            background: var(--surface-2);
             border: 1px solid var(--border);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-family: var(--font-mono);
             color: var(--text-dim);
-            padding: 2px 8px;
-            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
 
-        .card-btn {
-            width: 100%;
-            background: linear-gradient(135deg, var(--accent), #8b5cf6);
-            border: none;
+        .palette-chip:hover {
+            border-color: var(--accent);
             color: #fff;
-            font-family: var(--font-main);
-            font-weight: 700;
-            font-size: 0.88rem;
-            padding: 10px 16px;
+        }
+
+        .color-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* Code Inspection Panel */
+        .code-panel {
+            background: #04060a;
+            border: 1px solid var(--border);
             border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .code-header {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        .code-content {
+            padding: 14px 16px;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: #e2e8f0;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            line-height: 1.5;
+            max-height: 140px;
+        }
+
+        .btn-copy {
+            background: transparent;
+            border: none;
+            color: var(--accent);
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-copy:hover {
+            text-decoration: underline;
+        }
+
+        /* Card Footer */
+        .style-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        .btn-preview-full {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 0.82rem;
+            font-weight: 600;
             cursor: pointer;
             display: inline-flex;
-            justify-content: center;
             align-items: center;
             gap: 8px;
             transition: all 0.2s ease;
         }
 
-        .card-btn:hover {
-            filter: brightness(1.1);
-            box-shadow: 0 4px 15px var(--accent-glow);
+        .btn-preview-full:hover {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
         }
 
-        /* ── Modal Sandbox View ── */
-        .modal-backdrop {
-            display: none;
+        /* Toast notification */
+        .toast {
             position: fixed;
-            inset: 0;
+            bottom: 24px;
+            right: 24px;
+            background: var(--accent);
+            color: #000;
+            font-weight: 700;
+            padding: 12px 20px;
+            border-radius: var(--radius-md);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 8px;
             z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Full Screen Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(12px);
+            z-index: 200;
+            display: flex;
             align-items: center;
             justify-content: center;
-            padding: 16px;
+            padding: 24px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
         }
 
-        .modal-backdrop.active {
-            display: flex;
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
         }
 
-        .modal-container {
-            background: var(--surface-1);
+        .modal-card {
+            background: var(--bg);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
             width: 100%;
-            max-width: 1000px;
+            max-width: 900px;
             max-height: 90vh;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-            overflow: hidden;
+            box-shadow: 0 24px 48px rgba(0,0,0,0.6);
         }
 
-        .modal-top {
-            padding: 16px 20px;
-            background: var(--surface-2);
+        .modal-header {
+            padding: 20px 24px;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .modal-title {
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .modal-body {
+            padding: 32px 24px;
         }
 
-        .modal-close {
-            background: var(--surface-3);
+        .btn-close-modal {
+            background: var(--surface-2);
             border: none;
             color: var(--text-dim);
             width: 32px;
@@ -354,565 +545,855 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.1rem;
+        }
+
+        .btn-close-modal:hover {
+            color: #fff;
+            background: var(--surface-3);
+        }
+
+        /* ── INDIVIDUAL DESIGN STYLE DEMO STYLES ── */
+
+        /* Style 1: Glassmorphism */
+        .demo-glassmorphism {
+            background: radial-gradient(circle at 50% 50%, #2e1065 0%, #09090b 100%);
+        }
+        .glass-box {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            border-radius: 16px;
+            padding: 20px;
+            width: 100%;
+            max-width: 360px;
+            color: #fff;
+        }
+
+        /* Style 2: Neumorphism */
+        .demo-neumorphism {
+            background: #e0e5ec;
+            color: #2d3748;
+        }
+        .neu-box {
+            background: #e0e5ec;
+            border-radius: 20px;
+            box-shadow: 9px 9px 18px #a3b1c6, -9px -9px 18px #ffffff;
+            padding: 24px;
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+        }
+        .neu-btn {
+            background: #e0e5ec;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 5px 5px 10px #a3b1c6, -5px -5px 10px #ffffff;
+            padding: 10px 20px;
+            font-weight: 700;
+            color: #3b82f6;
+            cursor: pointer;
             transition: all 0.15s ease;
         }
+        .neu-btn:active {
+            box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        }
 
-        .modal-close:hover {
+        /* Style 3: Cyberpunk HUD */
+        .demo-cyberpunk {
+            background: #050811;
+            position: relative;
+        }
+        .cyber-box {
+            background: rgba(5, 8, 17, 0.9);
+            border: 1px solid #00f0ff;
+            clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+            padding: 20px;
+            width: 100%;
+            max-width: 380px;
+            color: #00f0ff;
+            font-family: 'Share Tech Mono', monospace;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+        }
+        .cyber-title {
+            font-family: 'Orbitron', sans-serif;
+            color: #ff0055;
+            text-shadow: 0 0 8px #ff0055;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        /* Style 4: Neo-Brutalism */
+        .demo-neobrutalism {
+            background: #fffdf8;
+            color: #000;
+        }
+        .brutal-box {
+            background: #ffe600;
+            border: 3.5px solid #000;
+            box-shadow: 6px 6px 0px #000;
+            border-radius: 8px;
+            padding: 20px;
+            width: 100%;
+            max-width: 360px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .brutal-btn {
+            background: #ff5964;
+            border: 3px solid #000;
+            box-shadow: 4px 4px 0px #000;
             color: #fff;
-            background: var(--rose);
+            font-weight: 800;
+            padding: 8px 16px;
+            cursor: pointer;
+            margin-top: 12px;
+            display: inline-block;
+            transition: all 0.1s ease;
+        }
+        .brutal-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #000;
         }
 
-        .modal-body {
+        /* Style 5: Clean Corporate SaaS */
+        .demo-saas {
+            background: #f8fafc;
+            color: #0f172a;
+        }
+        .saas-box {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.06);
+            border-radius: 12px;
             padding: 24px;
-            overflow-y: auto;
-            flex: 1;
+            width: 100%;
+            max-width: 360px;
+            font-family: 'Inter', sans-serif;
+        }
+        .saas-pill {
+            background: #eff6ff;
+            color: #2563eb;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 8px;
         }
 
-        /* ── Footer ── */
-        .footer {
+        /* Style 6: Synthwave 80s */
+        .demo-synthwave {
+            background: linear-gradient(180deg, #120428 0%, #3a0ca3 100%);
+            color: #fff;
+        }
+        .synth-box {
+            background: rgba(18, 4, 40, 0.85);
+            border: 2px solid #ff2a85;
+            box-shadow: 0 0 15px #ff2a85, inset 0 0 15px rgba(255, 42, 133, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            width: 100%;
+            max-width: 360px;
             text-align: center;
-            padding: 40px 20px;
-            border-top: 1px solid var(--border);
-            color: var(--text-muted);
+        }
+        .synth-title {
+            font-family: 'Press Start 2P', cursive;
             font-size: 0.85rem;
+            color: #00f5d4;
+            text-shadow: 0 0 10px #00f5d4;
+            margin-bottom: 12px;
         }
 
-        @media (max-width: 640px) {
-            .grid { grid-template-columns: 1fr; }
-            .hero-title { font-size: 1.8rem; }
-            .nav-stats { display: none; }
+        /* Style 7: Luxury Gold */
+        .demo-luxury {
+            background: #0c0c0c;
+            color: #f3f3f3;
+        }
+        .luxury-box {
+            background: #161616;
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
+            border-radius: 8px;
+            padding: 24px;
+            width: 100%;
+            max-width: 360px;
+            font-family: 'Cormorant Garamond', serif;
+        }
+        .luxury-title {
+            font-size: 1.5rem;
+            color: #d4af37;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        /* Style 8: Bento Grid Holographic */
+        .demo-bento {
+            background: #0b0d14;
+        }
+        .bento-box {
+            background: #131722;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 18px;
+            width: 100%;
+            max-width: 380px;
+            position: relative;
+        }
+        .bento-box::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 17px;
+            padding: 1px;
+            background: linear-gradient(135deg, #a78bfa, #38bdf8, #f472b6);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        /* Style 9: Claymorphism */
+        .demo-claymorphism {
+            background: #f0f4f8;
+            color: #2d3748;
+        }
+        .clay-box {
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 12px 12px 24px #d1d9e6, -12px -12px 24px #ffffff, inset 4px 4px 8px rgba(255, 255, 255, 0.8);
+            padding: 24px;
+            width: 100%;
+            max-width: 360px;
+            font-family: 'Fredoka', sans-serif;
+            text-align: center;
+        }
+        .clay-badge {
+            background: #ff7675;
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            box-shadow: inset -2px -2px 4px rgba(0,0,0,0.2), inset 2px 2px 4px rgba(255,255,255,0.4);
+            display: inline-block;
+            font-weight: 700;
+        }
+
+        /* Style 10: Hacker Terminal */
+        .demo-terminal {
+            background: #050505;
+            color: #00ff66;
+            font-family: 'Fira Code', monospace;
+        }
+        .term-box {
+            background: #0a110a;
+            border: 1px solid #00ff66;
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.2);
+            border-radius: 6px;
+            padding: 16px;
+            width: 100%;
+            max-width: 380px;
+            font-size: 0.82rem;
+            line-height: 1.5;
+        }
+        .term-prompt {
+            color: #38bdf8;
         }
     </style>
 </head>
 <body>
 
-    <!-- Navbar -->
+    <!-- Top Navigation Bar -->
     <nav class="navbar">
-        <a href="#" class="brand">
-            🚀 Vibe Coding Vault
-            <span class="brand-badge">Website Design</span>
+        <a href="index.html" class="brand">
+            <div class="brand-icon">
+                <i data-lucide="palette"></i>
+            </div>
+            <div>
+                A30 Innovation Hub
+            </div>
+            <span class="brand-badge">10 Design Styles</span>
         </a>
-        <div class="nav-stats">
-            <div class="nav-stat-item">Projects: <span>10 Showcase</span></div>
-            <div class="nav-stat-item">Design: <span>UI Design System</span></div>
-            <div class="nav-stat-item">Status: <span>100% Ready</span></div>
+        <div class="nav-actions">
+            <a href="index.html" class="btn-back">
+                <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> กลับสู่ Showcase Portal
+            </a>
         </div>
     </nav>
 
-    <!-- Main Container -->
-    <div class="container">
-        
-        <!-- Hero Header -->
-        <header class="hero">
-            <h1 class="hero-title">10 Web Design Challenges Showcase</h1>
-            <p class="hero-desc">
-                รวบรวม 10 มินิเว็บแอปยอดนิยมจากโจทย์ยอดฮิตบนโลกออนไลน์ ออกแบบด้วยสไตล์ <strong>Modern Dark Glassmorphism</strong> ตามมาตรฐาน UI Design System ของชาว Vibe Code
-            </p>
-            
-            <!-- Category Filter Buttons -->
-            <div class="filter-bar">
-                <button class="filter-btn active" onclick="filterProjects('all')">🌟 ทั้งหมด (10)</button>
-                <button class="filter-btn" onclick="filterProjects('finance')">📈 การเงิน & เทรด (3)</button>
-                <button class="filter-btn" onclick="filterProjects('tools')">🛠️ เครื่องมือ & AI (3)</button>
-                <button class="filter-btn" onclick="filterProjects('productivity')">⚡ ผลิตภาพ (2)</button>
-                <button class="filter-btn" onclick="filterProjects('lifestyle')">📰 ไลฟ์สไตล์ & ดีล (2)</button>
-            </div>
-        </header>
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="hero-pill">
+            <i data-lucide="sparkles" style="width:14px;height:14px;"></i> UI Design System & Vibe Coding Showcase
+        </div>
+        <h1 class="hero-title">10 Web Design Styles Vault</h1>
+        <p class="hero-desc">
+            สำรวจคลัง 10 สไตล์การออกแบบเว็บไซต์ยอดนิยมระดับสากล พร้อม Interactive Live Demo ให้ทดลองใช้งานจริง, โทนสี Color Palette, และ CSS Code Tokens ที่พร้อมคัดลอกไปพัฒนาต่อทันที
+        </p>
+    </header>
 
-        <!-- Projects Cards Grid -->
-        <main class="grid" id="projects-grid">
-            <!-- Cards will be populated dynamically via JavaScript -->
-        </main>
-
+    <!-- Category Filter Tabs & Search Bar -->
+    <div class="filter-container">
+        <div class="filter-tabs">
+            <button class="tab-btn active" onclick="filterCategory('all')">✨ ทั้งหมด (10 สไตล์)</button>
+            <button class="tab-btn" onclick="filterCategory('dark')">🌙 Dark & Glowing</button>
+            <button class="tab-btn" onclick="filterCategory('soft')">☁️ Soft & Minimal</button>
+            <button class="tab-btn" onclick="filterCategory('retro')">🎨 Bold & Retro</button>
+            <button class="tab-btn" onclick="filterCategory('tech')">⚡ Tech & Sci-Fi</button>
+        </div>
+        <div class="search-box">
+            <i data-lucide="search" class="search-icon"></i>
+            <input type="text" id="searchInput" class="search-input" placeholder="ค้นหาสไตล์ เช่น Glass, Neo..." oninput="searchStyles()">
+        </div>
     </div>
 
-    <!-- Interactive Project Modal Sandbox -->
-    <div class="modal-backdrop" id="demo-modal">
-        <div class="modal-container">
-            <div class="modal-top">
-                <div class="modal-title" id="modal-project-title">Project Title</div>
-                <button class="modal-close" onclick="closeModal()">✕</button>
+    <!-- Main Showcase Cards Grid -->
+    <main class="showcase-grid" id="stylesGrid">
+        <!-- Javascript will inject 10 Style Cards dynamically -->
+    </main>
+
+    <!-- Full Screen Modal for Live Preview -->
+    <div class="modal-overlay" id="previewModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <span id="modalNum" class="style-num">#01</span>
+                    <h3 id="modalTitle" style="color:#fff; font-size:1.2rem;">Full Screen Demo Preview</h3>
+                </div>
+                <button class="btn-close-modal" onclick="closeModal()">
+                    <i data-lucide="x" style="width:18px;height:18px;"></i>
+                </button>
             </div>
-            <div class="modal-body" id="modal-project-content">
-                <!-- Project Demo Interactive UI will be rendered here -->
+            <div class="modal-body" id="modalContent">
+                <!-- Modal content injected by JS -->
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <p>Built with ❤️ by Antigravity AI — Powered by <code>ui-design-system</code> & Vibe Coding Principles</p>
-    </footer>
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i data-lucide="check-circle" style="width:18px;height:18px;"></i>
+        <span id="toastMsg">คัดลอก CSS Snippet เรียบร้อยแล้ว!</span>
+    </div>
 
-    <!-- JavaScript Data & Logics -->
+    <!-- JavaScript Application Logic -->
     <script>
-        const projects = [
+        const stylesData = [
             {
                 id: 1,
-                num: 'PROJECT #01',
-                category: 'finance',
-                icon: '🟢',
-                title: 'XAUUSD Gold Risk & Lot Calculator',
-                prompt: 'สร้างเครื่องมือคำนวณ Lot Size, Risk % และจุด StopLoss/TakeProfit สำหรับเทรดทองคำ XAUUSD แบบ Real-time UI',
-                features: ['Lot Calculation', 'Risk Management', 'Live SL/TP Math'],
-                accent: '#a78bfa',
-                render: function() {
-                    return `
-                        <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:20px; max-width:500px; margin:0 auto;">
-                            <h3 style="color:#fff; margin-bottom:16px; font-size:1.1rem; display:flex; align-items:center; gap:8px;">
-                                🟢 XAU/USD Position Size Calculator
-                            </h3>
-                            <div style="display:flex; flex-direction:column; gap:12px;">
-                                <div>
-                                    <label style="font-size:0.8rem; color:var(--text-dim);">เงินทุนในพอร์ต Balance ($):</label>
-                                    <input type="number" id="p1-balance" value="1000" style="width:100%; background:var(--surface-2); border:1px solid var(--border); border-radius:6px; padding:8px 12px; color:#fff; font-family:var(--font-mono); outline:none;" oninput="calcP1()">
-                                </div>
-                                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                                    <div>
-                                        <label style="font-size:0.8rem; color:var(--text-dim);">ความเสี่ยง Risk (%):</label>
-                                        <input type="number" id="p1-risk" value="2" style="width:100%; background:var(--surface-2); border:1px solid var(--border); border-radius:6px; padding:8px 12px; color:#fff; font-family:var(--font-mono); outline:none;" oninput="calcP1()">
-                                    </div>
-                                    <div>
-                                        <label style="font-size:0.8rem; color:var(--text-dim);">ระยะ Stop Loss (Pips):</label>
-                                        <input type="number" id="p1-sl" value="300" style="width:100%; background:var(--surface-2); border:1px solid var(--border); border-radius:6px; padding:8px 12px; color:#fff; font-family:var(--font-mono); outline:none;" oninput="calcP1()">
-                                    </div>
-                                </div>
-                                <div style="background:var(--surface-2); border:1px solid var(--accent); border-radius:8px; padding:16px; margin-top:8px; text-align:center;">
-                                    <div style="font-size:0.75rem; color:var(--text-dim); text-transform:uppercase;">ขนาด Lot แนะนำ (Standard Lot)</div>
-                                    <div style="font-size:2rem; font-weight:800; color:var(--accent); font-family:var(--font-mono); margin:4px 0;" id="p1-lot">0.07 Lot</div>
-                                    <div style="font-size:0.8rem; color:var(--emerald);" id="p1-risk-usd">จำนวนเงินยอมขาดทุน: $20.00</div>
-                                </div>
+                num: '#01',
+                category: 'dark',
+                title: 'Glassmorphism (Frosted Glass)',
+                badge: 'Dark & Glowing',
+                badgeBg: 'rgba(167,139,250,0.15)',
+                badgeColor: '#a78bfa',
+                desc: 'ดีไซน์แผงกระจกฝ้าโปร่งแสงยอดฮิต ให้ความรู้สึกหรูหราทันสมัย ด้วยการผสมผสาน Backdrop Blur, ขอบเส้นแสงบางเบา และพื้นหลังมืดพร้อมแสงนีออนละมุน',
+                palette: [
+                    { hex: '#09090b', label: 'BG Dark' },
+                    { hex: 'rgba(255,255,255,0.06)', label: 'Glass Panel' },
+                    { hex: '#a78bfa', label: 'Purple Glow' },
+                    { hex: '#38bdf8', label: 'Cyan Accent' }
+                ],
+                cssToken: `/* Glassmorphism CSS Token */
+.glass-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    border-radius: 16px;
+}`,
+                demoHtml: `
+                    <div class="demo-canvas demo-glassmorphism">
+                        <div class="glass-box">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                                <div style="font-size:0.75rem; color:#a78bfa; font-weight:700; text-transform:uppercase;">🟢 XAUUSD Live Trade</div>
+                                <span style="background:rgba(52,211,153,0.2); color:#34d399; font-size:0.7rem; padding:2px 8px; border-radius:10px;">+2.45%</span>
+                            </div>
+                            <div style="font-size:1.6rem; font-weight:800; font-family:'JetBrains Mono'; margin-bottom:12px;">$2,745.80</div>
+                            <div style="display:flex; gap:8px;">
+                                <button style="flex:1; background:rgba(52,211,153,0.25); border:1px solid #34d399; color:#fff; padding:8px; border-radius:8px; font-weight:700; cursor:pointer;" onclick="showToast('กด Buy Position สำเร็จ!')">BUY</button>
+                                <button style="flex:1; background:rgba(251,113,133,0.25); border:1px solid #fb7185; color:#fff; padding:8px; border-radius:8px; font-weight:700; cursor:pointer;" onclick="showToast('กด Sell Position สำเร็จ!')">SELL</button>
                             </div>
                         </div>
-                    `;
-                }
+                    </div>
+                `
             },
             {
                 id: 2,
-                num: 'PROJECT #02',
-                category: 'tools',
-                icon: '🤖',
-                title: 'AI Prompt Generator & Studio',
-                prompt: 'สร้างเว็บมินิสตูดิโอผสม Prompt คำสั่ง AI (System Prompt, Role, Persona) พร้อมปุ่มคัดลอก และ Chip เลือกสไตล์',
-                features: ['Persona Chips', 'System Prompt Builder', 'Copy to Clipboard'],
-                accent: '#38bdf8',
-                render: function() {
-                    return `
-                        <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:20px; max-width:600px; margin:0 auto;">
-                            <h3 style="color:#fff; margin-bottom:14px; font-size:1.1rem;">🤖 AI Prompt Builder Studio</h3>
-                            <div style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;">
-                                <button class="filter-btn active" style="font-size:0.75rem; padding:4px 10px;" onclick="setP2Preset('coder')">💻 Coding Expert</button>
-                                <button class="filter-btn" style="font-size:0.75rem; padding:4px 10px;" onclick="setP2Preset('trader')">📈 Financial Analyst</button>
-                                <button class="filter-btn" style="font-size:0.75rem; padding:4px 10px;" onclick="setP2Preset('writer')">✍️ Content Writer</button>
+                num: '#02',
+                category: 'soft',
+                title: 'Neumorphism (Soft UI 3D)',
+                badge: 'Soft & Minimal',
+                badgeBg: 'rgba(59,130,246,0.15)',
+                badgeColor: '#3b82f6',
+                desc: 'เน้นความนุ่มนวลแบบนวัตกรรม 3D เสมือนจริงด้วยเงาสองทิศทาง (Soft Dual Shadows) ให้ปุ่มและกล่องดูเหมือนถูกปั๊มนูนขึ้นมาจากพื้นผิว',
+                palette: [
+                    { hex: '#e0e5ec', label: 'Soft Surface' },
+                    { hex: '#ffffff', label: 'Top Highlight' },
+                    { hex: '#a3b1c6', label: 'Bottom Shadow' },
+                    { hex: '#3b82f6', label: 'Active Blue' }
+                ],
+                cssToken: `/* Neumorphism CSS Token */
+.neu-card {
+    background: #e0e5ec;
+    border-radius: 20px;
+    box-shadow: 9px 9px 18px #a3b1c6, 
+                -9px -9px 18px #ffffff;
+}
+.neu-btn:active {
+    box-shadow: inset 4px 4px 8px #a3b1c6, 
+                inset -4px -4px 8px #ffffff;
+}`,
+                demoHtml: `
+                    <div class="demo-canvas demo-neumorphism">
+                        <div class="neu-box">
+                            <div style="font-size:0.75rem; color:#718096; font-weight:700; margin-bottom:8px;">CLIMATE CONTROL</div>
+                            <div style="font-size:2.2rem; font-weight:800; color:#2d3748; margin-bottom:14px;" id="neuTemp">24°C</div>
+                            <div style="display:flex; justify-content:center; gap:12px;">
+                                <button class="neu-btn" onclick="changeNeuTemp(-1)">-</button>
+                                <button class="neu-btn" onclick="showToast('สลับโหมดเครื่องปรับอากาศ!')">❄️ COOL</button>
+                                <button class="neu-btn" onclick="changeNeuTemp(1)">+</button>
                             </div>
-                            <textarea id="p2-prompt" style="width:100%; height:140px; background:var(--surface-2); border:1px solid var(--border); border-radius:8px; padding:12px; color:#fff; font-family:var(--font-mono); font-size:0.85rem; outline:none; resize:none;" readonly>You are an expert Senior Full-Stack Engineer specializing in clean code and modern UI design.</textarea>
-                            <button class="card-btn" style="margin-top:12px;" onclick="copyP2Prompt()">📋 คัดลอก Prompt ไปใช้งาน</button>
                         </div>
-                    `;
-                }
+                    </div>
+                `
             },
             {
                 id: 3,
-                num: 'PROJECT #03',
-                category: 'productivity',
-                icon: '⏱️',
-                title: 'Pomodoro Focus & Lofi Ambient Player',
-                prompt: 'สร้างนาฬิกาจับเวลาอ่านหนังสือ 25/5 นาที พร้อมเอฟเฟกต์เสียงบรรยากาศ (Rain / Lofi Beats) และสถิติรอบความสำเร็จ',
-                features: ['25/5 Min Timer', 'Ambient Sound Sim', 'Cycle Counter'],
-                accent: '#fbbf24',
-                render: function() {
-                    return `
-                        <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:24px; max-width:450px; margin:0 auto; text-align:center;">
-                            <div style="font-size:0.8rem; color:var(--text-dim); font-weight:600; text-transform:uppercase;">🎯 FOCUS TIME</div>
-                            <div style="font-size:3.5rem; font-weight:800; font-family:var(--font-mono); color:var(--amber); margin:10px 0;" id="p3-timer">25:00</div>
-                            <div style="display:flex; justify-content:center; gap:10px; margin-bottom:16px;">
-                                <button class="card-btn" style="width:auto; padding:8px 24px; background:var(--amber); color:#000;" onclick="toggleP3Timer()" id="p3-btn">START</button>
-                                <button class="filter-btn" onclick="resetP3Timer()">RESET</button>
+                num: '#03',
+                category: 'tech',
+                title: 'Cyberpunk & Neon HUD',
+                badge: 'Tech & Sci-Fi',
+                badgeBg: 'rgba(0,240,255,0.15)',
+                badgeColor: '#00f0ff',
+                desc: 'สไตล์โลกอนาคตแรงบันดาลใจจาก Sci-Fi และเกม Cyberpunk โดดเด่นด้วยโทนสี Neon Cyan/Magenta, ขอบตัดเฉียง (Clip-path), และเอฟเฟกต์ HUD',
+                palette: [
+                    { hex: '#050811', label: 'Void Space' },
+                    { hex: '#00f0ff', label: 'Neon Cyan' },
+                    { hex: '#ff0055', label: 'Magenta Glow' },
+                    { hex: '#ffe600', label: 'Electric Yellow' }
+                ],
+                cssToken: `/* Cyberpunk HUD CSS Token */
+.cyber-card {
+    background: rgba(5, 8, 17, 0.9);
+    border: 1px solid #00f0ff;
+    clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+}`,
+                demoHtml: `
+                    <div class="demo-canvas demo-cyberpunk">
+                        <div class="cyber-box">
+                            <div class="cyber-title">SYSTEM DIAGNOSTIC // CORE</div>
+                            <div style="font-size:0.8rem; margin-bottom:8px; color:#aaa;">STATUS: <span style="color:#00f0ff;">ONLINE [STABLE]</span></div>
+                            <div style="background:rgba(0,240,255,0.1); border:1px solid #00f0ff; height:12px; border-radius:2px; margin-bottom:12px; overflow:hidden;">
+                                <div style="width:78%; height:100%; background:#00f0ff; box-shadow:0 0 8px #00f0ff;"></div>
                             </div>
-                            <div style="font-size:0.8rem; color:var(--emerald);">🔥 รอบที่สำเร็จในวันนี้: <span id="p3-cycles">3</span> รอบ (75 นาที)</div>
+                            <button style="background:#ff0055; border:none; color:#fff; font-family:'Share Tech Mono'; padding:6px 12px; font-weight:700; cursor:pointer; width:100%;" onclick="showToast('TRIGGER OVERRIDE PROTOCOL!')">OVERRIDE CORE</button>
                         </div>
-                    `;
-                }
+                    </div>
+                `
             },
             {
                 id: 4,
-                num: 'PROJECT #04',
-                category: 'finance',
-                icon: '📈',
-                title: 'Crypto Real-Time Portfolio Tracker',
-                prompt: 'ตารางแสดงราคาสินทรัพย์คริปโต (BTC, ETH, SOL) คำนวณมูลค่าพอร์ตอัตโนมัติ พร้อมสัญลักษณ์การขึ้นลง +%',
-                features: ['Live Sim Price', 'Portfolio PnL', 'Badge Indicators'],
-                accent: '#34d399',
-                render: function() {
-                    return `
-                        <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:18px;">
-                            <h3 style="color:#fff; margin-bottom:14px; font-size:1.05rem;">📈 Crypto Live Portfolio Overview</h3>
-                            <table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
-                                <thead>
-                                    <tr style="color:var(--text-dim); border-bottom:1px solid var(--border); text-align:left;">
-                                        <th style="padding:8px;">สินทรัพย์</th>
-                                        <th style="padding:8px;">ราคา ($)</th>
-                                        <th style="padding:8px;">24h %</th>
-                                        <th style="padding:8px; text-align:right;">มูลค่าในพอร์ต</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr style="border-bottom:1px solid var(--surface-3);">
-                                        <td style="padding:10px; font-weight:700; color:#fff;">₿ BTC</td>
-                                        <td style="padding:10px; font-family:var(--font-mono);">$67,450.00</td>
-                                        <td style="padding:10px; color:var(--emerald); font-weight:700;">+3.4% ▲</td>
-                                        <td style="padding:10px; text-align:right; font-family:var(--font-mono);">$33,725.00</td>
-                                    </tr>
-                                    <tr style="border-bottom:1px solid var(--surface-3);">
-                                        <td style="padding:10px; font-weight:700; color:#fff;">Ξ ETH</td>
-                                        <td style="padding:10px; font-family:var(--font-mono);">$3,480.20</td>
-                                        <td style="padding:10px; color:var(--emerald); font-weight:700;">+1.8% ▲</td>
-                                        <td style="padding:10px; text-align:right; font-family:var(--font-mono);">$10,440.60</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding:10px; font-weight:700; color:#fff;">◎ SOL</td>
-                                        <td style="padding:10px; font-family:var(--font-mono);">$182.50</td>
-                                        <td style="padding:10px; color:var(--rose); font-weight:700;">-0.6% ▼</td>
-                                        <td style="padding:10px; text-align:right; font-family:var(--font-mono);">$3,650.00</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                num: '#04',
+                category: 'retro',
+                title: 'Neo-Brutalism (Bold Pop)',
+                badge: 'Bold & Retro',
+                badgeBg: 'rgba(255,89,100,0.15)',
+                badgeColor: '#ff5964',
+                desc: 'การหวนคืนของสไตล์อินดี้สุดป๊อบ เน้นขอบสีดำหนาเตอะ (3.5px Solid Black), เงาแข็งตัดระนาบ (Offset Drop Shadows), และสีสันสดใสกระแทกตา',
+                palette: [
+                    { hex: '#fffdf8', label: 'Canvas Offwhite' },
+                    { hex: '#ff5964', label: 'Pop Coral' },
+                    { hex: '#ffe600', label: 'Pop Yellow' },
+                    { hex: '#000000', label: 'Ink Black' }
+                ],
+                cssToken: `/* Neo-Brutalism CSS Token */
+.brutal-card {
+    background: #ffe600;
+    border: 3.5px solid #000000;
+    box-shadow: 6px 6px 0px #000000;
+    border-radius: 8px;
+}
+.brutal-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px #000000;
+}`,
+                demoHtml: `
+                    <div class="demo-canvas demo-neobrutalism">
+                        <div class="brutal-box">
+                            <div style="font-size:0.75rem; font-weight:800; background:#000; color:#fff; padding:2px 8px; display:inline-block; margin-bottom:8px;">FLASH SALE!</div>
+                            <div style="font-size:1.3rem; font-weight:900;">🔥 Vibe Coding Pass</div>
+                            <div style="font-size:0.9rem; margin-top:4px;">รับสิทธิ์ใช้ Prompt Studio 1 ปีเต็ม</div>
+                            <button class="brutal-btn" onclick="showToast('กดสั่งซื้อสไตล์ Neo-Brutalism!')">GET ACCESS $19 ➔</button>
                         </div>
-                    `;
-                }
+                    </div>
+                `
             },
             {
                 id: 5,
-                num: 'PROJECT #05',
-                category: 'lifestyle',
-                icon: '🎟️',
-                title: 'Shopee & Lazada Coupon Vault UI',
-                prompt: 'คลังรวบรวมดีลคูปองส่วนลด Shopee / Lazada พร้อมแท็กหมวดหมู่ และปุ่มก๊อปปี้โค้ดพร้อมใช้งาน',
-                features: ['Voucher Cards', 'Click to Copy Code', 'Expiry Badge'],
-                accent: '#fb7185',
-                render: function() {
-                    return `
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                            <div style="background:var(--surface-2); border:1px dashed var(--rose); border-radius:10px; padding:14px; position:relative;">
-                                <div style="font-size:0.7rem; color:var(--rose); font-weight:700; text-transform:uppercase;">🧡 Shopee Super Sale</div>
-                                <div style="font-size:1.1rem; font-weight:800; color:#fff; margin:4px 0;">ส่วนลด 15% สูงสุด 300.-</div>
-                                <div style="font-size:0.75rem; color:var(--text-dim); margin-bottom:10px;">ขั้นต่ำ 1,000 บาท · หมดเขตวันนี้</div>
-                                <button class="card-btn" style="background:var(--rose); padding:6px 12px; font-size:0.75rem;" onclick="alert('คัดลอกโค้ด SHOPEE15OFF เรียบร้อย!')">✂️ คัดลอกโค้ด</button>
-                            </div>
-                            <div style="background:var(--surface-2); border:1px dashed var(--cyan); border-radius:10px; padding:14px; position:relative;">
-                                <div style="font-size:0.7rem; color:var(--cyan); font-weight:700; text-transform:uppercase;">💙 Lazada Fast Flash</div>
-                                <div style="font-size:1.1rem; font-weight:800; color:#fff; margin:4px 0;">ส่งฟรีทั่วไทย 0 บาท</div>
-                                <div style="font-size:0.75rem; color:var(--text-dim); margin-bottom:10px;">ไม่มีขั้นต่ำ · สำหรับสินค้า Flash Sale</div>
-                                <button class="card-btn" style="background:var(--cyan); color:#000; padding:6px 12px; font-size:0.75rem;" onclick="alert('คัดลอกโค้ด FREESHIP2026 เรียบร้อย!')">✂️ คัดลอกโค้ด</button>
-                            </div>
+                num: '#05',
+                category: 'soft',
+                title: 'Clean Corporate SaaS',
+                badge: 'Soft & Minimal',
+                badgeBg: 'rgba(16,185,129,0.15)',
+                badgeColor: '#10b981',
+                desc: 'มาตรฐานเว็บแอปยุคใหม่สไตล์ Swiss Design เน้นความสะอาดตา ลำดับอ่านง่าย (Typography Hierarchy), พื้นหลังสีสว่างสบายตา และปุ่ม Pills',
+                palette: [
+                    { hex: '#f8fafc', label: 'Slate 50' },
+                    { hex: '#ffffff', label: 'Pure White' },
+                    { hex: '#0f172a', label: 'Slate Text' },
+                    { hex: '#2563eb', label: 'Brand Blue' }
+                ],
+                cssToken: `/* Clean SaaS CSS Token */
+.saas-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+}`,
+                demoHtml: `
+                    <div class="demo-canvas demo-saas">
+                        <div class="saas-box">
+                            <span class="saas-pill">PRO TIER</span>
+                            <div style="font-size:1.4rem; font-weight:800; color:#0f172a; margin:4px 0;">$49 <span style="font-size:0.85rem; color:#64748b; font-weight:400;">/เดือน</span></div>
+                            <p style="font-size:0.85rem; color:#64748b; margin-bottom:14px;">ปลดล็อกทุกความสามารถสำหรับทีมของคุณ</p>
+                            <button style="width:100%; background:#2563eb; color:#fff; border:none; padding:10px; border-radius:8px; font-weight:600; cursor:pointer;" onclick="showToast('เลือกแพ็กเกจ SaaS สำเร็จ!')">เริ่มต้นใช้งานฟรี 14 วัน</button>
                         </div>
-                    `;
-                }
+                    </div>
+                `
             },
             {
                 id: 6,
-                num: 'PROJECT #06',
-                category: 'lifestyle',
-                icon: '📰',
-                title: 'Cyberpunk Tech News Reader UI',
-                prompt: 'หน้ารวมข่าวเทคโนโลยีสไตล์ นีออน ดาร์ก (Dark Neon UI) มีระบบกรองหมวดหมู่ข่าว (AI, Tech, Crypto)',
-                features: ['Dark Neon UI', 'Category Chips', 'Compact News Feed'],
-                accent: '#a78bfa',
-                render: function() {
-                    return `
-                        <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:16px;">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-                                <h3 style="color:#fff; font-size:1rem;">⚡ CYBERPUNK TECH FEED</h3>
-                                <span style="font-size:0.7rem; color:var(--accent); font-family:var(--font-mono);">● LIVE UPDATED</span>
-                            </div>
-                            <div style="display:flex; flex-direction:column; gap:10px;">
-                                <div style="background:var(--surface-2); border-left:3px solid var(--accent); padding:10px 14px; border-radius:6px;">
-                                    <div style="font-size:0.85rem; font-weight:700; color:#fff;">Google เปิดตัว Antigravity AI Engine รุ่นใหม่ล่าสุด</div>
-                                    <div style="font-size:0.72rem; color:var(--text-dim); margin-top:2px;">AI & Machine Learning · 10 นาทีที่แล้ว</div>
-                                </div>
-                                <div style="background:var(--surface-2); border-left:3px solid var(--cyan); padding:10px 14px; border-radius:6px;">
-                                    <div style="font-size:0.85rem; font-weight:700; color:#fff;">กระแส Vibe Coding ทะยานขึ้นเป็นเทรนด์เขียนโปรแกรมอันดับ 1</div>
-                                    <div style="font-size:0.72rem; color:var(--text-dim); margin-top:2px;">Developer News · 1 ชั่วโมงที่แล้ว</div>
-                                </div>
-                            </div>
+                num: '#06',
+                category: 'retro',
+                title: 'Synthwave & 80s Vaporwave',
+                badge: 'Bold & Retro',
+                badgeBg: 'rgba(255,42,133,0.15)',
+                badgeColor: '#ff2a85',
+                desc: 'สไตล์ย้อนยุคปี 80s ผสมผสานกลิ่นอายดนตรี Synthwave แสงไฟเรืองแสงสีชมพู Hot Pink, ท้องฟ้าไล่สีม่วงเข้ม และแบบอักษร Arcade',
+                palette: [
+                    { hex: '#120428', label: 'Synth Night' },
+                    { hex: '#ff2a85', label: 'Hot Pink' },
+                    { hex: '#9d4edd', label: 'Neon Violet' },
+                    { hex: '#00f5d4', label: 'Turquoise' }
+                ],
+                cssToken: `/* Synthwave 80s CSS Token */
+.synth-card {
+    background: rgba(18, 4, 40, 0.85);
+    border: 2px solid #ff2a85;
+    box-shadow: 0 0 15px #ff2a85, 
+                inset 0 0 15px rgba(255, 42, 133, 0.3);
+    border-radius: 12px;
+}`,
+                demoHtml: `
+                    <div class="demo-canvas demo-synthwave">
+                        <div class="synth-box">
+                            <div class="synth-title">RETRO ARCADE 1984</div>
+                            <div style="font-size:0.8rem; color:#00f5d4; margin-bottom:10px;">HIGH SCORE: 999,990</div>
+                            <button style="background:linear-gradient(90deg, #ff2a85, #9d4edd); border:none; color:#fff; padding:8px 18px; font-family:'Press Start 2P'; font-size:0.65rem; border-radius:4px; cursor:pointer;" onclick="showToast('INSERT COIN TO PLAY!')">PRESS START</button>
                         </div>
-                    `;
-                }
+                    </div>
+                `
             },
             {
                 id: 7,
-                num: 'PROJECT #07',
-                category: 'tools',
-                icon: '🚀',
-                title: 'SaaS Interactive Pricing Switcher',
-                prompt: 'หน้าเลือกการ์ดราคาแพ็กเกจ SaaS พร้อมปุ่มสลับการจ่ายเงิน (รายเดือน / รายปี ลด 20%)',
-                features: ['Monthly/Yearly Toggle', 'Discount Badge', 'Glass Cards'],
-                accent: '#38bdf8',
-                render: function() {
-                    return `
-                        <div style="text-align:center;">
-                            <div style="display:inline-flex; align-items:center; background:var(--surface-2); border:1px solid var(--border); padding:4px 12px; border-radius:20px; gap:10px; margin-bottom:16px;">
-                                <span style="font-size:0.8rem; color:#fff;">รายเดือน</span>
-                                <input type="checkbox" id="p7-toggle" onchange="toggleP7Price()" style="cursor:pointer;">
-                                <span style="font-size:0.8rem; color:var(--emerald); font-weight:700;">รายปี (ลด 20%)</span>
-                            </div>
-                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; max-width:550px; margin:0 auto; text-align:left;">
-                                <div style="background:var(--surface-2); border:1px solid var(--border); border-radius:12px; padding:18px;">
-                                    <div style="font-weight:700; color:var(--text-dim);">PRO PLAN</div>
-                                    <div style="font-size:1.8rem; font-weight:800; color:#fff; margin:6px 0;" id="p7-price-pro">$19/เดือน</div>
-                                    <button class="card-btn" style="font-size:0.8rem; padding:8px;">เลือกแพ็กเกจนี้</button>
-                                </div>
-                                <div style="background:var(--surface-2); border:1px solid var(--accent); border-radius:12px; padding:18px; box-shadow:0 0 15px var(--accent-glow);">
-                                    <div style="font-weight:700; color:var(--accent);">ENTERPRISE</div>
-                                    <div style="font-size:1.8rem; font-weight:800; color:#fff; margin:6px 0;" id="p7-price-ent">$49/เดือน</div>
-                                    <button class="card-btn" style="font-size:0.8rem; padding:8px; background:var(--accent);">เลือกแพ็กเกจนี้</button>
-                                </div>
-                            </div>
+                num: '#07',
+                category: 'dark',
+                title: 'Luxury Gold & Obsidian Minimal',
+                badge: 'Luxury & Elegant',
+                badgeBg: 'rgba(212,175,55,0.15)',
+                badgeColor: '#d4af37',
+                desc: 'ความหรูหราระดับพรีเมียมด้วยโทนสีดำ Obsidian ตัดกับขอบเส้นทองคำ Champagne Gold และฟอนต์ Serif สไตล์นิตยสารแฟชั่นชั้นนำ',
+                palette: [
+                    { hex: '#0c0c0c', label: 'Obsidian Black' },
+                    { hex: '#161616', label: 'Card Surface' },
+                    { hex: '#d4af37', label: 'Champagne Gold' },
+                    { hex: '#f3f3f3', label: 'Silk Text' }
+                ],
+                cssToken: `/* Luxury Gold CSS Token */
+.luxury-card {
+    background: #161616;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
+    font-family: 'Cormorant Garamond', serif;
+}`,
+                demoHtml: `
+                    <div class="demo-canvas demo-luxury">
+                        <div class="luxury-box">
+                            <div style="font-size:0.7rem; color:#d4af37; letter-spacing:0.15em; text-transform:uppercase;">PRIVATE CONCIERGE</div>
+                            <div class="luxury-title">The Royal Membership</div>
+                            <p style="font-size:0.85rem; color:#aaa; margin-bottom:14px;">สิทธิพิเศษระดับ Exclusive สำหรับผู้ถือบัตรVIP เท่านั้น</p>
+                            <button style="background:transparent; border:1px solid #d4af37; color:#d4af37; font-family:'Cormorant Garamond'; font-size:1rem; padding:6px 20px; cursor:pointer; width:100%; font-weight:700;" onclick="showToast('คำขอสำรองสิทธิ์ VIP ถูกส่งแล้ว')">RESERVE INVITATION</button>
                         </div>
-                    `;
-                }
+                    </div>
+                `
             },
             {
                 id: 8,
-                num: 'PROJECT #08',
-                category: 'productivity',
-                icon: '📋',
-                title: 'Kanban Quick Note & Task Board',
-                prompt: 'กระดานจัดหมวดหมู่งาน Kanban Board (To Do, In Progress, Done) พร้อมเพิ่มบันทึกโน้ตด่วน',
-                features: ['3 Column Board', 'Add Task UI', 'Status Badge'],
-                accent: '#fbbf24',
-                render: function() {
-                    return `
-                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
-                            <div style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:10px;">
-                                <div style="font-size:0.75rem; font-weight:700; color:var(--rose); margin-bottom:8px;">📌 TO DO (2)</div>
-                                <div style="background:var(--surface-2); padding:8px; border-radius:4px; font-size:0.78rem; margin-bottom:6px; color:#fff;">ออกแบบ UI สำหรับ Vibe Code</div>
-                                <div style="background:var(--surface-2); padding:8px; border-radius:4px; font-size:0.78rem; color:#fff;">เขียนยูนิตเทสต์</div>
+                num: '#08',
+                category: 'dark',
+                title: 'Bento Grid Holographic',
+                badge: 'Modern Bento',
+                badgeBg: 'rgba(244,114,182,0.15)',
+                badgeColor: '#f472b6',
+                desc: 'การจัดเลย์เอาต์สไตล์ Bento Box ยอดฮิตของ Apple & Vercel เพิ่มลูกเล่นขอบสายรุ้งไล่สี Holographic Gradient และความเงางามระดับไฮเอนด์',
+                palette: [
+                    { hex: '#0b0d14', label: 'Midnight BG' },
+                    { hex: '#131722', label: 'Tile Surface' },
+                    { hex: '#a78bfa', label: 'Purple Rim' },
+                    { hex: '#f472b6', label: 'Pink Rim' }
+                ],
+                cssToken: `/* Bento Holographic CSS Token */
+.bento-card {
+    background: #131722;
+    border-radius: 16px;
+    position: relative;
+}
+.bento-card::before {
+    content: '';
+    position: absolute; inset: -1px;
+    border-radius: 17px; padding: 1px;
+    background: linear-gradient(135deg, #a78bfa, #38bdf8, #f472b6);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+}`,
+                demoHtml: `
+                    <div class="demo-canvas demo-bento">
+                        <div class="bento-box">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                                <span style="font-size:0.75rem; color:#94a3b8; font-weight:600;">⚡ AI TOKEN USAGE</span>
+                                <span style="background:rgba(167,139,250,0.2); color:#a78bfa; font-size:0.7rem; padding:2px 8px; border-radius:10px;">98.4% Efficiency</span>
                             </div>
-                            <div style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:10px;">
-                                <div style="font-size:0.75rem; font-weight:700; color:var(--amber); margin-bottom:8px;">⏳ DOING (1)</div>
-                                <div style="background:var(--surface-2); padding:8px; border-radius:4px; font-size:0.78rem; color:#fff;">สร้าง Showcase 10 โปรเจกต์</div>
-                            </div>
-                            <div style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:10px;">
-                                <div style="font-size:0.75rem; font-weight:700; color:var(--emerald); margin-bottom:8px;">✅ DONE (1)</div>
-                                <div style="background:var(--surface-2); padding:8px; border-radius:4px; font-size:0.78rem; color:#fff;">ติดตั้ง Custom Skills</div>
-                            </div>
+                            <div style="font-size:1.5rem; font-weight:800; color:#fff; font-family:'Outfit';">1,420,500 Tokens</div>
+                            <div style="font-size:0.8rem; color:#38bdf8; margin-top:4px;">+14.2% จากสัปดาห์ที่แล้ว</div>
                         </div>
-                    `;
-                }
+                    </div>
+                `
             },
             {
                 id: 9,
-                num: 'PROJECT #09',
-                category: 'tools',
-                icon: '💻',
-                title: 'Developer Code Snippet Vault',
-                prompt: 'คลังเก็บตัวอย่างโค้ดคำสั่งยอดฮิต (Bash / Python) พร้อมแท็กค้นหา และปุ่มก๊อปปี้',
-                features: ['Syntax Highlight UI', 'One-Click Copy', 'Search Tags'],
-                accent: '#a78bfa',
-                render: function() {
-                    return `
-                        <div style="background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:16px; font-family:var(--font-mono);">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                                <span style="font-size:0.8rem; color:var(--accent);">Python / Async Task Runner</span>
-                                <button class="filter-btn" style="padding:2px 8px; font-size:0.7rem;" onclick="alert('คัดลอกโค้ดเรียบร้อย!')">Copy Code</button>
-                            </div>
-                            <pre style="background:var(--surface-2); padding:12px; border-radius:6px; font-size:0.78rem; color:#38bdf8; overflow-x:auto;">import asyncio
-
-async function main():
-    print("🚀 Vibe Coding Task Started!")
-    await asyncio.sleep(1)
-    print("✅ Task Completed Successfully")
-
-asyncio.run(main())</pre>
+                num: '#09',
+                category: 'soft',
+                title: 'Claymorphism (Soft 3D Clay)',
+                badge: 'Soft & Playful',
+                badgeBg: 'rgba(255,118,117,0.15)',
+                badgeColor: '#ff7675',
+                desc: 'ดีไซน์ดินน้ำมัน 3D สุดน่ารักและเป็นกันเอง ด้วยการผสมผสาน multi-layer inner/outer shadows และมุมโค้งมนมนมนเป็นพิเศษ (Extra Rounded 24px)',
+                palette: [
+                    { hex: '#f0f4f8', label: 'Sky Pastel' },
+                    { hex: '#ffffff', label: 'Clay Body' },
+                    { hex: '#ff7675', label: 'Clay Coral' },
+                    { hex: '#6c5ce7', label: 'Clay Purple' }
+                ],
+                cssToken: `/* Claymorphism CSS Token */
+.clay-card {
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: 12px 12px 24px #d1d9e6, 
+                -12px -12px 24px #ffffff, 
+                inset 4px 4px 8px rgba(255, 255, 255, 0.8);
+}`,
+                demoHtml: `
+                    <div class="demo-canvas demo-claymorphism">
+                        <div class="clay-box">
+                            <span class="clay-badge">🎉 LEVEL UP!</span>
+                            <div style="font-size:1.3rem; font-weight:700; color:#2d3748; margin:10px 0 4px;">Streak 7 วันต่อเนื่อง</div>
+                            <p style="font-size:0.85rem; color:#718096; margin-bottom:14px;">คุณได้ปลดล็อกตราประทับ Vibe Coder!</p>
+                            <button style="background:#6c5ce7; color:#fff; border:none; padding:10px 20px; border-radius:18px; font-weight:700; font-family:'Fredoka'; cursor:pointer; box-shadow:0 6px 12px rgba(108,92,231,0.3);" onclick="showToast('รับรางวัล Claymorphic Badge!')">รับรางวัล ✨</button>
                         </div>
-                    `;
-                }
+                    </div>
+                `
             },
             {
                 id: 10,
-                num: 'PROJECT #10',
-                category: 'finance',
-                icon: '💱',
-                title: 'Real-time Currency & Inflation Converter',
-                prompt: 'เครื่องมือคำนวณแปลงอัตราแลกเปลี่ยนสกุลเงิน (USD ➔ THB ➔ AUD) พร้อมคำนวณเงินเฟ้อสะสม',
-                features: ['Live Multi-Currency', 'Inflation Math', 'Instant Output'],
-                accent: '#34d399',
-                render: function() {
-                    return `
-                        <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:20px; max-width:480px; margin:0 auto;">
-                            <h3 style="color:#fff; margin-bottom:14px; font-size:1.05rem;">💱 Currency & Purchasing Power Calculator</h3>
-                            <div style="display:flex; flex-direction:column; gap:10px;">
-                                <div>
-                                    <label style="font-size:0.8rem; color:var(--text-dim);">จำนวนเงิน USD ($):</label>
-                                    <input type="number" id="p10-usd" value="100" style="width:100%; background:var(--surface-2); border:1px solid var(--border); border-radius:6px; padding:8px 12px; color:#fff; font-family:var(--font-mono);" oninput="calcP10()">
-                                </div>
-                                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                                    <div style="background:var(--surface-2); padding:12px; border-radius:8px; border:1px solid var(--border);">
-                                        <div style="font-size:0.72rem; color:var(--text-dim);">แปลงเป็นเงินบาท (THB)</div>
-                                        <div style="font-size:1.3rem; font-weight:800; color:var(--emerald); font-family:var(--font-mono); margin-top:2px;" id="p10-thb">3,620 ฿</div>
-                                    </div>
-                                    <div style="background:var(--surface-2); padding:12px; border-radius:8px; border:1px solid var(--border);">
-                                        <div style="font-size:0.72rem; color:var(--text-dim);">แปลงเป็นดอลลาร์ออสซี่ (AUD)</div>
-                                        <div style="font-size:1.3rem; font-weight:800; color:var(--cyan); font-family:var(--font-mono); margin-top:2px;" id="p10-aud">152 AUD</div>
-                                    </div>
-                                </div>
-                            </div>
+                num: '#10',
+                category: 'tech',
+                title: 'Hacker Terminal & Matrix CLI',
+                badge: 'Tech & Sci-Fi',
+                badgeBg: 'rgba(0,255,102,0.15)',
+                badgeColor: '#00ff66',
+                desc: 'อินเทอร์เฟซสไตล์แฮกเกอร์และเทอร์มินัลสายเขียว Phosphor Green บนพื้นหลังดำสนิท พร้อมแบบอักษร Monospace และเส้นสแกนสายตา CRT',
+                palette: [
+                    { hex: '#050505', label: 'Pitch Black' },
+                    { hex: '#00ff66', label: 'Phosphor Green' },
+                    { hex: '#0a110a', label: 'Terminal Surface' },
+                    { hex: '#38bdf8', label: 'Prompt Cyan' }
+                ],
+                cssToken: `/* Hacker Terminal CSS Token */
+.terminal-card {
+    background: #0a110a;
+    border: 1px solid #00ff66;
+    box-shadow: 0 0 15px rgba(0, 255, 102, 0.2);
+    font-family: 'JetBrains Mono', monospace;
+    color: #00ff66;
+}`,
+                demoHtml: `
+                    <div class="demo-canvas demo-terminal">
+                        <div class="term-box">
+                            <div><span class="term-prompt">root@agy-cli:~#</span> agy status --verbose</div>
+                            <div style="color:#a1a1aa; margin:4px 0;">[OK] Telegram Bot running (PID 12044)</div>
+                            <div style="color:#a1a1aa; margin-bottom:10px;">[OK] Dashboard Server active on port 8080</div>
+                            <button style="background:transparent; border:1px solid #00ff66; color:#00ff66; font-family:'Fira Code'; padding:4px 10px; font-size:0.75rem; cursor:pointer;" onclick="showToast('Execute Shell Command!')">> EXECUTE DISPATCH</button>
                         </div>
-                    `;
-                }
+                    </div>
+                `
             }
         ];
 
-        // Render Cards to Main Grid
-        function renderCards(filter = 'all') {
-            const grid = document.getElementById('projects-grid');
+        // Render Cards into Grid
+        function renderCards(data) {
+            const grid = document.getElementById('stylesGrid');
             grid.innerHTML = '';
 
-            const filtered = filter === 'all' 
-                ? projects 
-                : projects.filter(p => p.category === filter);
-
-            filtered.forEach(p => {
+            data.forEach(item => {
                 const card = document.createElement('div');
-                card.className = 'card';
-                card.style.setProperty('--card-accent', p.accent);
+                card.className = 'style-card';
+                card.setAttribute('data-category', item.category);
 
-                const featuresHtml = p.features.map(f => `<span class="feature-chip">${f}</span>`).join('');
+                const paletteChipsHtml = item.palette.map(p => `
+                    <div class="palette-chip" onclick="copyText('${p.hex}')" title="คลิกเพื่อคัดลอก Code สี">
+                        <span class="color-dot" style="background:${p.hex};"></span>
+                        <span>${p.hex}</span>
+                    </div>
+                `).join('');
 
                 card.innerHTML = `
-                    <div>
-                        <div class="card-header">
-                            <span class="card-tag">${p.category}</span>
-                            <span class="card-num">${p.num}</span>
+                    <div class="style-header">
+                        <div class="style-title-group">
+                            <span class="style-num">${item.num}</span>
+                            <h2 class="style-title">${item.title}</h2>
                         </div>
-                        <h3 class="card-title">${p.icon} ${p.title}</h3>
-                        <div class="card-prompt">💬 Prompt: "${p.prompt}"</div>
-                        <div class="card-features">${featuresHtml}</div>
+                        <span class="style-badge" style="background:${item.badgeBg}; color:${item.badgeColor};">${item.badge}</span>
                     </div>
-                    <button class="card-btn" onclick="openDemo(${p.id})">
-                        🚀 เปิดดูโปรเจกต์ตัวอย่าง (Live Demo)
-                    </button>
-                `;
+                    <div class="style-body">
+                        <p class="style-desc">${item.desc}</p>
+                        
+                        <!-- Interactive Live Demo Canvas -->
+                        ${item.demoHtml}
 
+                        <!-- Color Palette -->
+                        <div style="font-size:0.75rem; color:var(--text-muted); font-weight:600; text-transform:uppercase; margin-top:4px;">🎨 Color Palette Tokens:</div>
+                        <div class="palette-row">
+                            ${paletteChipsHtml}
+                        </div>
+
+                        <!-- Code Inspector -->
+                        <div class="code-panel">
+                            <div class="code-header">
+                                <span>CSS TOKEN SNIPPET</span>
+                                <button class="btn-copy" onclick="copyText(\`${escapeHtml(item.cssToken)}\`)">
+                                    <i data-lucide="copy" style="width:13px;height:13px;"></i> Copy CSS
+                                </button>
+                            </div>
+                            <div class="code-content">${escapeHtml(item.cssToken)}</div>
+                        </div>
+                    </div>
+                    <div class="style-footer">
+                        <span style="font-size:0.8rem; color:var(--text-muted);">Aesthetics Level: 100%</span>
+                        <button class="btn-preview-full" onclick="openModal(${item.id})">
+                            <i data-lucide="maximize-2" style="width:15px;height:15px;"></i> ขยายดู Full Demo
+                        </button>
+                    </div>
+                `;
                 grid.appendChild(card);
+            });
+
+            lucide.createIcons();
+        }
+
+        // Filter Category
+        function filterCategory(cat) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (cat === 'all') {
+                renderCards(stylesData);
+            } else {
+                const filtered = stylesData.filter(s => s.category === cat);
+                renderCards(filtered);
+            }
+        }
+
+        // Search Input
+        function searchStyles() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = stylesData.filter(s => 
+                s.title.toLowerCase().includes(query) || 
+                s.desc.toLowerCase().includes(query) ||
+                s.badge.toLowerCase().includes(query)
+            );
+            renderCards(filtered);
+        }
+
+        // Copy Text & Toast
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('คัดลอกลง Clipboard เรียบร้อยแล้ว!');
+            }).catch(() => {
+                showToast('ไม่สามารถคัดลอกได้');
             });
         }
 
-        // Filter Action
-        function filterProjects(cat) {
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            renderCards(cat);
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
         }
 
-        // Open Modal Demo
-        function openDemo(id) {
-            const p = projects.find(item => item.id === id);
-            if (!p) return;
+        // Modal Controls
+        function openModal(id) {
+            const item = stylesData.find(s => s.id === id);
+            if (!item) return;
 
-            document.getElementById('modal-project-title').innerHTML = `${p.icon} ${p.num}: ${p.title}`;
-            document.getElementById('modal-project-content').innerHTML = p.render();
-            document.getElementById('demo-modal').classList.add('active');
+            document.getElementById('modalNum').innerText = item.num;
+            document.getElementById('modalTitle').innerText = item.title;
+            
+            document.getElementById('modalContent').innerHTML = `
+                <div style="margin-bottom:20px; font-size:1rem; color:var(--text-dim); line-height:1.6;">
+                    ${item.desc}
+                </div>
+                <div style="margin-bottom:24px;">
+                    ${item.demoHtml}
+                </div>
+                <div class="code-panel" style="margin-top:20px;">
+                    <div class="code-header">
+                        <span>COMPLETE HTML & CSS EMBED SNIPPET</span>
+                        <button class="btn-copy" onclick="copyText(\`${escapeHtml(item.cssToken)}\`)">
+                            <i data-lucide="copy" style="width:14px;height:14px;"></i> Copy Code
+                        </button>
+                    </div>
+                    <div class="code-content" style="max-height:260px;">${escapeHtml(item.cssToken)}</div>
+                </div>
+            `;
+            
+            document.getElementById('previewModal').classList.add('active');
+            lucide.createIcons();
         }
 
         function closeModal() {
-            document.getElementById('demo-modal').classList.remove('active');
+            document.getElementById('previewModal').classList.remove('active');
         }
 
-        // Interactive Math Helpers inside Demos
-        function calcP1() {
-            const balance = parseFloat(document.getElementById('p1-balance')?.value || 0);
-            const risk = parseFloat(document.getElementById('p1-risk')?.value || 0);
-            const sl = parseFloat(document.getElementById('p1-sl')?.value || 1);
-            
-            const riskUsd = (balance * (risk / 100));
-            const lot = (riskUsd / (sl * 1)).toFixed(2);
-            
-            if (document.getElementById('p1-lot')) document.getElementById('p1-lot').textContent = `${lot} Lot`;
-            if (document.getElementById('p1-risk-usd')) document.getElementById('p1-risk-usd').textContent = `จำนวนเงินยอมขาดทุน: $${riskUsd.toFixed(2)}`;
+        // Helpers
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
         }
 
-        function setP2Preset(type) {
-            const p = document.getElementById('p2-prompt');
-            if (!p) return;
-            if (type === 'coder') p.value = "You are an expert Senior Full-Stack Engineer specializing in clean code and modern UI design.";
-            if (type === 'trader') p.value = "You are a Quantitative Financial Analyst specializing in XAUUSD risk management and technical indicators.";
-            if (type === 'writer') p.value = "You are a Creative Technology Writer crafting engaging, viral posts for modern developer communities.";
+        function changeNeuTemp(delta) {
+            const el = document.getElementById('neuTemp');
+            if (!el) return;
+            let current = parseInt(el.innerText);
+            el.innerText = (current + delta) + '°C';
         }
 
-        function copyP2Prompt() {
-            const val = document.getElementById('p2-prompt')?.value;
-            if (val) {
-                navigator.clipboard?.writeText(val);
-                alert('คัดลอก Prompt เรียบร้อย!');
-            }
-        }
-
-        let p3Interval = null;
-        let p3Seconds = 1500;
-
-        function toggleP3Timer() {
-            const btn = document.getElementById('p3-btn');
-            if (!p3Interval) {
-                p3Interval = setInterval(() => {
-                    if (p3Seconds > 0) {
-                        p3Seconds--;
-                        updateP3Display();
-                    } else {
-                        clearInterval(p3Interval);
-                        p3Interval = null;
-                        alert('🎉 ครบรอบเวลาโฟกัส 25 นาทีเรียบร้อย!');
-                    }
-                }, 1000);
-                if (btn) btn.textContent = 'PAUSE';
-            } else {
-                clearInterval(p3Interval);
-                p3Interval = null;
-                if (btn) btn.textContent = 'START';
-            }
-        }
-
-        function resetP3Timer() {
-            clearInterval(p3Interval);
-            p3Interval = null;
-            p3Seconds = 1500;
-            updateP3Display();
-            const btn = document.getElementById('p3-btn');
-            if (btn) btn.textContent = 'START';
-        }
-
-        function updateP3Display() {
-            const m = String(Math.floor(p3Seconds / 60)).padStart(2, '0');
-            const s = String(p3Seconds % 60).padStart(2, '0');
-            const timerEl = document.getElementById('p3-timer');
-            if (timerEl) timerEl.textContent = `${m}:${s}`;
-        }
-
-        function toggleP7Price() {
-            const isYearly = document.getElementById('p7-toggle')?.checked;
-            const proEl = document.getElementById('p7-price-pro');
-            const entEl = document.getElementById('p7-price-ent');
-            if (isYearly) {
-                if (proEl) proEl.textContent = '$15/เดือน';
-                if (entEl) entEl.textContent = '$39/เดือน';
-            } else {
-                if (proEl) proEl.textContent = '$19/เดือน';
-                if (entEl) entEl.textContent = '$49/เดือน';
-            }
-        }
-
-        function calcP10() {
-            const usd = parseFloat(document.getElementById('p10-usd')?.value || 0);
-            const thbEl = document.getElementById('p10-thb');
-            const audEl = document.getElementById('p10-aud');
-            if (thbEl) thbEl.textContent = `${(usd * 36.2).toLocaleString()} ฿`;
-            if (audEl) audEl.textContent = `${(usd * 1.52).toFixed(1)} AUD`;
-        }
-
-        // Initialize Cards
-        renderCards('all');
+        // Initialize on Load
+        window.addEventListener('DOMContentLoaded', () => {
+            renderCards(stylesData);
+        });
     </script>
 </body>
 </html>
