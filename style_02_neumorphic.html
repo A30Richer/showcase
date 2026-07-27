@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEO-HOME — Neumorphic Smart IoT Control Center</title>
+    <meta name="description" content="สไตล์การออกแบบ Neumorphism / Soft UI 3D นุ่มนวล สมจริง สำหรับระบบควบคุมบ้านอัจฉริยะ Smart Home">
+
+    <!-- Google Fonts & Lucide Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --bg-neu: #e0e5ec;
+            --text-dark: #2d3748;
+            --text-dim: #718096;
+            --accent-blue: #3b82f6;
+            --accent-emerald: #10b981;
+            --accent-rose: #f43f5e;
+            --accent-amber: #f59e0b;
+
+            /* Neumorphic Shadows */
+            --neu-flat: 9px 9px 18px #a3b1c6, -9px -9px 18px #ffffff;
+            --neu-btn: 6px 6px 12px #a3b1c6, -6px -6px 12px #ffffff;
+            --neu-pressed: inset 5px 5px 10px #a3b1c6, inset -5px -5px 10px #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-neu);
+            color: var(--text-dark);
+            font-family: 'Inter', 'Prompt', sans-serif;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg-neu);
+            padding: 16px 32px;
+            box-shadow: var(--neu-btn);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 800;
+            font-size: 1.2rem;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-neu);
+            border-radius: 12px;
+            box-shadow: var(--neu-btn);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-blue);
+        }
+
+        .badge-style {
+            background: #dbeafe;
+            color: var(--accent-blue);
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+
+        .btn-hub {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-neu);
+            box-shadow: var(--neu-btn);
+            border: none;
+            color: var(--text-dark);
+            padding: 8px 18px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-hub:active {
+            box-shadow: var(--neu-pressed);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 36px 24px 60px;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 32px;
+        }
+
+        @media (max-width: 900px) {
+            .grid-layout { grid-template-columns: 1fr; }
+        }
+
+        /* Neumorphic Card */
+        .neu-card {
+            background: var(--bg-neu);
+            border-radius: 24px;
+            box-shadow: var(--neu-flat);
+            padding: 28px;
+        }
+
+        /* Climate Thermostat Dial */
+        .thermostat-dial {
+            width: 220px;
+            height: 220px;
+            margin: 20px auto;
+            border-radius: 50%;
+            background: var(--bg-neu);
+            box-shadow: var(--neu-flat);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .thermostat-inner {
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: var(--bg-neu);
+            box-shadow: var(--neu-pressed);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .temp-display {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            line-height: 1;
+        }
+
+        .dial-controls {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .btn-dial {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--bg-neu);
+            box-shadow: var(--neu-btn);
+            border: none;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-dial:active {
+            box-shadow: var(--neu-pressed);
+        }
+
+        /* Room Devices Grid */
+        .devices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-top: 24px;
+        }
+
+        .device-card {
+            background: var(--bg-neu);
+            border-radius: 20px;
+            box-shadow: var(--neu-btn);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 140px;
+            transition: all 0.2s ease;
+        }
+
+        .device-card.active {
+            box-shadow: var(--neu-pressed);
+        }
+
+        .device-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .device-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: var(--bg-neu);
+            box-shadow: var(--neu-btn);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dim);
+        }
+
+        .device-card.active .device-icon {
+            color: var(--accent-blue);
+            box-shadow: var(--neu-pressed);
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            width: 50px;
+            height: 26px;
+            border-radius: 15px;
+            background: var(--bg-neu);
+            box-shadow: var(--neu-pressed);
+            position: relative;
+            cursor: pointer;
+        }
+
+        .toggle-pin {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--bg-neu);
+            box-shadow: var(--neu-btn);
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            transition: all 0.2s ease;
+        }
+
+        .device-card.active .toggle-pin {
+            left: 27px;
+            background: var(--accent-blue);
+        }
+
+        .device-name {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-top: 12px;
+        }
+
+        .device-status {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        /* Room Scenes Presets */
+        .scenes-row {
+            display: flex;
+            gap: 14px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .scene-chip {
+            background: var(--bg-neu);
+            box-shadow: var(--neu-btn);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-dim);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .scene-chip.active {
+            box-shadow: var(--neu-pressed);
+            color: var(--accent-blue);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 60px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            padding: 24px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <a href="website_design.html" class="brand">
+            <div class="brand-icon">
+                <i data-lucide="home"></i>
+            </div>
+            <span>NEO-HOME</span>
+            <span class="badge-style">Style #02: Neumorphism</span>
+        </a>
+        <a href="website_design.html" class="btn-hub">
+            <i data-lucide="grid"></i> กลับสู่ 10 Design Vault
+        </a>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container">
+        
+        <!-- Room Scenes Row -->
+        <div class="scenes-row">
+            <button class="scene-chip active" onclick="setScene(this, 'Living Room')">
+                <i data-lucide="tv"></i> ห้องนั่งเล่น (Living Room)
+            </button>
+            <button class="scene-chip" onclick="setScene(this, 'Master Bedroom')">
+                <i data-lucide="bed"></i> ห้องนอนใหญ่ (Bedroom)
+            </button>
+            <button class="scene-chip" onclick="setScene(this, 'Home Office')">
+                <i data-lucide="laptop"></i> ห้องทำงาน (Office)
+            </button>
+            <button class="scene-chip" onclick="setScene(this, 'Kitchen')">
+                <i data-lucide="coffee"></i> ห้องครัว (Kitchen)
+            </button>
+        </div>
+
+        <div class="grid-layout">
+            
+            <!-- Thermostat Control -->
+            <div class="neu-card" style="text-align:center;">
+                <h3 style="font-size:1.1rem; color:var(--text-dark); display:flex; align-items:center; justify-content:center; gap:8px;">
+                    <i data-lucide="thermometer" style="color:var(--accent-blue);"></i> ระบบปรับอากาศ
+                </h3>
+                <p style="font-size:0.8rem; color:var(--text-dim); margin-top:4px;" id="currentSceneText">ห้องนั่งเล่น · Living Room</p>
+
+                <!-- Soft Dial -->
+                <div class="thermostat-dial">
+                    <div class="thermostat-inner">
+                        <div class="temp-display" id="tempVal">24°</div>
+                        <div style="font-size:0.75rem; color:var(--text-dim); margin-top:4px;">COOLING ACTIVE</div>
+                    </div>
+                </div>
+
+                <div class="dial-controls">
+                    <button class="btn-dial" onclick="adjustTemp(-1)">-</button>
+                    <button class="btn-dial" onclick="adjustTemp(1)">+</button>
+                </div>
+            </div>
+
+            <!-- Smart Devices Controls Grid -->
+            <div>
+                <div class="neu-card">
+                    <h3 style="font-size:1.1rem; margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+                        <i data-lucide="sliders" style="color:var(--accent-emerald);"></i> อุปกรณ์ในห้องนั่งเล่น
+                    </h3>
+
+                    <div class="devices-grid">
+                        
+                        <!-- Device 1 -->
+                        <div class="device-card active" onclick="toggleDevice(this)">
+                            <div class="device-top">
+                                <div class="device-icon"><i data-lucide="lightbulb"></i></div>
+                                <div class="toggle-switch"><div class="toggle-pin"></div></div>
+                            </div>
+                            <div>
+                                <div class="device-name">ไฟส่องสว่างหลัก</div>
+                                <div class="device-status">เปิดใช้งาน (100% Brightness)</div>
+                            </div>
+                        </div>
+
+                        <!-- Device 2 -->
+                        <div class="device-card active" onclick="toggleDevice(this)">
+                            <div class="device-top">
+                                <div class="device-icon"><i data-lucide="air-vent"></i></div>
+                                <div class="toggle-switch"><div class="toggle-pin"></div></div>
+                            </div>
+                            <div>
+                                <div class="device-name">เครื่องฟอกอากาศ</div>
+                                <div class="device-status">AQI: 12 (Good)</div>
+                            </div>
+                        </div>
+
+                        <!-- Device 3 -->
+                        <div class="device-card" onclick="toggleDevice(this)">
+                            <div class="device-top">
+                                <div class="device-icon"><i data-lucide="speaker"></i></div>
+                                <div class="toggle-switch"><div class="toggle-pin"></div></div>
+                            </div>
+                            <div>
+                                <div class="device-name">ลำโพง Smart Audio</div>
+                                <div class="device-status">ปิดอยู่</div>
+                            </div>
+                        </div>
+
+                        <!-- Device 4 -->
+                        <div class="device-card active" onclick="toggleDevice(this)">
+                            <div class="device-top">
+                                <div class="device-icon"><i data-lucide="shield-check"></i></div>
+                                <div class="toggle-switch"><div class="toggle-pin"></div></div>
+                            </div>
+                            <div>
+                                <div class="device-name">กล้องรักษาความปลอดภัย</div>
+                                <div class="device-status">บันทึก 4K Active</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        © 2026 NEO-HOME — Neumorphic Soft UI Design Showcase
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        let currentTemp = 24;
+
+        function adjustTemp(delta) {
+            currentTemp += delta;
+            if (currentTemp < 16) currentTemp = 16;
+            if (currentTemp > 30) currentTemp = 30;
+            document.getElementById('tempVal').innerText = `${currentTemp}°`;
+        }
+
+        function toggleDevice(card) {
+            card.classList.toggle('active');
+            const statusEl = card.querySelector('.device-status');
+            if (card.classList.contains('active')) {
+                statusEl.innerText = 'เปิดใช้งาน';
+            } else {
+                statusEl.innerText = 'ปิดอยู่';
+            }
+        }
+
+        function setScene(btn, sceneName) {
+            document.querySelectorAll('.scene-chip').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('currentSceneText').innerText = `โซน: ${sceneName}`;
+        }
+    </script>
+</body>
+</html>
