@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POPOP STORE — Neo-Brutalism E-Commerce Vault</title>
+    <meta name="description" content="สไตล์การออกแบบ Neo-Brutalism ขอบดำหนาเตอะ เงาแข็งตัดระนาบ และสีสันสดใสป๊อบปูร่า">
+
+    <!-- Google Fonts & Lucide Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800;900&family=Prompt:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --bg-canvas: #fffdf8;
+            --ink-black: #000000;
+            --pop-yellow: #ffe600;
+            --pop-coral: #ff5964;
+            --pop-blue: #35a7ff;
+            --pop-green: #38b000;
+            --pop-purple: #9d4edd;
+
+            --border-thick: 3.5px solid var(--ink-black);
+            --shadow-hard: 6px 6px 0px var(--ink-black);
+            --shadow-hard-sm: 4px 4px 0px var(--ink-black);
+
+            --font-head: 'Plus Jakarta Sans', 'Prompt', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-canvas);
+            color: var(--ink-black);
+            font-family: var(--font-head);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        /* Marquee Ticker */
+        .marquee {
+            background: var(--pop-yellow);
+            border-bottom: var(--border-thick);
+            padding: 8px 0;
+            font-weight: 900;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .marquee-inner {
+            display: inline-block;
+            animation: marquee 15s linear infinite;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg-canvas);
+            border-bottom: var(--border-thick);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--ink-black);
+            font-weight: 900;
+            font-size: 1.4rem;
+        }
+
+        .brand-badge {
+            background: var(--pop-coral);
+            color: #fff;
+            border: var(--border-thick);
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 2px 10px;
+            box-shadow: 3px 3px 0px #000;
+        }
+
+        .btn-hub {
+            background: var(--pop-blue);
+            border: var(--border-thick);
+            box-shadow: var(--shadow-hard-sm);
+            color: #fff;
+            padding: 8px 18px;
+            text-decoration: none;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.1s ease;
+        }
+
+        .btn-hub:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #000;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 36px 24px 60px;
+        }
+
+        /* Hero Banner Card */
+        .hero-card {
+            background: var(--pop-yellow);
+            border: var(--border-thick);
+            box-shadow: var(--shadow-hard);
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 24px;
+        }
+
+        .hero-title {
+            font-size: 2.8rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 12px;
+        }
+
+        /* Products Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 28px;
+        }
+
+        .product-card {
+            background: #fff;
+            border: var(--border-thick);
+            box-shadow: var(--shadow-hard);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .sticker-tag {
+            position: absolute;
+            top: -12px;
+            right: 16px;
+            background: var(--pop-coral);
+            color: #fff;
+            border: 2px solid #000;
+            font-weight: 800;
+            font-size: 0.75rem;
+            padding: 2px 10px;
+            transform: rotate(4deg);
+            box-shadow: 2px 2px 0 #000;
+        }
+
+        .product-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin: 12px 0 6px;
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--pop-purple);
+        }
+
+        .btn-add-cart {
+            width: 100%;
+            background: var(--pop-green);
+            color: #fff;
+            border: var(--border-thick);
+            box-shadow: var(--shadow-hard-sm);
+            padding: 10px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            cursor: pointer;
+            margin-top: 14px;
+            transition: all 0.1s ease;
+        }
+
+        .btn-add-cart:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 #000;
+        }
+
+        /* Footer */
+        .footer {
+            border-top: var(--border-thick);
+            background: var(--pop-yellow);
+            padding: 24px;
+            text-align: center;
+            font-weight: 800;
+            margin-top: 60px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Marquee Banner -->
+    <div class="marquee">
+        <div class="marquee-inner">
+            🔥 FLASH SALE 50% OFF ★ NEO-BRUTALISM POP STORE ★ LIMITED EDITION GEAR ★ EXPRESS SHIPPING WORLDWIDE ★
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <a href="../pages/website_design.html" class="brand">
+            ⚡ POPOP STORE
+            <span class="brand-badge">Style #04: Neo-Brutalism</span>
+        </a>
+        <div style="display:flex; align-items:center; gap:16px;">
+            <div style="font-weight:900; background:#fff; border:var(--border-thick); padding:6px 14px; box-shadow:3px 3px 0 #000;">
+                🛒 ตะกร้า: <span id="cartCount">0</span> ชิ้น
+            </div>
+            <a href="../pages/website_design.html" class="btn-hub">
+                <i data-lucide="grid"></i> 10 DESIGN VAULT
+            </a>
+        </div>
+    </header>
+
+    <main class="container">
+        
+        <!-- Hero Section -->
+        <section class="hero-card">
+            <div>
+                <h1 class="hero-title">BOLD & POP VIBE GEAR</h1>
+                <p style="font-size:1.1rem; font-weight:700;">สินค้าสไตล์ Neo-Brutalism ออกแบบมาเพื่อสายครีเอเตอร์พันธุ์แท้!</p>
+            </div>
+            <button style="background:var(--pop-coral); color:#fff; border:var(--border-thick); box-shadow:var(--shadow-hard); padding:16px 32px; font-size:1.2rem; font-weight:900; cursor:pointer;" onclick="alert('กดช้อปสินค้าคอลเลกชันใหม่เรียบร้อย!')">
+                ช้อปเลย NOW ➔
+            </button>
+        </section>
+
+        <!-- Products Grid -->
+        <h2 style="font-size:1.6rem; font-weight:900; margin-bottom:20px;">🔥 สินค้าขายดีประจำสัปดาห์</h2>
+
+        <section class="products-grid">
+            
+            <!-- Product 1 -->
+            <div class="product-card">
+                <span class="sticker-tag">BESTSELLER</span>
+                <div style="font-size:3rem; text-align:center;">🎧</div>
+                <div class="product-title">Neo Pop Headphones</div>
+                <p style="font-size:0.85rem; font-weight:600;">หูฟังเสียงทรงพลัง พร้อมดีไซน์ขอบดำสุดเท่</p>
+                <div class="product-price">$89.00</div>
+                <button class="btn-add-cart" onclick="addToCart()">+ หยิบใส่ตะกร้า</button>
+            </div>
+
+            <!-- Product 2 -->
+            <div class="product-card">
+                <span class="sticker-tag" style="background:var(--pop-yellow); color:#000;">NEW DEAL</span>
+                <div style="font-size:3rem; text-align:center;">⌨️</div>
+                <div class="product-title">Mechanical Pop Keyboard</div>
+                <p style="font-size:0.85rem; font-weight:600;">คีย์บอร์ดกลไกสวิตช์สัมผัส tactile สไตล์ป๊อบ</p>
+                <div class="product-price">$129.00</div>
+                <button class="btn-add-cart" onclick="addToCart()">+ หยิบใส่ตะกร้า</button>
+            </div>
+
+            <!-- Product 3 -->
+            <div class="product-card">
+                <span class="sticker-tag" style="background:var(--pop-blue);">LIMITED</span>
+                <div style="font-size:3rem; text-align:center;">🎒</div>
+                <div class="product-title">Brutal Tech Backpack</div>
+                <p style="font-size:0.85rem; font-weight:600;">กระเป๋าเป้กันน้ำ ลุยได้ทุกสถานการณ์</p>
+                <div class="product-price">$69.00</div>
+                <button class="btn-add-cart" onclick="addToCart()">+ หยิบใส่ตะกร้า</button>
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        © 2026 POPOP STORE — NEO-BRUTALISM DESIGN SHOWCASE
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        let count = 0;
+        function addToCart() {
+            count++;
+            document.getElementById('cartCount').innerText = count;
+            alert('เพิ่มสินค้าลงตะกร้าเรียบร้อย!');
+        }
+    </script>
+</body>
+</html>
