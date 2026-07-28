@@ -33,14 +33,16 @@ Update sync_showcase.sh script to implement robust Python two-pass mirror sync a
 - **Code layout**: /root/ai-workspace/test/sync_showcase.sh
 
 ## Change Tracker
-- **Files modified**: None yet
-- **Build status**: Not run yet
+- **Files modified**: 
+  - `/root/ai-workspace/test/sync_showcase.sh` — Updated with two-pass Python mirror sync & expanded exclusions (`.git`, `.agents`, `.gemini`).
+  - `/root/ai-workspace/showcase/website-design` — Removed legacy obsolete folder.
+- **Build status**: Pass (sync script executed successfully and pushed to remote repo).
 - **Pending issues**: None
 
 ## Quality Status
-- **Build/test result**: TBD
+- **Build/test result**: Pass (Verified target structure: 10 themes, 4 apps, 5 pages, 0 stale root HTML files).
 - **Lint status**: N/A
-- **Tests added/modified**: N/A
+- **Tests added/modified**: Integrated Python verification assertions.
 
 ## Loaded Skills
 - None
