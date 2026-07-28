@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS SaaS — Clean Swiss Corporate Platform</title>
+    <meta name="description" content="สไตล์การออกแบบ Clean Corporate SaaS มาตรฐานระดับโลก เน้นความสะอาดตา โทนสว่าง อ่านง่าย">
+
+    <!-- Google Fonts & Lucide Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --bg-saas: #f8fafc;
+            --card-white: #ffffff;
+            --border-slate: #e2e8f0;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --brand-blue: #2563eb;
+            --brand-blue-hover: #1d4ed8;
+            --accent-green: #10b981;
+
+            --font-main: 'Inter', 'Prompt', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-saas);
+            color: var(--text-dark);
+            font-family: var(--font-main);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-slate);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 800;
+            font-size: 1.25rem;
+        }
+
+        .brand-logo {
+            width: 36px;
+            height: 36px;
+            background: var(--brand-blue);
+            color: #fff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .badge-style {
+            background: #eff6ff;
+            color: var(--brand-blue);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .btn-hub {
+            background: var(--bg-saas);
+            border: 1px solid var(--border-slate);
+            color: var(--text-dark);
+            padding: 8px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-hub:hover {
+            border-color: var(--brand-blue);
+            color: var(--brand-blue);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            max-width: 780px;
+            margin: 0 auto 60px;
+        }
+
+        .hero-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #eff6ff;
+            color: var(--brand-blue);
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: 30px;
+            margin-bottom: 20px;
+        }
+
+        .hero-title {
+            font-size: 3.2rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            margin-bottom: 16px;
+        }
+
+        .hero-desc {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+        }
+
+        .btn-primary {
+            background: var(--brand-blue);
+            color: #fff;
+            padding: 14px 28px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .btn-primary:hover { background: var(--brand-blue-hover); }
+
+        /* Pricing Section */
+        .pricing-section {
+            background: var(--card-white);
+            border: 1px solid var(--border-slate);
+            border-radius: 16px;
+            padding: 48px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.04);
+            margin-top: 40px;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 28px;
+            margin-top: 36px;
+        }
+
+        .price-card {
+            background: var(--bg-saas);
+            border: 1px solid var(--border-slate);
+            border-radius: 12px;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .price-card.popular {
+            background: #fff;
+            border: 2px solid var(--brand-blue);
+            box-shadow: 0 20px 30px -10px rgba(37, 99, 235, 0.15);
+            position: relative;
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -14px;
+            right: 24px;
+            background: var(--brand-blue);
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 12px;
+        }
+
+        .price-val {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 12px 0;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid var(--border-slate);
+            padding: 32px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 60px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <a href="../pages/website_design.html" class="brand">
+            <div class="brand-logo"><i data-lucide="layers"></i></div>
+            <span>NEXUS</span>
+            <span class="badge-style">Style #05: Clean SaaS</span>
+        </a>
+        <a href="../pages/website_design.html" class="btn-hub">
+            <i data-lucide="grid"></i> 10 DESIGN VAULT
+        </a>
+    </header>
+
+    <main class="container">
+        
+        <!-- Hero -->
+        <section class="hero">
+            <div class="hero-pill">
+                <i data-lucide="sparkles" style="width:14px;height:14px;"></i> SaaS Platform 3.0 Release
+            </div>
+            <h1 class="hero-title">บริหารจัดการทีมและโปรเจกต์อย่างไร้ขีดจำกัด</h1>
+            <p class="hero-desc">
+                แพลตฟอร์มการทำงานร่วมกันระดับองค์กร ออกแบบด้วยสไตล์ Swiss Modern สะอาดตา เพิ่มประสิทธิภาพการทำงานถึง 300%
+            </p>
+            <button class="btn-primary" onclick="alert('สมัครทดลองใช้งานฟรี 14 วัน!')">เริ่มต้นใช้งานฟรี 14 วัน (ไม่ต้องใช้บัตรเครดิต)</button>
+        </section>
+
+        <!-- Pricing Section -->
+        <section class="pricing-section">
+            <div style="text-align:center;">
+                <h2 style="font-size:2rem; font-weight:800;">แพ็กเกจราคาที่เหมาะกับทีมของคุณ</h2>
+                <p style="color:var(--text-muted); margin-top:6px;">ไม่มีค่าธรรมเนียมแอบแฝง ยกเลิกได้ตลอดเวลา</p>
+            </div>
+
+            <div class="pricing-grid">
+                
+                <!-- Starter -->
+                <div class="price-card">
+                    <div>
+                        <div style="font-weight:700; color:var(--text-muted);">STARTER</div>
+                        <div class="price-val">$19 <span style="font-size:1rem; font-weight:400; color:var(--text-muted);">/เดือน</span></div>
+                        <p style="font-size:0.85rem; color:var(--text-muted);">สำหรับฟรีแลนซ์และสตาร์ทอัพเริ่มต้น</p>
+                        
+                        <ul class="feature-list">
+                            <li class="feature-item"><i data-lucide="check" style="color:var(--accent-green); width:16px; height:16px;"></i> รองรับผู้ใช้สูงสุด 5 คน</li>
+                            <li class="feature-item"><i data-lucide="check" style="color:var(--accent-green); width:16px; height:16px;"></i> พื้นที่เก็บข้อมูล 10GB</li>
+                            <li class="feature-item"><i data-lucide="check" style="color:var(--accent-green); width:16px; height:16px;"></i> รายงานสถิติประจำสัปดาห์</li>
+                        </ul>
+                    </div>
+                    <button class="btn-hub" style="width:100%; text-align:center;" onclick="alert('เลือกแพ็กเกจ Starter')">เลือก Starter</button>
+                </div>
+
+                <!-- Professional -->
+                <div class="price-card popular">
+                    <span class="popular-badge">RECOMMENDED</span>
+                    <div>
+                        <div style="font-weight:700; color:var(--brand-blue);">PROFESSIONAL</div>
+                        <div class="price-val">$49 <span style="font-size:1rem; font-weight:400; color:var(--text-muted);">/เดือน</span></div>
+                        <p style="font-size:0.85rem; color:var(--text-muted);">สำหรับทีมที่ต้องการเติบโตอย่างก้าวกระโดด</p>
+                        
+                        <ul class="feature-list">
+                            <li class="feature-item"><i data-lucide="check" style="color:var(--accent-green); width:16px; height:16px;"></i> ผู้ใช้งานไม่จำกัดจำนวน</li>
+                            <li class="feature-item"><i data-lucide="check" style="color:var(--accent-green); width:16px; height:16px;"></i> พื้นที่เก็บข้อมูล Cloud 500GB</li>
+                            <li class="feature-item"><i data-lucide="check" style="color:var(--accent-green); width:16px; height:16px;"></i> ระบบ AI Prompt Assistant</li>
+                            <li class="feature-item"><i data-lucide="check" style="color:var(--accent-green); width:16px; height:16px;"></i> Support ดูแลตลอด 24 ชั่วโมง</li>
+                        </ul>
+                    </div>
+                    <button class="btn-primary" style="width:100%;" onclick="alert('เลือกแพ็กเกจ Professional')">เริ่มต้นใช้งาน Pro</button>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        © 2026 NEXUS PLATFORM — CLEAN CORPORATE SAAS SHOWCASE
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

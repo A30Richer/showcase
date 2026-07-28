@@ -1,0 +1,1206 @@
+{
+  "cute_quiz.html": {
+    "path": "cute_quiz.html",
+    "line_count": 535,
+    "hrefs": [
+      {
+        "line": 8,
+        "val": "https://fonts.googleapis.com"
+      },
+      {
+        "line": 9,
+        "val": "https://fonts.gstatic.com"
+      },
+      {
+        "line": 10,
+        "val": "https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600&display=swap"
+      },
+      {
+        "line": 391,
+        "val": "index.html"
+      }
+    ],
+    "srcs": [
+      {
+        "line": 11,
+        "val": "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"
+      }
+    ],
+    "js_refs": [],
+    "iframes": [],
+    "styles": [],
+    "fetches": []
+  },
+  "index.html": {
+    "path": "index.html",
+    "line_count": 981,
+    "hrefs": [
+      {
+        "line": 10,
+        "val": "https://fonts.googleapis.com"
+      },
+      {
+        "line": 11,
+        "val": "https://fonts.gstatic.com"
+      },
+      {
+        "line": 12,
+        "val": "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap"
+      },
+      {
+        "line": 439,
+        "val": "index.html"
+      },
+      {
+        "line": 484,
+        "val": "reports/market-monitor.html"
+      },
+      {
+        "line": 502,
+        "val": "reports/vp-breakout.html"
+      },
+      {
+        "line": 522,
+        "val": "main.html"
+      },
+      {
+        "line": 540,
+        "val": "reports/gold-small-account.html"
+      },
+      {
+        "line": 558,
+        "val": "present_agy_cli.html"
+      },
+      {
+        "line": 578,
+        "val": "cute_quiz.html"
+      },
+      {
+        "line": 596,
+        "val": "love_counter.html"
+      },
+      {
+        "line": 614,
+        "val": "second_brain.html"
+      },
+      {
+        "line": 653,
+        "val": "youtube_downloader.html"
+      },
+      {
+        "line": 671,
+        "val": "vocal_remover.html"
+      },
+      {
+        "line": 689,
+        "val": "shop_vouchers.html"
+      },
+      {
+        "line": 709,
+        "val": "website_design.html"
+      },
+      {
+        "line": 727,
+        "val": "style_01_glassmorphic.html"
+      },
+      {
+        "line": 745,
+        "val": "style_02_neumorphic.html"
+      },
+      {
+        "line": 763,
+        "val": "style_03_cyberpunk.html"
+      },
+      {
+        "line": 781,
+        "val": "style_04_neobrutalism.html"
+      },
+      {
+        "line": 799,
+        "val": "style_05_clean_saas.html"
+      },
+      {
+        "line": 817,
+        "val": "style_06_synthwave.html"
+      },
+      {
+        "line": 835,
+        "val": "style_07_luxury_gold.html"
+      },
+      {
+        "line": 853,
+        "val": "style_08_bento_grid.html"
+      },
+      {
+        "line": 871,
+        "val": "style_09_claymorphism.html"
+      },
+      {
+        "line": 889,
+        "val": "style_10_hacker_terminal.html"
+      }
+    ],
+    "srcs": [
+      {
+        "line": 13,
+        "val": "https://unpkg.com/lucide@latest"
+      }
+    ],
+    "js_refs": [],
+    "iframes": [],
+    "styles": [],
+    "fetches": [
+      {
+        "line": 928,
+        "val": "https://api.github.com/repos/A30Richer/showcase/commits/main"
+      }
+    ]
+  },
+  "love_counter.html": {
+    "path": "love_counter.html",
+    "line_count": 582,
+    "hrefs": [
+      {
+        "line": 9,
+        "val": "https://fonts.googleapis.com"
+      },
+      {
+        "line": 10,
+        "val": "https://fonts.gstatic.com"
+      },
+      {
+        "line": 11,
+        "val": "https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600&family=Outfit:wght@400;700;900&family=Space+Grotesk:wght@400;600;700&display=swap"
+      },
+      {
+        "line": 14,
+        "val": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      }
+    ],
+    "srcs": [
+      {
+        "line": 15,
+        "val": "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"
+      }
+    ],
+    "js_refs": [],
+    "iframes": [],
+    "styles": [
+      {
+        "line": 75,
+        "val": "https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=1600&auto=format&fit=crop"
+      }
+    ],
+    "fetches": []
+  },
+  "main.html": {
+    "path": "main.html",
+    "line_count": 467,
+    "hrefs": [
+      {
+        "line": 10,
+        "val": "https://fonts.googleapis.com"
+      },
+      {
+        "line": 11,
+        "val": "https://fonts.gstatic.com"
+      },
+      {
+        "line": 12,
+        "val": "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap"
+      },
+      {
+        "line": 298,
+        "val": "main.html"
+      },
+      {
+        "line": 306,
+        "val": "main.html"
+      },
+      {
+        "line": 307,
+        "val": "reports/gold-small-account.html"
+      },
+      {
+        "line": 308,
+        "val": "reports/vp-breakout.html"
+      },
+      {
+        "line": 309,
+        "val": "reports/gold-high-profit.html"
+      },
+      {
+        "line": 310,
+        "val": "reports/us100-daytrade.html"
+      },
+      {
+        "line": 311,
+        "val": "reports/market-monitor.html"
+      },
+      {
+        "line": 362,
+        "val": "reports/gold-small-account.html"
+      },
+      {
+        "line": 391,
+        "val": "reports/vp-breakout.html"
+      },
+      {
+        "line": 420,
+        "val": "reports/gold-high-profit.html"
+      },
+      {
+        "line": 449,
+        "val": "reports/us100-daytrade.html"
+      }
+    ],
+    "srcs": [
+      {
+        "line": 13,
+        "val": "https://unpkg.com/lucide@latest"
+      },
+      {
+        "line": 341,
+        "val": "assets/images/gold_micro_100_backtest_chart.png"
+      },
+      {
+        "line": 370,
+        "val": "assets/images/vp_breakout_best_chart.png"
+      },
+      {
+        "line": 399,
+        "val": "assets/images/gold_backtest_results.png"
+      },
+      {
+        "line": 428,
+        "val": "assets/images/us100_backtest_results.png"
+      }
+    ],
+    "js_refs": [],
+    "iframes": [],
+    "styles": [],
+    "fetches": []
+  },
+  "present_agy_cli.html": {
+    "path": "present_agy_cli.html",
+    "line_count": 592,
+    "hrefs": [
+      {
+        "line": 9,
+        "val": "https://fonts.googleapis.com"
+      },
+      {
+        "line": 10,
+        "val": "https://fonts.gstatic.com"
+      },
+      {
+        "line": 11,
+        "val": "https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600&family=Outfit:wght@400;600;700;800;900&family=Space+Grotesk:wght@400;600;700&display=swap"
+      },
+      {
+        "line": 14,
+        "val": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      },
+      {
+        "line": 270,
+        "val": "index.html"
+      }
+    ],
+    "srcs": [],
+    "js_refs": [],
+    "iframes": [],
+    "styles": [],
+    "fetches": []
+  },
+  "reports/gold-high-profit.html": {
+    "path": "reports/gold-high-profit.html",
+    "line_count": 101,
+    "hrefs": [
+      {
+        "line": 7,
+        "val": "https://fonts.googleapis.com"
+      },
+      {
+        "line": 8,
+        "val": "https://fonts.gstatic.com"
+      },
+      {
+        "line": 9,
+        "val": "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap"
+      },
+      {
+        "line": 50,
+        "val": "../main.html"
+      },
+      {
+        "line": 56,
+        "val": "../main.html"
+      },
+      {
+        "line": 57,
+        "val": "vp-breakout.html"
+      },
+      {
+        "line": 58,
+        "val": "gold-high-profit.html"
+      },
+      {
+        "line": 59,
+        "val": "us100-daytrade.html"
+      },
+      {
+        "line": 60,
+        "val": "market-monitor.html"
+      },
+      {
+        "line": 67,
+        "val": "../main.html"
+      }
+    ],
+    "srcs": [
+      {
+        "line": 10,
+        "val": "https://unpkg.com/lucide@latest"
+      },
+      {
+        "line": 92,
+        "val": "../assets/images/gold_backtest_results.png"
+      }
+    ],
+    "js_refs": [],
+    "iframes": [],
+    "styles": [],
+    "fetches": []
+  },
+  "reports/gold-small-account.html": {
+    "path": "reports/gold-small-account.html",
+    "line_count": 314,
+    "hrefs": [
+      {
+        "line": 7,
+        "val": "https://fonts.googleapis.com"
+      },
+      {
+        "line": 8,
+        "val": "https://fonts.gstatic.com"
+      },
+      {
+        "line": 9,
+        "val": "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap"
+      },
+      {
+        "line": 78,
+        "val": "../main.html"
+      },
+      {
+        "line": 84,
+        "val": "../main.html"
+      },
+      {
+        "line": 85,
+        "val": "gold-small-account.html"
+      },
+      {
+        "line": 86,
+        "val": "vp-breakout.html"
+      },
+      {
+        "line": 87,
+        "val": "gold-high-profit.html"
+      },
+      {
+        "line": 88,
+        "val": "us100-daytrade.html"
+      },
+      {
+        "line": 95,
+        "val": "../main.html"
+      }
+    ],
+    "srcs": [
+      {
+        "line": 10,
+        "val": "https://unpkg.com/lucide@latest"
+      },
+      {
+        "line": 304,
+        "val": "../assets/images/gold_micro_100_backtest_chart.png"
+      }
+    ],
+    "js_refs": [],
+    "iframes": [],
+    "styles": [],
+    "fetches": []
+  },
+  "reports/market-monitor.html": {
+    "path": "reports/market-monitor.html",
+    "line_count": 96,
+    "hrefs": [
+      {
+        "line": 7,
+        "val": "https://fonts.googleapis.com"
+      },
+      {
+        "line": 8,
+        "val": "https://fonts.gstatic.com"
+      },
+      {
+        "line": 9,
+        "val": "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap"
+      },
+      {
+        "line": 49,
+        "val": "../main.html"
+      },
+      {
+        "line": 55,
+        "val": "../main.html"
+      },
+      {
+        "line": 56,
+        "val": "vp-breakout.html"
+      },
+      {
+        "line": 57,
+        "val": "gold-high-profit.html"
+      },
+      {
+        "line": 58,
+        "val": "us100-daytrade.html"
+      },
+      {
+        "line": 59,
+        "val": "market-monitor.html"
+      },
+      {
+        "line": 66,
+        "val": "../main.html"
+      }
+    ],
+    "srcs": [
+      {
+        "line": 10,
+        "val": "https://unpkg.com/lucide@latest"
+      },
+      {
+        "line": 87,
+        "val": "../assets/images/vp_zones_chart.png"
+      }
+    ],
+    "js_refs": [],
+    "iframes": [],
+    "styles": [],
+    "fetches": []
+  },
+  "reports/us100-daytrade.html": {
+    "path": "reports/us100-daytrade.html",
+    "line_count": 101,
+    "hrefs": [
+      {
+        "line": 7,
+        "val": "https://fonts.googleapis.com"
+      },
+      {
+        "line": 8,
+        "val": "https://fonts.gstatic.com"
+      },
+      {
+        "line": 9,
+        "val": "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap"
+      },
+      {
+        "line": 50,
+        "val": "../main.html"
+      },
+      {
+        "line": 56,
+        "val": "../main.html"
+      },
+      {
+        "line": 57,
+        "val": "vp-breakout.html"
+      },
+      {
+        "line": 58,
+        "val": "gold-high-profit.html"
+      },
+      {
+        "line": 59,
+        "val": "us100-daytrade.html"
+      },
+      {
+        "line": 60,
+        "val": "market-monitor.html"
+      },
+      {
+        "line": 67,
+        "val": "../main.html"
+      }
+    ],
+    "srcs": [
+      {
+        "line": 10,
+        "val": "https://unpkg.com/lucide@latest"
+      },
+      {
+        "line": 92,
+        "val": "../assets/images/us100_backtest_results.png"
+      }
+    ],
+    "js_refs": [],
+    "iframes": [],
+    "styles": [],
+    "fetches": []
+  },
+  "reports/vp-breakout.html": {
+    "path": "reports/vp-breakout.html",
+    "line_count": 106,
+    "hrefs": [
+      {
+        "line": 7,
+        "val": "https://fonts.googleapis.com"
+      },
+      {
+        "line": 8,
+        "val": "https://fonts.gstatic.com"
+      },
+      {
+        "line": 9,
+        "val": "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap"
+      },
+      {
+        "line": 50,
+        "val": "../main.html"
+      },
+      {
+        "line": 56,
+        "val": "../main.html"
+      },
+      {
+        "line": 57,
+        "val": "vp-breakout.html"
+      },
+      {
+        "line": 58,
+        "val": "gold-high-profit.html"
+      },
+      {
+        "line": 59,
+        "val": "us100-daytrade.html"
+      },
+      {
+        "line": 60,
+        "val": "market-monitor.html"
+      },
+      {
+        "line": 67,
+        "val": "../main.html"
+      }
+    ],
+    "srcs": [
+      {
+        "line": 10,
+        "val": "https://unpkg.com/lucide@latest"
+      },
+      {
+        "line": 92,
+        "val": "../assets/images/vp_breakout_best_chart.png"
+      },
+      {
+        "line": 97,
+        "val": "../assets/images/vp_zones_chart.png"
+      }
+    ],
+    "js_refs": [],
+    "iframes": [],
+    "styles": [],
+    "fetches": []
+  },
+  "second_brain.html": {
+    "path": "second_brain.html",
+    "line_count": 546,
+    "hrefs": [
+      {
+        "line": 9,
+        "val": "https://fonts.googleapis.com"
+      },
+      {
+        "line": 10,
+        "val": "https://fonts.gstatic.com"
+      },
+      {
+        "line": 11,
+        "val": "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Mitr:wght@300;400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap"
+      },
+      {
+        "line": 14,
+        "val": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      },
+      {
+        "line": 293,
+        "val": "index.html"
+      },
+      {
+        "line": 304,
+        "val": "index.html"
+      }
+    ],
+    "srcs": [
+      {
+        "line": 15,
+        "val": "https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"
+      }
+    ],
+    "js_refs": [],
+    "iframes": [],
+    "styles": [],
+    "fetches": []
+  },
+  "shop_vouchers.html": {
+    "path": "shop_vouchers.html",
+    "line_count": 1293,
+    "hrefs": [
+      {
+        "line": 7,
+        "val": "https://fonts.googleapis.com"
+      },
+      {
+        "line": 8,
+        "val": "https://fonts.gstatic.com"
+      },
+      {
+        "line": 9,
+        "val": "https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap"
+      }
+    ],
+    "srcs": [
+      {
+        "line": 1241,
+        "val": "${shop.avatar}"
+      }
+    ],
+    "js_refs": [],
+    "iframes": [],
+    "styles": [],
+    "fetches": []
+  },
+  "style_01_glassmorphic.html": {
+    "path": "style_01_glassmorphic.html",
+    "line_count": 544,
+    "hrefs": [
+      {
+        "line": 10,
+        "val": "https://fonts.googleapis.com"
+      },
+      {
+        "line": 11,
+        "val": "https://fonts.gstatic.com"
+      },
+      {
+        "line": 12,
+        "val": "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap"
+      },
+      {
+        "line": 369,
+        "val": "website_design.html"
+      },
+      {
+        "line": 376,
+        "val": "website_design.html"
+      }
+    ],
+    "srcs": [
+      {
+        "line": 13,
+        "val": "https://unpkg.com/lucide@latest"
+      }
+    ],
+    "js_refs": [],
+    "iframes": [],
+    "styles": [],
+    "fetches": []
+  },
+  "style_02_neumorphic.html": {
+    "path": "style_02_neumorphic.html",
+    "line_count": 480,
+    "hrefs": [
+      {
+        "line": 10,
+        "val": "https://fonts.googleapis.com"
+      },
+      {
+        "line": 11,
+        "val": "https://fonts.gstatic.com"
+      },
+      {
+        "line": 12,
+        "val": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap"
+      },
+      {
+        "line": 327,
+        "val": "website_design.html"
+      },
+      {
+        "line": 334,
+        "val": "website_design.html"
+      }
+    ],
+    "srcs": [
+      {
+        "line": 13,
+        "val": "https://unpkg.com/lucide@latest"
+      }
+    ],
+    "js_refs": [],
+    "iframes": [],
+    "styles": [],
+    "fetches": []
+  },
+  "style_03_cyberpunk.html": {
+    "path": "style_03_cyberpunk.html",
+    "line_count": 276,
+    "hrefs": [
+      {
+        "line": 10,
+        "val": "https://fonts.googleapis.com"
+      },
+      {
+        "line": 11,
+        "val": "https://fonts.gstatic.com"
+      },
+      {
+        "line": 12,
+        "val": "https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Share+Tech+Mono&family=Prompt:wght@300;400;500;600;700&display=swap"
+      },
+      {
+        "line": 179,
+        "val": "website_design.html"
+      },
+      {
+        "line": 183,
+        "val": "website_design.html"
+      }
+    ],
+    "srcs": [
+      {
+        "line": 13,
+        "val": "https://unpkg.com/lucide@latest"
+      }
+    ],
+    "js_refs": [],
+    "iframes": [],
+    "styles": [],
+    "fetches": []
+  },
+  "style_04_neobrutalism.html": {
+    "path": "style_04_neobrutalism.html",
+    "line_count": 313,
+    "hrefs": [
+      {
+        "line": 10,
+        "val": "https://fonts.googleapis.com"
+      },
+      {
+        "line": 11,
+        "val": "https://fonts.gstatic.com"
+      },
+      {
+        "line": 12,
+        "val": "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800;900&family=Prompt:wght@400;600;700;800&display=swap"
+      },
+      {
+        "line": 232,
+        "val": "website_design.html"
+      },
+      {
+        "line": 240,
+        "val": "website_design.html"
+      }
+    ],
+    "srcs": [
+      {
+        "line": 13,
+        "val": "https://unpkg.com/lucide@latest"
+      }
+    ],
+    "js_refs": [],
+    "iframes": [],
+    "styles": [],
+    "fetches": []
+  },
+  "style_05_clean_saas.html": {
+    "path": "style_05_clean_saas.html",
+    "line_count": 322,
+    "hrefs": [
+      {
+        "line": 10,
+        "val": "https://fonts.googleapis.com"
+      },
+      {
+        "line": 11,
+        "val": "https://fonts.gstatic.com"
+      },
+      {
+        "line": 12,
+        "val": "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap"
+      },
+      {
+        "line": 242,
+        "val": "website_design.html"
+      },
+      {
+        "line": 247,
+        "val": "website_design.html"
+      }
+    ],
+    "srcs": [
+      {
+        "line": 13,
+        "val": "https://unpkg.com/lucide@latest"
+      }
+    ],
+    "js_refs": [],
+    "iframes": [],
+    "styles": [],
+    "fetches": []
+  },
+  "style_06_synthwave.html": {
+    "path": "style_06_synthwave.html",
+    "line_count": 212,
+    "hrefs": [
+      {
+        "line": 10,
+        "val": "https://fonts.googleapis.com"
+      },
+      {
+        "line": 11,
+        "val": "https://fonts.gstatic.com"
+      },
+      {
+        "line": 12,
+        "val": "https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Outfit:wght@500;700;800&family=Prompt:wght@400;600;700&display=swap"
+      },
+      {
+        "line": 147,
+        "val": "website_design.html"
+      },
+      {
+        "line": 151,
+        "val": "website_design.html"
+      }
+    ],
+    "srcs": [
+      {
+        "line": 13,
+        "val": "https://unpkg.com/lucide@latest"
+      }
+    ],
+    "js_refs": [],
+    "iframes": [],
+    "styles": [],
+    "fetches": []
+  },
+  "style_07_luxury_gold.html": {
+    "path": "style_07_luxury_gold.html",
+    "line_count": 216,
+    "hrefs": [
+      {
+        "line": 10,
+        "val": "https://fonts.googleapis.com"
+      },
+      {
+        "line": 11,
+        "val": "https://fonts.gstatic.com"
+      },
+      {
+        "line": 12,
+        "val": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600&display=swap"
+      },
+      {
+        "line": 165,
+        "val": "website_design.html"
+      },
+      {
+        "line": 169,
+        "val": "website_design.html"
+      }
+    ],
+    "srcs": [
+      {
+        "line": 13,
+        "val": "https://unpkg.com/lucide@latest"
+      }
+    ],
+    "js_refs": [],
+    "iframes": [],
+    "styles": [],
+    "fetches": []
+  },
+  "style_08_bento_grid.html": {
+    "path": "style_08_bento_grid.html",
+    "line_count": 204,
+    "hrefs": [
+      {
+        "line": 10,
+        "val": "https://fonts.googleapis.com"
+      },
+      {
+        "line": 11,
+        "val": "https://fonts.gstatic.com"
+      },
+      {
+        "line": 12,
+        "val": "https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&family=Prompt:wght@300;400;500;600&display=swap"
+      },
+      {
+        "line": 149,
+        "val": "website_design.html"
+      },
+      {
+        "line": 153,
+        "val": "website_design.html"
+      }
+    ],
+    "srcs": [
+      {
+        "line": 13,
+        "val": "https://unpkg.com/lucide@latest"
+      }
+    ],
+    "js_refs": [],
+    "iframes": [],
+    "styles": [],
+    "fetches": []
+  },
+  "style_09_claymorphism.html": {
+    "path": "style_09_claymorphism.html",
+    "line_count": 162,
+    "hrefs": [
+      {
+        "line": 10,
+        "val": "https://fonts.googleapis.com"
+      },
+      {
+        "line": 11,
+        "val": "https://fonts.gstatic.com"
+      },
+      {
+        "line": 12,
+        "val": "https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Outfit:wght@500;600;700&family=Prompt:wght@400;600;700&display=swap"
+      },
+      {
+        "line": 116,
+        "val": "website_design.html"
+      },
+      {
+        "line": 120,
+        "val": "website_design.html"
+      }
+    ],
+    "srcs": [
+      {
+        "line": 13,
+        "val": "https://unpkg.com/lucide@latest"
+      }
+    ],
+    "js_refs": [],
+    "iframes": [],
+    "styles": [],
+    "fetches": []
+  },
+  "style_10_hacker_terminal.html": {
+    "path": "style_10_hacker_terminal.html",
+    "line_count": 233,
+    "hrefs": [
+      {
+        "line": 10,
+        "val": "https://fonts.googleapis.com"
+      },
+      {
+        "line": 11,
+        "val": "https://fonts.gstatic.com"
+      },
+      {
+        "line": 12,
+        "val": "https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap"
+      },
+      {
+        "line": 153,
+        "val": "website_design.html"
+      },
+      {
+        "line": 157,
+        "val": "website_design.html"
+      }
+    ],
+    "srcs": [
+      {
+        "line": 13,
+        "val": "https://unpkg.com/lucide@latest"
+      }
+    ],
+    "js_refs": [],
+    "iframes": [],
+    "styles": [],
+    "fetches": []
+  },
+  "vocal_remover.html": {
+    "path": "vocal_remover.html",
+    "line_count": 503,
+    "hrefs": [
+      {
+        "line": 9,
+        "val": "https://fonts.googleapis.com"
+      },
+      {
+        "line": 10,
+        "val": "https://fonts.gstatic.com"
+      },
+      {
+        "line": 11,
+        "val": "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      },
+      {
+        "line": 369,
+        "val": "index.html"
+      },
+      {
+        "line": 377,
+        "val": "index.html"
+      },
+      {
+        "line": 439,
+        "val": "https://github.com/A30Richer/showcase/actions/workflows/vocal_remover.yml"
+      }
+    ],
+    "srcs": [
+      {
+        "line": 14,
+        "val": "https://unpkg.com/lucide@latest"
+      },
+      {
+        "line": 467,
+        "val": "https://raw.githubusercontent.com/facebookresearch/demucs/main/samples/htdemucs_vocals.mp3"
+      },
+      {
+        "line": 481,
+        "val": "https://raw.githubusercontent.com/facebookresearch/demucs/main/samples/htdemucs_no_vocals.mp3"
+      }
+    ],
+    "js_refs": [],
+    "iframes": [],
+    "styles": [],
+    "fetches": []
+  },
+  "website-design/index.html": {
+    "path": "website-design/index.html",
+    "line_count": 918,
+    "hrefs": [
+      {
+        "line": 8,
+        "val": "https://fonts.googleapis.com"
+      },
+      {
+        "line": 9,
+        "val": "https://fonts.gstatic.com"
+      },
+      {
+        "line": 10,
+        "val": "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap"
+      },
+      {
+        "line": 392,
+        "val": "#"
+      }
+    ],
+    "srcs": [],
+    "js_refs": [],
+    "iframes": [],
+    "styles": [],
+    "fetches": []
+  },
+  "website_design.html": {
+    "path": "website_design.html",
+    "line_count": 1411,
+    "hrefs": [
+      {
+        "line": 10,
+        "val": "https://fonts.googleapis.com"
+      },
+      {
+        "line": 11,
+        "val": "https://fonts.gstatic.com"
+      },
+      {
+        "line": 12,
+        "val": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400&family=Fira+Code:wght@400;600&family=Fredoka:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Orbitron:wght@600;800;900&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;700;800&family=Press+Start+2P&family=Prompt:wght@300;400;500;600;700&display=swap"
+      },
+      {
+        "line": 807,
+        "val": "index.html"
+      },
+      {
+        "line": 817,
+        "val": "index.html"
+      },
+      {
+        "line": 1303,
+        "val": "${item.pageUrl}"
+      }
+    ],
+    "srcs": [
+      {
+        "line": 15,
+        "val": "https://unpkg.com/lucide@latest"
+      }
+    ],
+    "js_refs": [],
+    "iframes": [],
+    "styles": [],
+    "fetches": []
+  },
+  "youtube_downloader.html": {
+    "path": "youtube_downloader.html",
+    "line_count": 898,
+    "hrefs": [
+      {
+        "line": 9,
+        "val": "https://fonts.googleapis.com"
+      },
+      {
+        "line": 10,
+        "val": "https://fonts.gstatic.com"
+      },
+      {
+        "line": 11,
+        "val": "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      },
+      {
+        "line": 550,
+        "val": "index.html"
+      },
+      {
+        "line": 558,
+        "val": "index.html"
+      },
+      {
+        "line": 674,
+        "val": "#"
+      }
+    ],
+    "srcs": [
+      {
+        "line": 14,
+        "val": "https://unpkg.com/lucide@latest"
+      },
+      {
+        "line": 635,
+        "val": ""
+      }
+    ],
+    "js_refs": [],
+    "iframes": [],
+    "styles": [],
+    "fetches": []
+  }
+}

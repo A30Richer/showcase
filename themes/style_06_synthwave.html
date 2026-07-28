@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYNTH-RADIO 1984 — Retro 80s Arcade Lounge</title>
+    <meta name="description" content="สไตล์การออกแบบ Synthwave 80s Retro Neon แสงเรืองชมพู Hot Pink ตู้เกมย้อนยุค">
+
+    <!-- Google Fonts & Lucide Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Outfit:wght@500;700;800&family=Prompt:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --bg-synth: #120428;
+            --hot-pink: #ff2a85;
+            --neon-violet: #9d4edd;
+            --turquoise: #00f5d4;
+            --amber-glow: #fbbf24;
+
+            --font-arcade: 'Press Start 2P', cursive;
+            --font-body: 'Outfit', 'Prompt', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(180deg, #120428 0%, #3a0ca3 100%);
+            color: #fff;
+            font-family: var(--font-body);
+            min-height: 100vh;
+            line-height: 1.6;
+            background-attachment: fixed;
+        }
+
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(18, 4, 40, 0.9);
+            border-bottom: 2px solid var(--hot-pink);
+            box-shadow: 0 0 20px rgba(255, 42, 133, 0.4);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--turquoise);
+            font-family: var(--font-arcade);
+            font-size: 0.9rem;
+            text-shadow: 0 0 10px var(--turquoise);
+        }
+
+        .badge-style {
+            background: rgba(255, 42, 133, 0.2);
+            border: 1px solid var(--hot-pink);
+            color: var(--hot-pink);
+            font-size: 0.75rem;
+            padding: 4px 12px;
+            border-radius: 4px;
+        }
+
+        .btn-hub {
+            background: transparent;
+            border: 1px solid var(--turquoise);
+            color: var(--turquoise);
+            padding: 8px 18px;
+            text-decoration: none;
+            font-family: var(--font-arcade);
+            font-size: 0.65rem;
+            box-shadow: 0 0 10px var(--turquoise);
+            cursor: pointer;
+        }
+
+        .btn-hub:hover {
+            background: var(--turquoise);
+            color: #000;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Card Panel */
+        .synth-card {
+            background: rgba(18, 4, 40, 0.85);
+            border: 2px solid var(--hot-pink);
+            box-shadow: 0 0 20px var(--hot-pink), inset 0 0 15px rgba(255, 42, 133, 0.3);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
+        }
+
+        .equalizer-bar {
+            display: flex;
+            align-items: flex-end;
+            gap: 6px;
+            height: 60px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .bar {
+            width: 10px;
+            background: var(--turquoise);
+            box-shadow: 0 0 8px var(--turquoise);
+            animation: bounce 0.8s ease-in-out infinite alternate;
+        }
+
+        @keyframes bounce {
+            0% { height: 10%; }
+            100% { height: 100%; }
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid var(--hot-pink);
+            padding: 24px;
+            text-align: center;
+            font-family: var(--font-arcade);
+            font-size: 0.65rem;
+            color: var(--turquoise);
+            margin-top: 60px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <a href="../pages/website_design.html" class="brand">
+            📻 SYNTH-RADIO 84
+        </a>
+        <span class="badge-style">Style #06: Synthwave 80s</span>
+        <a href="../pages/website_design.html" class="btn-hub">
+            <i data-lucide="grid"></i> 10 DESIGN VAULT
+        </a>
+    </header>
+
+    <main class="container">
+        
+        <!-- Radio Player Card -->
+        <section class="synth-card" style="text-align:center;">
+            <h1 style="font-family:var(--font-arcade); font-size:1.2rem; color:var(--turquoise); text-shadow:0 0 12px var(--turquoise); margin-bottom:12px;">
+                NOW PLAYING: MIDNIGHT CYBER CRUISE
+            </h1>
+            <p style="color:#ddd; font-size:1rem;">อัลบั้ม Synthwave FM 88.4 MHz — LIVE BROADCAST</p>
+
+            <!-- Equalizer Bars -->
+            <div class="equalizer-bar">
+                <div class="bar" style="animation-delay: 0.1s;"></div>
+                <div class="bar" style="animation-delay: 0.3s;"></div>
+                <div class="bar" style="animation-delay: 0.2s;"></div>
+                <div class="bar" style="animation-delay: 0.5s;"></div>
+                <div class="bar" style="animation-delay: 0.4s;"></div>
+                <div class="bar" style="animation-delay: 0.6s;"></div>
+            </div>
+
+            <button style="background:linear-gradient(90deg, var(--hot-pink), var(--neon-violet)); border:none; color:#fff; font-family:var(--font-arcade); font-size:0.75rem; padding:12px 28px; border-radius:30px; cursor:pointer; box-shadow:0 0 20px var(--hot-pink);" onclick="alert('สลับเพลง Synthwave ในระบบ!')">
+                ▶ PLAY / PAUSE RADIO
+            </button>
+        </section>
+
+        <!-- Arcade High Score Board -->
+        <section class="synth-card">
+            <h2 style="font-family:var(--font-arcade); font-size:1rem; color:var(--amber-glow); text-shadow:0 0 8px var(--amber-glow); margin-bottom:20px;">
+                🏆 ARCADE HALL OF FAME LEADERBOARD
+            </h2>
+
+            <div style="font-family:var(--font-arcade); font-size:0.8rem; display:flex; flex-direction:column; gap:16px;">
+                <div style="display:flex; justify-content:space-between; border-bottom:1px dashed var(--hot-pink); padding-bottom:8px;">
+                    <span>1ST — AGY_CYBER_GOD</span>
+                    <span style="color:var(--turquoise);">999,990 PTS</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; border-bottom:1px dashed var(--hot-pink); padding-bottom:8px;">
+                    <span>2ND — VIBE_MASTER_84</span>
+                    <span style="color:var(--turquoise);">854,200 PTS</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span>3RD — NEON_RACER_X</span>
+                    <span style="color:var(--turquoise);">720,150 PTS</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        © 1984 SYNTH-RADIO — 80S RETRO SYNTHWAVE DESIGN SHOWCASE
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
