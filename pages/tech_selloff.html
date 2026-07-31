@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tech Stock Sell-Off Special Report · A30 Showcase</title>
+  <meta name="description" content="รายงานเจาะลึกวิกฤตการเทขายหุ้นกลุ่มเทคโนโลยี (Big Tech Sell-Off Analysis): สาเหตุ ปัจจัยเร่งปฏิกิริยา ผลกระทบ และแนวทางการรับมือเชิงกลยุทธ์">
+
+  <!-- Google Fonts & Lucide Icons & Chart.js -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      --bg-dark: #07090e;
+      --bg-surface: #0e131f;
+      --card-bg: rgba(17, 24, 39, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --card-hover-border: rgba(239, 68, 68, 0.4);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --text-dim: #6b7280;
+      
+      --accent-red: #ef4444;
+      --accent-red-glow: rgba(239, 68, 68, 0.25);
+      --accent-gold: #f59e0b;
+      --accent-gold-glow: rgba(245, 158, 11, 0.25);
+      --accent-emerald: #10b981;
+      --accent-blue: #3b82f6;
+      --accent-purple: #8b5cf6;
+      --accent-cyan: #06b6d4;
+
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        radial-gradient(circle at 20% 15%, rgba(239, 68, 68, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 80% 60%, rgba(245, 158, 11, 0.06) 0%, transparent 45%),
+        radial-gradient(circle at 50% 90%, rgba(6, 182, 212, 0.05) 0%, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    h1, h2, h3, h4, .brand-title {
+      font-family: 'Outfit', sans-serif;
+    }
+
+    /* Header Navbar */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(7, 9, 14, 0.9);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .nav-container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--accent-red), var(--accent-gold));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      box-shadow: 0 0 20px var(--accent-red-glow);
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-title span {
+      background: linear-gradient(135deg, var(--accent-red), var(--accent-gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      transition: all 0.2s ease;
+    }
+
+    .back-link:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateX(-3px);
+    }
+
+    /* Main Container */
+    main {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem 1.5rem;
+      width: 100%;
+    }
+
+    /* Hero Banner */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(245, 158, 11, 0.08));
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      border-radius: var(--radius-lg);
+      padding: 3rem 2.5rem;
+      margin-bottom: 3rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .hero-banner::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(239, 68, 68, 0.2), transparent 70%);
+      pointer-events: none;
+    }
+
+    .badge-report {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: var(--accent-red);
+      padding: 0.4rem 1rem;
+      border-radius: 50px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-banner h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, #ffffff 40%, #fca5a5 70%, var(--accent-gold) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-banner p {
+      color: var(--text-muted);
+      font-size: 1.15rem;
+      max-width: 820px;
+      line-height: 1.7;
+    }
+
+    .report-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.88rem;
+      color: var(--text-dim);
+    }
+
+    .report-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .report-meta-item span {
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    /* Key Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 3rem;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      transition: all 0.25s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--card-hover-border);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    .stat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .stat-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-red);
+    }
+
+    .stat-val {
+      font-size: 2.1rem;
+      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+      color: #fff;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-val.negative {
+      color: var(--accent-red);
+    }
+
+    .stat-sub {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    /* Section Layout */
+    .section-title-wrap {
+      margin-bottom: 1.75rem;
+    }
+
+    .section-title-wrap h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-title-wrap p {
+      color: var(--text-muted);
+      font-size: 0.98rem;
+      margin-top: 0.35rem;
+    }
+
+    /* Grid 2 Column */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 3.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* 4 Catalysts Cards Grid */
+    .catalysts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3.5rem;
+    }
+
+    .catalyst-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 1.75rem;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.25s ease;
+    }
+
+    .catalyst-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(245, 158, 11, 0.4);
+      box-shadow: 0 16px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .catalyst-num {
+      position: absolute;
+      top: 1rem;
+      right: 1.25rem;
+      font-size: 2.5rem;
+      font-weight: 900;
+      font-family: 'Outfit', sans-serif;
+      color: rgba(255, 255, 255, 0.05);
+      line-height: 1;
+    }
+
+    .catalyst-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      color: var(--accent-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .catalyst-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.6rem;
+    }
+
+    .catalyst-desc {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    /* Chart Container Card */
+    .chart-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 2rem;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      flex-grow: 1;
+      min-height: 300px;
+    }
+
+    /* Stock Impact Table & Bars */
+    .impact-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .impact-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-sm);
+      padding: 1rem 1.25rem;
+    }
+
+    .impact-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.6rem;
+    }
+
+    .stock-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .stock-symbol {
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .stock-name {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+
+    .stock-drop {
+      font-weight: 800;
+      font-size: 1rem;
+      color: var(--accent-red);
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-gold), var(--accent-red));
+      border-radius: 10px;
+      transition: width 1s ease-in-out;
+    }
+
+    /* Timeline Section */
+    .timeline-container {
+      position: relative;
+      padding-left: 2rem;
+      border-left: 2px solid rgba(239, 68, 68, 0.3);
+      margin-bottom: 3.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .timeline-node {
+      position: relative;
+    }
+
+    .timeline-node::before {
+      content: '';
+      position: absolute;
+      left: -2.45rem;
+      top: 0.3rem;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent-red);
+      box-shadow: 0 0 12px var(--accent-red-glow);
+      border: 3px solid var(--bg-dark);
+    }
+
+    .timeline-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+    }
+
+    .timeline-date {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--accent-gold);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 0.4rem;
+    }
+
+    .timeline-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+
+    .timeline-desc {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+    }
+
+    /* Strategy / Action Plan Grid */
+    .strategy-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .strategy-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 1.75rem;
+      border-top: 3px solid var(--strat-color, var(--accent-emerald));
+    }
+
+    .strategy-card h3 {
+      font-size: 1.25rem;
+      color: #fff;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .strategy-card p {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    /* Footer */
+    footer {
+      background: rgba(7, 9, 14, 0.95);
+      border-top: 1px solid var(--card-border);
+      padding: 2rem 1.5rem;
+      margin-top: auto;
+    }
+
+    .footer-container {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+
+    @media (max-width: 768px) {
+      .hero-banner {
+        padding: 2rem 1.5rem;
+      }
+      .hero-banner h1 {
+        font-size: 2.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header / Navbar -->
+  <header>
+    <div class="nav-container">
+      <a href="../index.html" class="brand">
+        <div class="brand-icon">
+          <i data-lucide="trending-down"></i>
+        </div>
+        <div class="brand-title">A30 <span>Market Research</span></div>
+      </a>
+      <a href="../index.html" class="back-link">
+        <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> กลับสู่ Showcase Portal
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <div class="badge-report">
+        <i data-lucide="alert-triangle" style="width:14px;height:14px;"></i> Special Research Report
+      </div>
+      <h1>เจาะลึกวิกฤตเทขายหุ้นเทค (Big Tech Sell-Off)</h1>
+      <p>วิเคราะห์ปรากฏการณ์การปรับฐานครั้งใหญ่ของหุ้นกลุ่มเทคโนโลยีและ Magnificent 7: ถอดรหัส 4 ชนวนเหตุสำคัญ ผลกระทบเชิงลูกโซ่ทั่วโลก และกลยุทธ์การปรับพอร์ตรับมือ</p>
+      
+      <div class="report-meta">
+        <div class="report-meta-item">
+          <i data-lucide="calendar" style="width:15px;height:15px;"></i> วันที่รายงาน: <span>31 กรกฎาคม 2026</span>
+        </div>
+        <div class="report-meta-item">
+          <i data-lucide="layers" style="width:15px;height:15px;"></i> หมวดหมู่: <span>Quantitative Research & Market Analysis</span>
+        </div>
+        <div class="report-meta-item">
+          <i data-lucide="clock" style="width:15px;height:15px;"></i> เวลาอ่าน: <span>5 นาที</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-header">
+          <span>NASDAQ 100 Correction</span>
+          <div class="stat-icon"><i data-lucide="trending-down"></i></div>
+        </div>
+        <div class="stat-val negative">-13.4%</div>
+        <div class="stat-sub">จากจุดสูงสุด Peak-to-Trough</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <span>NVIDIA Peak Drop</span>
+          <div class="stat-icon"><i data-lucide="zap-off"></i></div>
+        </div>
+        <div class="stat-val negative">-27.8%</div>
+        <div class="stat-sub">มูลค่าหายไปกว่า $850 Billion</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <span>CBOE VIX Volatility Index</span>
+          <div class="stat-icon" style="color:var(--accent-gold);"><i data-lucide="activity"></i></div>
+        </div>
+        <div class="stat-val" style="color:var(--accent-gold);">65.73</div>
+        <div class="stat-sub">Spike สูงสุดนับตั้งแต่ปี 2020</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <span>Nikkei 225 Black Monday</span>
+          <div class="stat-icon"><i data-lucide="globe"></i></div>
+        </div>
+        <div class="stat-val negative">-12.4%</div>
+        <div class="stat-sub">ดิ่งหนักที่สุดในวันเดียวนับจากปี 1987</div>
+      </div>
+    </div>
+
+    <!-- Section 1: 4 Key Catalysts -->
+    <div class="section-title-wrap">
+      <h2><i data-lucide="flame" style="color:var(--accent-red);"></i> 4 ปัจจัยหลักจุดชนวนการเทขาย (Key Catalysts)</h2>
+      <p>วิเคราะห์ 4 ตัวแปรสำคัญทางเศรษฐศาสตร์และการเงินที่เข้ามากระทบพร้อมกันจนเกิด Panic Sell</p>
+    </div>
+
+    <div class="catalysts-grid">
+      <div class="catalyst-card">
+        <div class="catalyst-num">01</div>
+        <div class="catalyst-icon"><i data-lucide="cpu"></i></div>
+        <h3 class="catalyst-title">AI Capex vs. ROI Anxiety</h3>
+        <p class="catalyst-desc">นักลงทุนเริ่มตั้งคำถามต่อเม็ดเงินลงทุนมหาศาล (CapEx) หลายแสนล้านดอลลาร์ในโครงสร้างพื้นฐาน AI ของยักษ์ใหญ่ (Microsoft, Alphabet, Meta) ว่ายังไม่เห็นผลกำไร (ROI) กลับมาเด่นชัดตามที่ตลาดคาดหวัง</p>
+      </div>
+
+      <div class="catalyst-card">
+        <div class="catalyst-num">02</div>
+        <div class="catalyst-icon"><i data-lucide="refresh-cw"></i></div>
+        <h3 class="catalyst-title">Yen Carry Trade Unwind</h3>
+        <p class="catalyst-desc">ธนาคารกลางญี่ปุ่น (BOJ) ปรับขึ้นอัตราดอกเบี้ยเกินคาด ส่งผลให้ค่าเงินเยนแข็งค่าอย่างรวดเร็ว บีบให้นักลงทุนสถาบันโลกต้องเร่งปิดสถานะกู้เงินเยนดอกเบี้ยต่ำมาไล่ซื้อหุ้นเทค US (Unwind Carry Trade)</p>
+      </div>
+
+      <div class="catalyst-card">
+        <div class="catalyst-num">03</div>
+        <div class="catalyst-icon"><i data-lucide="bar-chart-2"></i></div>
+        <h3 class="catalyst-title">Valuation Stretch & Profit Taking</h3>
+        <p class="catalyst-desc">อัตราส่วน P/E ของหุ้นกลุ่ม Magnificent 7 อยู่ในระดับสูงเป็นประวัติการณ์ (Extreme Valuation Stretch) เมื่อผลประกอบการออกมากอดคอกันโตช้ากว่าคาด จึงเกิดแรง Profit-taking ขนาดใหญ่</p>
+      </div>
+
+      <div class="catalyst-card">
+        <div class="catalyst-num">04</div>
+        <div class="catalyst-icon"><i data-lucide="alert-circle"></i></div>
+        <h3 class="catalyst-title">US Economic Slowdown (Sahm Rule)</h3>
+        <p class="catalyst-desc">ตัวเลขการจ้างงานสหรัฐฯ (Non-Farm Payrolls) ชะลอตัวกระทันหันและอัตราว่างงานพุ่งแตะ 4.3% ซึ่งกระตุ้นสัญญาณวิกฤตเศรษฐกิจถดถอยตามกฎ Sahm Rule ทำให้ตลาดกังวลว่า FED อาจลดดอกเบี้ยช้าเกินไป</p>
+      </div>
+    </div>
+
+    <!-- Section 2: Impact Analysis & Visual Chart -->
+    <div class="grid-2">
+      <!-- Visual Chart -->
+      <div class="chart-card">
+        <div class="section-title-wrap" style="margin-bottom:1.25rem;">
+          <h2 style="font-size:1.4rem;"><i data-lucide="pie-chart" style="color:var(--accent-cyan);"></i> เปรียบเทียบการปรับตัวลดลง (Peak to Trough Drop %)</h2>
+          <p style="font-size:0.88rem;">ระดับความลึกของการปรับฐานในหุ้นเทคหลักและดัชนีสำคัญ</p>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="selloffChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Stock Breakdown Progress Bars -->
+      <div class="chart-card">
+        <div class="section-title-wrap" style="margin-bottom:1.25rem;">
+          <h2 style="font-size:1.4rem;"><i data-lucide="list-tree" style="color:var(--accent-gold);"></i> รายชื่อหุ้นที่ได้รับผลกระทบหนักสุด</h2>
+          <p style="font-size:0.88rem;">รวบรวมเปอร์เซ็นต์การร่วงลงของหุ้นเทคชั้นนำ</p>
+        </div>
+        <div class="impact-list">
+          <div class="impact-item">
+            <div class="impact-header">
+              <div class="stock-info">
+                <span class="stock-symbol">NVDA</span>
+                <span class="stock-name">NVIDIA Corp.</span>
+              </div>
+              <span class="stock-drop">-27.8%</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" style="width: 85%;"></div>
+            </div>
+          </div>
+
+          <div class="impact-item">
+            <div class="impact-header">
+              <div class="stock-info">
+                <span class="stock-symbol">TSLA</span>
+                <span class="stock-name">Tesla Inc.</span>
+              </div>
+              <span class="stock-drop">-24.5%</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" style="width: 78%;"></div>
+            </div>
+          </div>
+
+          <div class="impact-item">
+            <div class="impact-header">
+              <div class="stock-info">
+                <span class="stock-symbol">INTC</span>
+                <span class="stock-name">Intel Corp.</span>
+              </div>
+              <span class="stock-drop">-32.1%</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" style="width: 95%;"></div>
+            </div>
+          </div>
+
+          <div class="impact-item">
+            <div class="impact-header">
+              <div class="stock-info">
+                <span class="stock-symbol">GOOGL</span>
+                <span class="stock-name">Alphabet Inc.</span>
+              </div>
+              <span class="stock-drop">-16.2%</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" style="width: 52%;"></div>
+            </div>
+          </div>
+
+          <div class="impact-item">
+            <div class="impact-header">
+              <div class="stock-info">
+                <span class="stock-symbol">MSFT</span>
+                <span class="stock-name">Microsoft Corp.</span>
+              </div>
+              <span class="stock-drop">-13.8%</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" style="width: 44%;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: Timeline of Events -->
+    <div class="section-title-wrap">
+      <h2><i data-lucide="calendar" style="color:var(--accent-gold);"></i> ลำดับเหตุการณ์สำคัญ (Timeline of the Crash)</h2>
+      <p>ไทม์ไลน์การลุกลามของวิกฤตเทขายในสัปดาห์สำคัญ</p>
+    </div>
+
+    <div class="timeline-container">
+      <div class="timeline-node">
+        <div class="timeline-card">
+          <div class="timeline-date">สัปดาห์ที่ 1 · AI Disappointment & Earning Misses</div>
+          <h3 class="timeline-title">รายงานงบการเงิน Alphabet & Microsoft จุดประเด็น AI CapEx</h3>
+          <p class="timeline-desc">ตลาดตอบรับเชิงลบต่องบการเงินยักษ์ใหญ่เทค หลังพบว่าการทุ่มงบลงทุน AI ไม่ส่งผลต่อกำไรระยะสั้น หุ้นกลุ่มเซมิคอนดักเตอร์เริ่มปรับตัวลงเป็นวันแรก</p>
+        </div>
+      </div>
+
+      <div class="timeline-node">
+        <div class="timeline-card">
+          <div class="timeline-date">สัปดาห์ที่ 2 · BOJ Rate Hike & Sahm Rule Signal</div>
+          <h3 class="timeline-title">ธนาคารกลางญี่ปุ่นขึ้นดอกเบี้ย & ตัวเลขการจ้างงาน US ออกมาแย่</h3>
+          <p class="timeline-desc">BOJ ขึ้นดอกเบี้ยกระทันหันสู่ 0.25% ส่งผลให้ Yen แข็งค่าแรง พร้อมตัวเลข US Non-Farm Payrolls ที่ต่ำกว่าคาด Trigger สัญญาณ Sahm Rule Recession Alert</p>
+        </div>
+      </div>
+
+      <div class="timeline-node">
+        <div class="timeline-card">
+          <div class="timeline-date">วันจันทร์วิกฤต (Black Monday) · Global Liquidity Squeeze</div>
+          <h3 class="timeline-title">Nikkei ดิ่ง -12%, VIX พุ่งแตะ 65 จุด, Crypto ร่วงหนัก</h3>
+          <p class="timeline-desc">เกิดการ Unwind Carry Trade ข้ามคืน ตลาดหุ้นเอเชียและยุโรปเปิดร่วงกระจาย ตลาดคริปโตร่วงกว่า 20% ภายในไม่กี่ชั่วโมงก่อนดัชนีสหรัฐฯ เปิดตัวติดลบรุนแรง</p>
+        </div>
+      </div>
+
+      <div class="timeline-node">
+        <div class="timeline-card">
+          <div class="timeline-date">สัปดาห์ถัดมา · Dip Buying & Stabilization</div>
+          <h3 class="timeline-title">ตลาดเริ่มทรงตัวจากแรงช้อนซื้อ (Bargain Hunting)</h3>
+          <p class="timeline-desc">เงินทุนเริ่มไหลกลับเข้าสู่หุ้นกลุ่มเทคที่มีงบดุลแข็งแกร่ง (Quality Cash Flow) หลัง Valuation ปรับลงมาสู่ระดับสมเหตุสมผล</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 4: Strategic Action Plan -->
+    <div class="section-title-wrap">
+      <h2><i data-lucide="shield-check" style="color:var(--accent-emerald);"></i> คำแนะนำและกลยุทธ์การลงทุนรับมือ (Actionable Strategy)</h2>
+      <p>ข้อเสนอแนะสำหรับการบริหารจัดการพอร์ตการลงทุนในภาวะตลาดผันผวนสูง</p>
+    </div>
+
+    <div class="strategy-grid">
+      <div class="strategy-card" style="--strat-color: var(--accent-emerald);">
+        <h3><i data-lucide="check-circle-2" style="color:var(--accent-emerald);"></i> 1. Focus on Cash-Flow Quality</h3>
+        <p>เลือกลงทุนในบริษัท Big Tech ที่มีกระแสเงินสดอิสระ (Free Cash Flow) สูงและมีคูเมืองทางธุรกิจ (Economic Moat) แข็งแกร่ง หลีกเลี่ยงหุ้นเก็งกำไร AI ที่ยังไม่มีโมเดลสร้างรายได้ชัดเจน</p>
+      </div>
+
+      <div class="strategy-card" style="--strat-color: var(--accent-gold);">
+        <h3><i data-lucide="pie-chart" style="color:var(--accent-gold);"></i> 2. Asset Allocation & Rebalancing</h3>
+        <p>กระจายความเสี่ยงไปยังสินทรัพย์ป้องกันความเสี่ยง (Safe-haven Assets) เช่น ทองคำ (Gold), พันธบัตรรัฐบาลระยะยาว (US Treasuries) หรือหุ้น Defensive กลุ่ม Healthcare/Consumer Staples</p>
+      </div>
+
+      <div class="strategy-card" style="--strat-color: var(--accent-cyan);">
+        <h3><i data-lucide="clock" style="color:var(--accent-cyan);"></i> 3. DCA (Dollar-Cost Averaging)</h3>
+        <p>ทยอยสะสมหุ้นเติบโตคุณภาพดีเมื่อ Valuation ปรับลงมาต่ำกว่าค่าเฉลี่ย 5 ปี โดยใช้กลยุทธ์แบ่งไม้ทยอยเข้าซื้อแทนการทุ่มเงินก้อนเดียว (All-in)</p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <div>© 2026 A30 Innovation Hub · Tech Sell-Off Special Research Report</div>
+      <div>ออกแบบด้วย UI Design System · Glassmorphic Analytics</div>
+    </div>
+  </footer>
+
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Chart.js - Tech Sell-off Comparison
+    const ctx = document.getElementById('selloffChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Intel (INTC)', 'NVIDIA (NVDA)', 'Tesla (TSLA)', 'Alphabet (GOOGL)', 'NASDAQ 100', 'S&P 500'],
+        datasets: [{
+          label: 'Peak to Trough Drop (%)',
+          data: [-32.1, -27.8, -24.5, -16.2, -13.4, -8.5],
+          backgroundColor: [
+            'rgba(239, 68, 68, 0.85)',
+            'rgba(239, 68, 68, 0.75)',
+            'rgba(245, 158, 11, 0.75)',
+            'rgba(245, 158, 11, 0.65)',
+            'rgba(6, 182, 212, 0.65)',
+            'rgba(16, 185, 129, 0.65)'
+          ],
+          borderColor: [
+            '#ef4444',
+            '#ef4444',
+            '#f59e0b',
+            '#f59e0b',
+            '#06b6d4',
+            '#10b981'
+          ],
+          borderWidth: 1.5,
+          borderRadius: 8
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return `ปรับตัวลดลง: ${context.raw}%`;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+            ticks: { color: '#9ca3af', callback: value => value + '%' }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { color: '#f3f4f6', font: { family: 'Outfit', weight: '600' } }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
