@@ -23,13 +23,13 @@ import urllib.parse
 # Default Paths
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 SRC_SHOWCASE_DIR = os.path.normpath(SCRIPT_DIR)
-SYNC_SCRIPT_PATH = os.path.normpath(os.path.join(SRC_SHOWCASE_DIR, "../../sync_showcase.sh"))
+SYNC_SCRIPT_PATH = os.path.normpath(os.path.join(SRC_SHOWCASE_DIR, "../test/sync_showcase.sh"))
 DST_SHOWCASE_DIR = "/root/ai-workspace/showcase"
 
 EXPECTED_COUNTS = {
     "themes": 10,
     "apps": 4,
-    "pages": 5,
+    "pages": 6,
     "root_index": 1,
 }
 

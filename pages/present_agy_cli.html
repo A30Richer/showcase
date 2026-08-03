@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AGY CLI & Slash Commands Complete Guide</title>
+  <title>My Telegram Bot & Antigravity Suite — Comprehensive User Guide</title>
 
   <!-- Google Fonts: Space Grotesk, Mitr & Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,6 +23,7 @@
       --accent-emerald: #10b981;
       --accent-amber: #f59e0b;
       --accent-rose: #f43f5e;
+      --accent-blue: #3b82f6;
       --text-main: #f8fafc;
       --text-sub: #94a3b8;
       --code-bg: #0f172a;
@@ -34,8 +35,9 @@
       font-family: 'Space Grotesk', 'Mitr', sans-serif;
       background-color: var(--bg-dark);
       background-image: 
-        radial-gradient(at 0% 0%, rgba(6, 182, 212, 0.12) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.12) 0px, transparent 50%);
+        radial-gradient(at 0% 0%, rgba(6, 182, 212, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%),
+        radial-gradient(at 50% 50%, rgba(16, 185, 129, 0.05) 0px, transparent 60%);
       color: var(--text-main);
       min-height: 100vh;
       padding: 2.5rem 1.5rem;
@@ -46,13 +48,36 @@
 
     .container {
       width: 100%;
-      max-width: 950px;
+      max-width: 1050px;
+    }
+
+    /* Top Back Navigation */
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: var(--text-sub);
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      margin-bottom: 2rem;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 0.5rem 1rem;
+      border-radius: 99px;
+      border: 1px solid var(--card-border);
+    }
+    .back-btn:hover {
+      color: var(--accent-cyan);
+      border-color: rgba(6, 182, 212, 0.4);
+      background: rgba(6, 182, 212, 0.1);
+      transform: translateX(-3px);
     }
 
     /* Header Presentation Banner */
     .present-banner {
       text-align: center;
-      margin-bottom: 3.5rem;
+      margin-bottom: 2.5rem;
       position: relative;
     }
 
@@ -60,48 +85,126 @@
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      background: rgba(6, 182, 212, 0.12);
-      border: 1px solid rgba(6, 182, 212, 0.3);
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(168, 85, 247, 0.2));
+      border: 1px solid rgba(6, 182, 212, 0.4);
       color: var(--accent-cyan);
-      padding: 0.4rem 1rem;
+      padding: 0.45rem 1.2rem;
       border-radius: 99px;
       font-size: 0.85rem;
-      font-weight: 600;
+      font-weight: 700;
       letter-spacing: 1px;
-      margin-bottom: 1rem;
+      margin-bottom: 1.2rem;
+      text-transform: uppercase;
+      box-shadow: 0 4px 15px rgba(6, 182, 212, 0.2);
     }
 
     .present-title {
       font-family: 'Outfit', sans-serif;
-      font-size: 2.5rem;
+      font-size: 2.8rem;
       font-weight: 900;
-      background: linear-gradient(135deg, #ffffff 30%, var(--accent-cyan) 70%, var(--accent-purple) 100%);
+      background: linear-gradient(135deg, #ffffff 20%, var(--accent-cyan) 60%, var(--accent-purple) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 0.8rem;
+      margin-bottom: 1rem;
+      line-height: 1.2;
     }
 
     .present-subtitle {
-      font-size: 1.05rem;
+      font-size: 1.1rem;
       color: var(--text-sub);
-      max-width: 720px;
+      max-width: 780px;
       margin: 0 auto;
-      line-height: 1.6;
+      line-height: 1.65;
+    }
+
+    /* Search & Filter Bar */
+    .controls-wrapper {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 1.2rem 1.5rem;
+      backdrop-filter: blur(16px);
+      margin-bottom: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    .search-box-wrap {
+      position: relative;
+      width: 100%;
+    }
+
+    .search-box-wrap i {
+      position: absolute;
+      left: 1.2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-sub);
+      font-size: 1rem;
+    }
+
+    .search-input {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 0.85rem 1rem 0.85rem 3rem;
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 15px rgba(6, 182, 212, 0.25);
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      color: var(--text-sub);
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .tab-btn:hover, .tab-btn.active {
+      background: var(--accent-cyan);
+      color: #000;
+      border-color: var(--accent-cyan);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
     }
 
     /* Section Category Titles */
     .section-title {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.4rem;
-      font-weight: 700;
+      font-size: 1.5rem;
+      font-weight: 800;
       color: #ffffff;
       margin-bottom: 1.5rem;
-      margin-top: 1rem;
+      margin-top: 2rem;
       display: flex;
       align-items: center;
-      gap: 0.6rem;
+      gap: 0.7rem;
       border-bottom: 1px solid var(--card-border);
-      padding-bottom: 0.6rem;
+      padding-bottom: 0.7rem;
     }
 
     .section-title i {
@@ -120,15 +223,16 @@
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 18px;
-      padding: 1.4rem 1.6rem;
-      backdrop-filter: blur(12px);
+      padding: 1.5rem 1.7rem;
+      backdrop-filter: blur(14px);
       transition: all 0.25s ease;
+      position: relative;
     }
 
     .cmd-card:hover {
       border-color: rgba(6, 182, 212, 0.4);
       transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
     }
 
     .cmd-header {
@@ -137,7 +241,7 @@
       justify-content: space-between;
       gap: 1rem;
       flex-wrap: wrap;
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.75rem;
     }
 
     .cmd-name {
@@ -145,43 +249,89 @@
       font-size: 1.15rem;
       font-weight: 700;
       color: var(--accent-cyan);
-      background: rgba(6, 182, 212, 0.1);
-      padding: 0.3rem 0.8rem;
+      background: rgba(6, 182, 212, 0.12);
+      padding: 0.35rem 0.85rem;
       border-radius: 8px;
-      border: 1px solid rgba(6, 182, 212, 0.2);
+      border: 1px solid rgba(6, 182, 212, 0.25);
     }
 
-    .cmd-name.sub {
-      color: var(--accent-emerald);
-      background: rgba(16, 185, 129, 0.1);
-      border-color: rgba(16, 185, 129, 0.2);
+    .cmd-name.cli {
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.12);
+      border-color: rgba(56, 189, 248, 0.25);
     }
 
-    .cmd-name.flag {
-      color: var(--accent-amber);
-      background: rgba(245, 158, 11, 0.1);
-      border-color: rgba(245, 158, 11, 0.2);
-    }
-
-    .cmd-name.slash {
+    .cmd-name.ai {
       color: var(--accent-purple);
-      background: rgba(168, 85, 247, 0.1);
-      border-color: rgba(168, 85, 247, 0.2);
+      background: rgba(168, 85, 247, 0.12);
+      border-color: rgba(168, 85, 247, 0.25);
+    }
+
+    .cmd-name.bot {
+      color: var(--accent-emerald);
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.25);
+    }
+
+    .cmd-name.market {
+      color: var(--accent-amber);
+      background: rgba(245, 158, 11, 0.12);
+      border-color: rgba(245, 158, 11, 0.25);
     }
 
     .cmd-purpose-tag {
       font-size: 0.8rem;
+      font-weight: 600;
       color: var(--text-sub);
       background: rgba(255, 255, 255, 0.06);
-      padding: 0.25rem 0.7rem;
+      padding: 0.3rem 0.75rem;
       border-radius: 99px;
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .cmd-desc {
-      font-size: 0.95rem;
+      font-size: 0.96rem;
       color: var(--text-sub);
-      line-height: 1.6;
+      line-height: 1.65;
+    }
+
+    /* Terminal Code Display Box */
+    .code-box-wrapper {
+      position: relative;
+      margin-top: 0.8rem;
+    }
+
+    .code-box {
+      background: #020617;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      font-family: 'Space Grotesk', monospace;
+      font-size: 0.9rem;
+      color: #38bdf8;
+      word-break: break-all;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .copy-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text-sub);
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .copy-btn:hover {
+      background: var(--accent-cyan);
+      color: #000;
+      border-color: var(--accent-cyan);
     }
 
     /* Accordion Scenario Dropdown */
@@ -190,7 +340,7 @@
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid var(--card-border);
       border-radius: 12px;
-      padding: 0.65rem 1rem;
+      padding: 0.7rem 1.1rem;
       font-size: 0.88rem;
       color: var(--text-main);
       cursor: pointer;
@@ -219,48 +369,60 @@
       background: var(--code-bg);
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 12px;
-      padding: 1.2rem;
+      padding: 1.3rem;
       font-size: 0.9rem;
       line-height: 1.65;
     }
 
     .scenario-block {
-      margin-bottom: 0.8rem;
+      margin-bottom: 0.9rem;
     }
     .scenario-block:last-child { margin-bottom: 0; }
 
     .scenario-label {
       font-weight: 700;
       color: var(--accent-cyan);
-      margin-bottom: 0.2rem;
+      margin-bottom: 0.3rem;
       font-size: 0.82rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
 
-    .code-box {
-      background: #020617;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 0.6rem 0.9rem;
-      border-radius: 8px;
-      font-family: monospace;
-      color: #38bdf8;
-      margin-top: 0.3rem;
-      word-break: break-all;
+    /* Highlight Feature Box */
+    .feature-callout {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(6, 182, 212, 0.15));
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      border-radius: 16px;
+      padding: 1.4rem;
+      margin-top: 1rem;
     }
 
-    /* Back Link */
-    .back-btn {
-      display: inline-flex;
+    .feature-callout-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
       align-items: center;
       gap: 0.5rem;
-      color: var(--text-sub);
-      text-decoration: none;
-      font-size: 0.9rem;
-      transition: color 0.2s;
-      margin-bottom: 2rem;
+      margin-bottom: 0.5rem;
     }
-    .back-btn:hover { color: var(--accent-cyan); }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--card-border);
+      color: var(--text-sub);
+      font-size: 0.88rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .present-title { font-size: 2rem; }
+      body { padding: 1.5rem 1rem; }
+      .cmd-card { padding: 1.2rem; }
+    }
   </style>
 </head>
 <body>
@@ -271,309 +433,332 @@
 
     <!-- Banner -->
     <div class="present-banner">
-      <div class="badge-tag"><i class="fa-solid fa-terminal"></i> AUTHORITATIVE COMMAND REFERENCE</div>
-      <h1 class="present-title">AGY CLI & Slash Commands Complete Guide</h1>
+      <div class="badge-tag"><i class="fa-solid fa-rocket"></i> SYSTEM USER GUIDE & PRESENTATION</div>
+      <h1 class="present-title">My Telegram Bot & Antigravity Suite</h1>
       <p class="present-subtitle">
-        คู่มือสรุปคำสั่งทั้งหมดอย่างครอบคลุมถ้วนหน้า อ้างอิงจากคำสั่ง <code>agy --help</code> และ TUI Slash Commands พร้อมระบบจำลองสถานการณ์ตัวอย่าง (Scenario Dropdown)
+        คู่มือการใช้งานและเอกสารอ้างอิงฉบับสมบูรณ์ สำหรับระบบ Telegram Control Bot, Local AI Code Review, เครื่องมือวิเคราะห์ตลาด Forex & Crypto, Shopee Voucher Monitor และ Antigravity AGY CLI
       </p>
     </div>
 
-    <!-- ════════ SECTION 1: CLI SUBCOMMANDS ════════ -->
-    <div class="section-title">
-      <i class="fa-solid fa-folder-tree" style="color:var(--accent-emerald);"></i> 1. คำสั่งย่อยของ AGY CLI (Subcommands)
+    <!-- Search & Filter Bar -->
+    <div class="controls-wrapper">
+      <div class="search-box-wrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="searchInput" class="search-input" placeholder="พิมพ์เพื่อค้นหาคำสั่ง เช่น review_code.py, bot.py, /live, market_monitor..." onkeyup="filterCards()">
+      </div>
+      <div class="nav-tabs">
+        <button class="tab-btn active" onclick="filterCategory('all', this)"><i class="fa-solid fa-border-all"></i> ทั้งหมด</button>
+        <button class="tab-btn" onclick="filterCategory('ai-review', this)"><i class="fa-solid fa-microchip"></i> Local AI Code Review</button>
+        <button class="tab-btn" onclick="filterCategory('bot', this)"><i class="fa-solid fa-robot"></i> Telegram Bot</button>
+        <button class="tab-btn" onclick="filterCategory('market', this)"><i class="fa-solid fa-chart-line"></i> Market & Forex</button>
+        <button class="tab-btn" onclick="filterCategory('shopee-ea', this)"><i class="fa-solid fa-bag-shopping"></i> Shopee & EA</button>
+        <button class="tab-btn" onclick="filterCategory('dashboard', this)"><i class="fa-solid fa-gauge-high"></i> Dashboard</button>
+        <button class="tab-btn" onclick="filterCategory('agy-cli', this)"><i class="fa-solid fa-terminal"></i> AGY CLI & Slash</button>
+      </div>
     </div>
 
-    <div class="cmd-grid">
-
-      <div class="cmd-card">
-        <div class="cmd-header">
-          <span class="cmd-name sub">agy agent / agents</span>
-          <span class="cmd-purpose-tag">ดูรายชื่อ Agent</span>
-        </div>
-        <p class="cmd-desc">แสดงรายการ Agents ทั้งหมดที่เปิดใช้งานได้ในระบบ</p>
-      </div>
-
-      <div class="cmd-card">
-        <div class="cmd-header">
-          <span class="cmd-name sub">agy changelog</span>
-          <span class="cmd-purpose-tag">บันทึกการอัปเดต</span>
-        </div>
-        <p class="cmd-desc">แสดงรายการอัปเดตเวอร์ชันและฟีเจอร์ใหม่ล่าสุดของ Antigravity CLI</p>
-      </div>
-
-      <div class="cmd-card">
-        <div class="cmd-header">
-          <span class="cmd-name sub">agy help [command]</span>
-          <span class="cmd-purpose-tag">ช่วยเหลือ</span>
-        </div>
-        <p class="cmd-desc">แสดงเมนูช่วยเหลือและคู่มือการใช้งานคำสั่งย่อยต่างๆ</p>
-      </div>
-
-      <div class="cmd-card">
-        <div class="cmd-header">
-          <span class="cmd-name sub">agy install</span>
-          <span class="cmd-purpose-tag">ติดตั้ง Environment</span>
-        </div>
-        <p class="cmd-desc">ตั้งค่า Environment PATHS และ Shell Completion สำหรับการใช้งานระบบ CLI</p>
-      </div>
-
-      <div class="cmd-card">
-        <div class="cmd-header">
-          <span class="cmd-name sub">agy models</span>
-          <span class="cmd-purpose-tag">เช็กโมเดล AI</span>
-        </div>
-        <p class="cmd-desc">แสดงรายชื่อโมเดล AI ทั้งหมดที่มีให้เลือกรันในระบบ (เช่น Gemini 3.6 Flash, Pro, ฯลฯ)</p>
-      </div>
-
-      <div class="cmd-card">
-        <div class="cmd-header">
-          <span class="cmd-name sub">agy plugin / plugins</span>
-          <span class="cmd-purpose-tag">จัดการพัคอิน</span>
-        </div>
-        <p class="cmd-desc">บริหารจัดการส่วนเสริม Plugins (install, uninstall, list, enable, disable)</p>
-        
-        <div class="scenario-toggle" onclick="toggleScenario(this)">
-          <span><i class="fa-solid fa-vial-circle-check"></i> จำลองสถานการณ์: <code>agy plugin</code></span>
-          <i class="fa-solid fa-chevron-down"></i>
-        </div>
-        <div class="scenario-content">
-          <div class="scenario-block">
-            <div class="scenario-label">📌 สถานการณ์</div>
-            <div>คุณต้องการติดตั้งหรือดูปลั๊กอินส่วนเสริมเพื่อขยายความสามารถของ CLI</div>
-          </div>
-          <div class="scenario-block">
-            <div class="scenario-label">💬 คำสั่งที่ใช้</div>
-            <div class="code-box">agy plugin list</div>
-            <div class="code-box" style="margin-top:0.4rem;">agy plugin enable my-extension</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="cmd-card">
-        <div class="cmd-header">
-          <span class="cmd-name sub">agy update</span>
-          <span class="cmd-purpose-tag">อัปเดตเวอร์ชัน</span>
-        </div>
-        <p class="cmd-desc">ตรวจสอบและอัปเดต Antigravity CLI ให้เป็นเวอร์ชันล่าสุดโดยอัตโนมัติ</p>
-      </div>
-
+    <!-- ════════ SECTION 1: LOCAL AI CODE REVIEW ════════ -->
+    <div class="section-title" data-section="ai-review">
+      <i class="fa-solid fa-microchip" style="color:var(--accent-purple);"></i> 1. Local AI Code Review (`review_code.py`)
     </div>
 
-    <!-- ════════ SECTION 2: CLI FLAGS & OPTIONS ════════ -->
-    <div class="section-title">
-      <i class="fa-solid fa-sliders" style="color:var(--accent-amber);"></i> 2. พารามิเตอร์และตัวเลือก CLI Flags (`agy --flag`)
-    </div>
+    <div class="cmd-grid" data-category="ai-review">
 
-    <div class="cmd-grid">
-
-      <div class="cmd-card">
+      <div class="cmd-card" data-keywords="review_code.py ai code review ollama qwen2.5-coder local">
         <div class="cmd-header">
-          <span class="cmd-name flag">--add-dir &lt;path&gt;</span>
-          <span class="cmd-purpose-tag">เพิ่มไดเรกทอรีทำงาน</span>
-        </div>
-        <p class="cmd-desc">เพิ่มโฟลเดอร์ภายนอกเข้าเป็นส่วนหนึ่งของ Workspace การทำงาน (สามารถพิมพ์ซ้ำหลายโฟลเดอร์ได้)</p>
-      </div>
-
-      <div class="cmd-card">
-        <div class="cmd-header">
-          <span class="cmd-name flag">-c | --continue</span>
-          <span class="cmd-purpose-tag">สานต่อแชทล่าสุด</span>
-        </div>
-        <p class="cmd-desc">เปิดใช้งาน CLI และสานต่อบทสนทนาจาก Session ล่าสุดทันที</p>
-      </div>
-
-      <div class="cmd-card">
-        <div class="cmd-header">
-          <span class="cmd-name flag">--conversation &lt;id&gt;</span>
-          <span class="cmd-purpose-tag">เจาะจง Session ID</span>
-        </div>
-        <p class="cmd-desc">เปิดโหลดบทสนทนาเก่าเฉพาะเจาะจงตาม Conversation ID</p>
-      </div>
-
-      <div class="cmd-card">
-        <div class="cmd-header">
-          <span class="cmd-name flag">--dangerously-skip-permissions</span>
-          <span class="cmd-purpose-tag">ข้ามการขออนุมัติ</span>
-        </div>
-        <p class="cmd-desc">อนุมัติคำขอสิทธิ์การเขียนไฟล์และรันคำสั่งทั้งหมดโดยอัตโนมัติ ไม่ต้องเด้งถามผู้ใช้</p>
-
-        <div class="scenario-toggle" onclick="toggleScenario(this)">
-          <span><i class="fa-solid fa-vial-circle-check"></i> จำลองสถานการณ์: <code>--dangerously-skip-permissions</code></span>
-          <i class="fa-solid fa-chevron-down"></i>
-        </div>
-        <div class="scenario-content">
-          <div class="scenario-block">
-            <div class="scenario-label">📌 สถานการณ์</div>
-            <div>คุณต้องการรันสคริปต์อัตโนมัติใน CI/CD ที่มั่นใจความปลอดภัยแล้ว และไม่ต้องการให้กระบวนการหยุดรอการกดยืนยันจากมนุษย์</div>
-          </div>
-          <div class="scenario-block">
-            <div class="scenario-label">💬 คำสั่งที่ใช้</div>
-            <div class="code-box">agy run "รันเทสต์ทั้งหมดและแก้ลิ้นท์" --dangerously-skip-permissions</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="cmd-card">
-        <div class="cmd-header">
-          <span class="cmd-name flag">--effort &lt;low | medium | high&gt;</span>
-          <span class="cmd-purpose-tag">ปรับระดับความคิด</span>
-        </div>
-        <p class="cmd-desc">กำหนดระดับความลึกในการประมวลผลให้ AI (Low = เร็วประหยัด, High = คิดวิเคราะห์ซับซ้อน)</p>
-      </div>
-
-      <div class="cmd-card">
-        <div class="cmd-header">
-          <span class="cmd-name flag">-p | --print | --prompt &lt;text&gt;</span>
-          <span class="cmd-purpose-tag">รันคำสั่งสั้นจบในตัว</span>
-        </div>
-        <p class="cmd-desc">สั่งรันงานสั้นๆ แบบ Non-Interactive แล้วพิมพ์ผลลัพธ์ออกหน้า Terminal ทันทีแล้วจบ</p>
-
-        <div class="scenario-toggle" onclick="toggleScenario(this)">
-          <span><i class="fa-solid fa-vial-circle-check"></i> จำลองสถานการณ์: <code>-p / --print</code></span>
-          <i class="fa-solid fa-chevron-down"></i>
-        </div>
-        <div class="scenario-content">
-          <div class="scenario-block">
-            <div class="scenario-label">📌 สถานการณ์</div>
-            <div>คุณต้องการส่ง Prompt สั้นๆ จาก Bash script เพื่อตรวจคำผิดในไฟล์</div>
-          </div>
-          <div class="scenario-block">
-            <div class="scenario-label">💬 คำสั่งที่ใช้</div>
-            <div class="code-box">agy -p "ตรวจทานคำผิดใน README.md"</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="cmd-card">
-        <div class="cmd-header">
-          <span class="cmd-name flag">--mode &lt;accept-edits | plan&gt;</span>
-          <span class="cmd-purpose-tag">กำหนดโหมดการทำงาน</span>
-        </div>
-        <p class="cmd-desc">ตั้งค่าโหมดเริ่มต้นของ Agent ใน Session เช่น โหมดเขียนไฟล์ทันที หรือโหมดเน้นวางแผนก่อน</p>
-      </div>
-
-      <div class="cmd-card">
-        <div class="cmd-header">
-          <span class="cmd-name flag">--sandbox</span>
-          <span class="cmd-purpose-tag">โหมดปลอดภัย Sandbox</span>
-        </div>
-        <p class="cmd-desc">เปิดใช้งานโหมดจำกัดสิทธิ์ความปลอดภัย ห้ามรันคำสั่งอันตรายนอกพื้นที่ที่กำหนด</p>
-      </div>
-
-    </div>
-
-    <!-- ════════ SECTION 3: TUI SLASH COMMANDS ════════ -->
-    <div class="section-title">
-      <i class="fa-solid fa-wand-magic-sparkles" style="color:var(--accent-purple);"></i> 3. คำสั่ง Slash Commands ในหน้าแชท TUI (`/`)
-    </div>
-
-    <div class="cmd-grid">
-
-      <div class="cmd-card">
-        <div class="cmd-header">
-          <span class="cmd-name slash">/goal [คำอธิบายเป้าหมาย]</span>
-          <span class="cmd-purpose-tag">โหมดลุยงานยาวข้ามคืน</span>
-        </div>
-        <p class="cmd-desc">สั่ง AI ลุยเป้าหมายใหญ่ต่อเนื่อง แก้โค้ด รันเทสต์ วนลูปไม่หยุดจนกว่าเป้าหมายจะสำเร็จ 100%</p>
-
-        <div class="scenario-toggle" onclick="toggleScenario(this)">
-          <span><i class="fa-solid fa-vial-circle-check"></i> จำลองสถานการณ์: <code>/goal</code></span>
-          <i class="fa-solid fa-chevron-down"></i>
-        </div>
-        <div class="scenario-content">
-          <div class="scenario-block">
-            <div class="scenario-label">📌 สถานการณ์</div>
-            <div>สั่งให้ทำ Refactor และเพิ่ม Unit Test ให้ครบทั้ง 50 ไฟล์ในโปรเจกต์ ปล่อยให้ระบบรันข้ามคืน</div>
-          </div>
-          <div class="scenario-block">
-            <div class="scenario-label">💬 คำสั่งที่ใช้</div>
-            <div class="code-box">/goal เขียน Unit Test ให้ครบทุกไฟล์ใน tests/ และห้ามหยุดจนกว่าจะผ่าน 100%</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="cmd-card">
-        <div class="cmd-header">
-          <span class="cmd-name slash">/schedule [ระยะเวลา / เงื่อนไข]</span>
-          <span class="cmd-purpose-tag">ตั้งเวลา / Cron Job</span>
-        </div>
-        <p class="cmd-desc">ตั้งเวลานาฬิกาปลุก หรือตั้ง Cron Schedule ให้ AI กลับมาตรวจเช็กงานหรือแจ้งเตือนตามรอบเวลา</p>
-
-        <div class="scenario-toggle" onclick="toggleScenario(this)">
-          <span><i class="fa-solid fa-vial-circle-check"></i> จำลองสถานการณ์: <code>/schedule</code></span>
-          <i class="fa-solid fa-chevron-down"></i>
-        </div>
-        <div class="scenario-content">
-          <div class="scenario-block">
-            <div class="scenario-label">📌 สถานการณ์</div>
-            <div>เพิ่งสั่ง Deploy หน้าเว็บ แล้วอยากให้ AI กลับมาตรวจเช็ก HTTP Status Code ในอีก 5 นาที</div>
-          </div>
-          <div class="scenario-block">
-            <div class="scenario-label">💬 คำสั่งที่ใช้</div>
-            <div class="code-box">/schedule ในอีก 5 นาที ให้ยิงเช็ก URL ว่าขึ้น 200 OK หรือยัง</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="cmd-card">
-        <div class="cmd-header">
-          <span class="cmd-name slash">/plan [เป้าหมาย]</span>
-          <span class="cmd-purpose-tag">วางแผนพิมพ์เขียวก่อนแตะโค้ด</span>
-        </div>
-        <p class="cmd-desc">บังคับให้ AI สรุปแผนงานเป็นข้อๆ (Blueprint Plan) ให้มนุษย์กดอนุมตรก่อนลงมือแก้ไฟล์จริง</p>
-      </div>
-
-      <div class="cmd-card">
-        <div class="cmd-header">
-          <span class="cmd-name slash">/grill-me</span>
-          <span class="cmd-purpose-tag">สัมภาษณ์ปรับความเข้าใจ</span>
-        </div>
-        <p class="cmd-desc">ให้ AI ยิงคำถามสัมภาษณ์คุณยิบๆ (Interview Mode) เพื่อเก็บความต้องการและเคลียร์ข้อสงสัยก่อนเริ่มงาน</p>
-      </div>
-
-      <div class="cmd-card">
-        <div class="cmd-header">
-          <span class="cmd-name slash">/teamwork-preview</span>
-          <span class="cmd-purpose-tag">แตกงานให้ทีม Subagents</span>
-        </div>
-        <p class="cmd-desc">สปอว์นทีมงาน Subagents หลายตัวมาช่วยกันรันงานขนานกันไปพร้อมๆ กัน</p>
-      </div>
-
-      <div class="cmd-card">
-        <div class="cmd-header">
-          <span class="cmd-name slash">/learn</span>
-          <span class="cmd-purpose-tag">บันทึกความจำ / กฎระเบียบ</span>
-        </div>
-        <p class="cmd-desc">บันทึกสไตล์การโค้ดหรือคำแนะนำของคุณลงโฟลเดอร์ <code>.gemini/rules/</code> ให้ AI จำไว้ใช้ตลอดไป</p>
-      </div>
-
-      <div class="cmd-card">
-        <div class="cmd-header">
-          <span class="cmd-name slash">/compact</span>
-          <span class="cmd-purpose-tag">ย่อประวัติแชท</span>
-        </div>
-        <p class="cmd-desc">สรุปรวมประวัติบทสนทนาที่ยาวเกินไปให้สั้นลง เพื่อประหยัด Context Window ในการทำงาน</p>
-      </div>
-
-      <div class="cmd-card">
-        <div class="cmd-header">
-          <span class="cmd-name slash">/copy</span>
-          <span class="cmd-purpose-tag">คัดลอกคำตอบ</span>
-        </div>
-        <p class="cmd-desc">คัดลอกโค้ดหรือข้อความตอบกลับล่าสุดของ AI เข้าสู่ Clipboard ของเครื่องทันที</p>
-      </div>
-
-      <div class="cmd-card">
-        <div class="cmd-header">
-          <span class="cmd-name slash">/clear | /help | /exit</span>
-          <span class="cmd-purpose-tag">คำสั่งควบคุมระบบ</span>
+          <span class="cmd-name ai">python3 review_code.py &lt;filename&gt;</span>
+          <span class="cmd-purpose-tag">วิเคราะห์โค้ดด้วย Local AI (Ollama)</span>
         </div>
         <p class="cmd-desc">
-          <b>/clear</b>: ล้างประวัติแชทเริ่มต้นใหม่ | <b>/help</b>: ดูเมนูคำสั่งช่วยเหลือ | <b>/exit</b>: ปิดและออกจากโปรแกรม
+          ตรวจทานวิเคราะห์ไฟล์โค้ดในเครื่องแบบ Local เพื่อหา **Bugs**, **Security Vulnerabilities** (XSS, Sensitive Data Leaks) และ **Performance Bottlenecks** ด้วยโมเดล <code>qwen2.5-coder:0.5b</code> ผ่าน Ollama Service
+        </p>
+
+        <div class="code-box-wrapper">
+          <div class="code-box">
+            <span>python3 review_code.py market_monitor.py</span>
+            <button class="copy-btn" onclick="copyCode('python3 review_code.py market_monitor.py', this)"><i class="fa-regular fa-copy"></i> Copy</button>
+          </div>
+        </div>
+
+        <div class="feature-callout">
+          <div class="feature-callout-title"><i class="fa-solid fa-bolt" style="color:var(--accent-amber);"></i> จุดเด่นและระบบความปลอดภัย:</div>
+          <ul style="padding-left:1.2rem; font-size:0.88rem; color:var(--text-sub); line-height:1.6;">
+            <li><b>Auto-Start Ollama Service</b>: หากบริการ Ollama บนพอร์ต 11434 ยังไม่ได้เปิด ระบบจะสั่งเปิด <code>ollama serve</code> ในพื้นหลังให้อัตโนมัติ</li>
+            <li><b>CPU Optimized</b>: จำกัดความยาวโค้ด input 5,000 ตัวอักษร และตั้งค่า <code>num_predict: 300</code> เพื่อประมวลผลได้อย่างรวดเร็ว ไม่หมดเวลา (Timeout)</li>
+            <li><b>Privacy 100%</b>: ทำงานบน Local Machine ทั้งหมด ข้อมูลโค้ดไม่ถูกส่งออกนอกเครื่อง</li>
+          </ul>
+        </div>
+
+        <div class="scenario-toggle" onclick="toggleScenario(this)">
+          <span><i class="fa-solid fa-vial-circle-check"></i> จำลองสถานการณ์การใช้งาน <code>review_code.py</code></span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </div>
+        <div class="scenario-content">
+          <div class="scenario-block">
+            <div class="scenario-label">📌 สถานการณ์</div>
+            <div>คุณเขียนไฟล์ <code>bot.py</code> หรือ <code>market_monitor.py</code> เสร็จแล้ว และต้องการให้ AI ช่วยตรวจหาบั๊กก่อน Commit เข้า Git</div>
+          </div>
+          <div class="scenario-block">
+            <div class="scenario-label">💬 คำสั่งที่ใช้ใน Terminal</div>
+            <div class="code-box"><span>python3 review_code.py bot.py</span></div>
+          </div>
+          <div class="scenario-block">
+            <div class="scenario-label">📝 ตัวอย่างผลลัพธ์ที่ได้จาก AI (Markdown Output)</div>
+            <div style="background:#020617; padding:0.8rem; border-radius:8px; font-family:monospace; font-size:0.82rem; color:#cbd5e1; line-height:1.5;">
+              🔍 กำลังวิเคราะห์โค้ดในไฟล์: bot.py ด้วย qwen2.5-coder:0.5b ...<br><br>
+              ============================================================<br>
+              📝 ผลการวิเคราะห์โค้ด (Code Review Result):<br>
+              ============================================================<br>
+              ### Bug Fixes & Security Issues<br>
+              1. **Environment Handling**: ควรตรวจสอบว่า TELEGRAM_BOT_TOKEN ไม่เป็นค่าว่างก่อนเริ่มบอท<br>
+              2. **Error Logging**: การจัดการ Exception ควรกำหนดประเภท Exception ให้ชัดเจน<br>
+              3. **Performance**: แนะนำใช้ ThreadPoolExecutor ในการดึงข่าวคู่ขนาน
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ════════ SECTION 2: TELEGRAM BOT & LIVE SESSIONS ════════ -->
+    <div class="section-title" data-section="bot">
+      <i class="fa-solid fa-robot" style="color:var(--accent-emerald);"></i> 2. Telegram Control Bot & Live Sessions (`bot.py`)
+    </div>
+
+    <div class="cmd-grid" data-category="bot">
+
+      <div class="cmd-card" data-keywords="bot.py telegram bot live session chat">
+        <div class="cmd-header">
+          <span class="cmd-name bot">python bot.py</span>
+          <span class="cmd-purpose-tag">เริ่มต้นบอต Telegram</span>
+        </div>
+        <p class="cmd-desc">
+          เปิดใช้งานบอต Telegram สำหรับสั่งงาน AI CLI (AGY), ดึงข่าว Forex, สั่งตรวจวิเคราะห์ราคาทอง และควบคุมเครื่องแบบ Live Session
+        </p>
+
+        <div class="code-box-wrapper">
+          <div class="code-box">
+            <span>python bot.py</span>
+            <button class="copy-btn" onclick="copyCode('python bot.py', this)"><i class="fa-regular fa-copy"></i> Copy</button>
+          </div>
+        </div>
+
+        <div class="scenario-toggle" onclick="toggleScenario(this)">
+          <span><i class="fa-solid fa-comments"></i> คำสั่งและการควบคุมในแชต Telegram</span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </div>
+        <div class="scenario-content">
+          <div class="scenario-block">
+            <div class="scenario-label">💬 คำสั่งหลักใน Telegram Chat</div>
+            <ul style="padding-left:1.2rem; font-size:0.88rem; color:var(--text-sub); line-height:1.7;">
+              <li><code>/live [ข้อความ]</code> — เปิด Interactive Session แยกเฉพาะแชต เพื่อคุยโต้ตอบกับ AI ต่อเนื่อง</li>
+              <li><code>/end</code> — ปิดและจบ Live Session ปัจจุบัน</li>
+              <li><code>/new</code> — ล้างประวัติเพื่อเริ่ม Interactive Session ใหม่</li>
+              <li><code>/cancel</code> — ยกเลิกงานหรือสคริปต์ที่กำลังประมวลผลอยู่</li>
+              <li><code>/help</code> — แสดงรายการคำสั่งทั้งหมดที่มีให้ใช้งานใน Telegram</li>
+            </ul>
+          </div>
+          <div class="scenario-block">
+            <div class="scenario-label">🔐 การตั้งค่าความปลอดภัย (Private Chat ID)</div>
+            <div>กำหนด <code>ALLOWED_CHAT_IDS=6649449367</code> ในไฟล์ <code>.env</code> เพื่ออนุญาตเฉพาะ User ID ของคุณในการสั่งงานบอต</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ════════ SECTION 3: MARKET & FOREX ANALYSIS ════════ -->
+    <div class="section-title" data-section="market">
+      <i class="fa-solid fa-chart-line" style="color:var(--accent-amber);"></i> 3. เครื่องมือวิเคราะห์ตลาด Forex & Gold (`market_monitor.py`)
+    </div>
+
+    <div class="cmd-grid" data-category="market">
+
+      <div class="cmd-card" data-keywords="market_monitor.py gold forex us10y oil correlation">
+        <div class="cmd-header">
+          <span class="cmd-name market">python market_monitor.py</span>
+          <span class="cmd-purpose-tag">วิเคราะห์ความสัมพันธ์ราคาทอง</span>
+        </div>
+        <p class="cmd-desc">
+          คำนวณและวิเคราะห์ Correlation ระหว่างราคาทองคำ (Gold Futures), พันธบัตรรัฐบาลสหรัฐ (US10Y Yield Proxy), ดอลลาร์อินเด็กซ์ (DXY) และน้ำมันดิบ (WTI)
+        </p>
+        <div class="code-box-wrapper">
+          <div class="code-box">
+            <span>python market_monitor.py --format json --period all --force-refresh</span>
+            <button class="copy-btn" onclick="copyCode('python market_monitor.py --format json --period all --force-refresh', this)"><i class="fa-regular fa-copy"></i> Copy</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="cmd-card" data-keywords="get_forex_news.py news forex factory financialjuice">
+        <div class="cmd-header">
+          <span class="cmd-name market">python get_forex_news.py</span>
+          <span class="cmd-purpose-tag">ดึงข่าว Forex & ข่าวสำคัญ</span>
+        </div>
+        <p class="cmd-desc">
+          ดึงข่าวเศรษฐกิจและข่าว Breaking News จาก ForexFactory และ FinancialJuice พร้อมระบบแจ้งเตือนข่าวสำคัญเข้า Telegram
+        </p>
+        <div class="code-box-wrapper">
+          <div class="code-box">
+            <span>python get_forex_news.py --format html --limit 5 --no-cache</span>
+            <button class="copy-btn" onclick="copyCode('python get_forex_news.py --format html --limit 5 --no-cache', this)"><i class="fa-regular fa-copy"></i> Copy</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="cmd-card" data-keywords="elliott_analyzer.py elliott wave btc gold crypto">
+        <div class="cmd-header">
+          <span class="cmd-name market">python elliott_analyzer.py</span>
+          <span class="cmd-purpose-tag">วิเคราะห์ทฤษฎี Elliott Wave</span>
+        </div>
+        <p class="cmd-desc">
+          นับคลื่น Elliott Wave โดยอัตโนมัติจากราคา Pivot จุดกลับตัวที่ยืนยันแล้ว รองรับหุ้น สินทรัพย์ Crypto (BTCUSDT) และ ทองคำ
+        </p>
+        <div class="code-box-wrapper">
+          <div class="code-box">
+            <span>python elliott_analyzer.py --symbol BTCUSDT --interval 4h --format json</span>
+            <button class="copy-btn" onclick="copyCode('python elliott_analyzer.py --symbol BTCUSDT --interval 4h --format json', this)"><i class="fa-regular fa-copy"></i> Copy</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ════════ SECTION 4: SHOPEE & GOLD EA ════════ -->
+    <div class="section-title" data-section="shopee-ea">
+      <i class="fa-solid fa-bag-shopping" style="color:var(--accent-cyan);"></i> 4. Shopee Voucher Monitor & Gold EA (`shop_voucher_monitor.py`)
+    </div>
+
+    <div class="cmd-grid" data-category="shopee-ea">
+
+      <div class="cmd-card" data-keywords="shop_voucher_monitor.py shopee voucher coupon discount">
+        <div class="cmd-header">
+          <span class="cmd-name cli">python shop_voucher_monitor.py</span>
+          <span class="cmd-purpose-tag">ดึงคูปองส่วนลดหน้าร้าน Shopee</span>
+        </div>
+        <p class="cmd-desc">
+          ดึงข้อมูล Voucher ทั้งหมดจากหน้าร้าน Shopee โดยใช้ Shop API ตรง ไม่พึ่ง HTML JavaScript Rendering แสดงสถานะ Active, Upcoming และ Expired
+        </p>
+        <div class="code-box-wrapper">
+          <div class="code-box">
+            <span>python shop_voucher_monitor.py --url https://shopee.co.th/yuedpao_official --format json</span>
+            <button class="copy-btn" onclick="copyCode('python shop_voucher_monitor.py --url https://shopee.co.th/yuedpao_official --format json', this)"><i class="fa-regular fa-copy"></i> Copy</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="cmd-card" data-keywords="gold_micro_live_ea.py ea trading bot gold micro account">
+        <div class="cmd-header">
+          <span class="cmd-name cli">python eas/gold_micro_live_ea.py</span>
+          <span class="cmd-purpose-tag">ระบบ Paper Trading EA ทองคำ</span>
+        </div>
+        <p class="cmd-desc">
+          จำลองการเทรดอัตโนมัติบนพอร์ตทองคำขนาดเล็ก ($100 Micro Account) ด้วยกลยุทธ์ Volume Profile & ATR Trailing Stop
         </p>
       </div>
 
     </div>
+
+    <!-- ════════ SECTION 5: DASHBOARD & WEB CONTROL ════════ -->
+    <div class="section-title" data-section="dashboard">
+      <i class="fa-solid fa-gauge-high" style="color:var(--accent-blue);"></i> 5. Dashboard & Web Control Center (`dashboard/server.py`)
+    </div>
+
+    <div class="cmd-grid" data-category="dashboard">
+
+      <div class="cmd-card" data-keywords="server.py dashboard web control panel">
+        <div class="cmd-header">
+          <span class="cmd-name cli">python dashboard/server.py</span>
+          <span class="cmd-purpose-tag">เปิดเว็บแผงควบคุม Dashboard</span>
+        </div>
+        <p class="cmd-desc">
+          เปิดใช้งาน Web Dashboard Server ที่พอร์ต <code>http://127.0.0.1:8080</code> เพื่อติดตามสถานะเครื่อง ดู Logs, จัดการไฟล์, บันทึก Quick Note และดูข้อมูลสถิติ
+        </p>
+        <div class="code-box-wrapper">
+          <div class="code-box">
+            <span>python dashboard/server.py</span>
+            <button class="copy-btn" onclick="copyCode('python dashboard/server.py', this)"><i class="fa-regular fa-copy"></i> Copy</button>
+          </div>
+        </div>
+
+        <div class="feature-callout">
+          <div class="feature-callout-title"><i class="fa-solid fa-shield-halved" style="color:var(--accent-emerald);"></i> ความปลอดภัยของ Dashboard:</div>
+          <ul style="padding-left:1.2rem; font-size:0.88rem; color:var(--text-sub); line-height:1.6;">
+            <li><b>DASHBOARD_TOKEN</b>: หากตั้งค่า Token ในไฟล์ <code>.env</code> API สิทธิ์ควบคุมจะต้องใช้ Bearer Token ยืนยันตัวตน</li>
+            <li><b>Strict Security Policy</b>: ไม่อนุญาต Inline Script อันตราย และปิด Shell Terminal Endpoint ไว้เป็นค่าเริ่มต้น</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ════════ SECTION 6: AGY CLI & SLASH COMMANDS ════════ -->
+    <div class="section-title" data-section="agy-cli">
+      <i class="fa-solid fa-terminal" style="color:var(--accent-purple);"></i> 6. Antigravity AGY CLI & TUI Slash Commands (`/`)
+    </div>
+
+    <div class="cmd-grid" data-category="agy-cli">
+
+      <div class="cmd-card" data-keywords="agy cli flags --dangerously-skip-permissions --effort --mode">
+        <div class="cmd-header">
+          <span class="cmd-name ai">agy --flags &amp; Subcommands</span>
+          <span class="cmd-purpose-tag">ตัวเลือกและพารามิเตอร์ CLI</span>
+        </div>
+        <p class="cmd-desc">
+          พารามิเตอร์หลักสำหรับสั่งงาน Antigravity CLI จาก Terminal
+        </p>
+
+        <div class="scenario-toggle" onclick="toggleScenario(this)">
+          <span><i class="fa-solid fa-list-check"></i> ดูรายการ CLI Flags ที่สำคัญ</span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </div>
+        <div class="scenario-content">
+          <ul style="padding-left:1.2rem; font-size:0.88rem; color:var(--text-sub); line-height:1.7;">
+            <li><code>-p | --prompt &lt;text&gt;</code> — สั่งงานสั้นๆ แบบรันครั้งเดียวจบ แล้วพิมพ์ผลลัพธ์ออกจอ</li>
+            <li><code>--dangerously-skip-permissions</code> — อนุมัติสิทธิ์การเขียนไฟล์และรันคำสั่งทั้งหมดอัตโนมัติ</li>
+            <li><code>--effort &lt;low | medium | high&gt;</code> — ปรับระดับความลึกในการคิดวิเคราะห์ของ AI</li>
+            <li><code>--mode &lt;accept-edits | plan&gt;</code> — ตั้งโหมดเริ่มต้นว่าจะเขียนไฟล์ทันที หรือเน้นวางแผนก่อน</li>
+            <li><code>--sandbox</code> — เปิดโหมดจำกัดสิทธิ์ความปลอดภัย Sandbox</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="cmd-card" data-keywords="/goal /schedule /plan /grill-me /teamwork-preview /learn slash commands">
+        <div class="cmd-header">
+          <span class="cmd-name ai">TUI Slash Commands (ในหน้าแชต /)</span>
+          <span class="cmd-purpose-tag">คำสั่งย่อยใน TUI Mode</span>
+        </div>
+        <p class="cmd-desc">
+          คำสั่งลัด Slash Commands สำหรับสั่งงานในหน้าต่างโต้ตอบ TUI Chat
+        </p>
+
+        <div class="scenario-toggle" onclick="toggleScenario(this)">
+          <span><i class="fa-solid fa-wand-magic-sparkles"></i> ดูรายการ Slash Commands ทั้งหมด</span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </div>
+        <div class="scenario-content">
+          <ul style="padding-left:1.2rem; font-size:0.88rem; color:var(--text-sub); line-height:1.7;">
+            <li><code>/goal [คำอธิบายเป้าหมาย]</code> — สั่ง AI ลุยงานต่อเนื่องยาวข้ามคืน วนลูปแก้และรันเทสต์จนกว่าจะสำเร็จ 100%</li>
+            <li><code>/schedule [ระยะเวลา / เงื่อนไข]</code> — ตั้งเวลานาฬิกาปลุกหรือ Cron Job ให้ AI กลับมาเช็กงานตามรอบเวลา</li>
+            <li><code>/plan [เป้าหมาย]</code> — บังคับให้ AI สรุปแผนพิมพ์เขียว (Blueprint) ให้มนุษย์อนุมัติก่อนเริ่มแตะโค้ด</li>
+            <li><code>/grill-me</code> — โหมดสัมภาษณ์ AI จะยิงคำถามถามคุณยิบๆ เพื่อเคลียร์ข้อสงสัยก่อนวางแผนงาน</li>
+            <li><code>/teamwork-preview</code> — แตกงานขนานให้ทีม Subagents สปอว์นช่วยกันรันงานพร้อมกัน</li>
+            <li><code>/learn</code> — บันทึกสไตล์การเขียนโค้ดและคำสั่งสอนของคุณลงโฟลเดอร์ <code>.gemini/rules/</code></li>
+            <li><code>/compact</code> — ย่อสรุปประวัติบทสนทนาเพื่อประหยัด Context Window</li>
+            <li><code>/copy</code> — คัดลอกผลลัพธ์ล่าสุดของ AI เข้า Clipboard ของเครื่องทันที</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <p>My Telegram Bot & Antigravity Suite — Comprehensive Interactive User Guide</p>
+      <p style="margin-top:0.4rem; font-size:0.8rem; color:rgba(255,255,255,0.4);">
+        วิเคราะห์ตลาดและพัฒนาด้วย Antigravity AI Engine
+      </p>
+    </footer>
 
   </div>
 
@@ -585,6 +770,63 @@
         content.style.display = 'none';
       } else {
         content.style.display = 'block';
+      }
+    }
+
+    function copyCode(text, btn) {
+      navigator.clipboard.writeText(text).then(() => {
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+        btn.style.background = 'var(--accent-emerald)';
+        btn.style.color = '#fff';
+        setTimeout(() => {
+          btn.innerHTML = originalHTML;
+          btn.style.background = '';
+          btn.style.color = '';
+        }, 2000);
+      });
+    }
+
+    function filterCards() {
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+      const cards = document.querySelectorAll('.cmd-card');
+
+      cards.forEach(card => {
+        const keywords = card.getAttribute('data-keywords') || '';
+        const textContent = card.textContent.toLowerCase();
+        if (!query || keywords.includes(query) || textContent.includes(query)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function filterCategory(category, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const grids = document.querySelectorAll('.cmd-grid');
+      const titles = document.querySelectorAll('.section-title');
+
+      if (category === 'all') {
+        grids.forEach(g => g.style.display = 'flex');
+        titles.forEach(t => t.style.display = 'flex');
+      } else {
+        grids.forEach(g => {
+          if (g.getAttribute('data-category') === category) {
+            g.style.display = 'flex';
+          } else {
+            g.style.display = 'none';
+          }
+        });
+        titles.forEach(t => {
+          if (t.getAttribute('data-section') === category) {
+            t.style.display = 'flex';
+          } else {
+            t.style.display = 'none';
+          }
+        });
       }
     }
   </script>
