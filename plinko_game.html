@@ -924,8 +924,8 @@
         x: startX,
         y: topFunnel.y,
         vx: (Math.random() - 0.5) * 0.8,
-        vy: 1.2,
-        r: 2.4,
+        vy: 1.4,
+        r: 1.8,
         bet: bet,
         color: '#fbbf24',
         trail: []
@@ -951,17 +951,16 @@
     }
 
     function updatePhysics() {
-      const substeps = 4;
-      const gravity = 0.28 / substeps;
-      const bounce = 0.52;
-      const wallBounce = 0.65;
+      const substeps = 2;
+      const gravity = 0.38 / substeps;
+      const wallBounce = 0.72;
       const dpr = window.devicePixelRatio || 1;
       const width = canvas.width / dpr;
       const height = canvas.height / dpr;
 
       // Animate Pegs & Buckets decay
       pegs.forEach(p => {
-        if (p.pulse > 0) p.pulse -= 0.04;
+        if (p.pulse > 0) p.pulse -= 0.05;
       });
       buckets.forEach(b => {
         if (b.hitAnim > 0) b.hitAnim -= 0.03;
@@ -977,16 +976,15 @@
         if (pt.alpha <= 0) State.particles.splice(i, 1);
       }
 
-      // Physics Substeps Loop for zero tunneling & perfect collision
       for (let sub = 0; sub < substeps; sub++) {
         for (let i = State.balls.length - 1; i >= 0; i--) {
           const b = State.balls[i];
           b.vy += gravity;
-          b.vx *= 0.998; // Air resistance
+          b.vx *= 0.998;
           b.x += b.vx / substeps;
           b.y += b.vy / substeps;
 
-          // Side Wall Containment (Slanted Funnel Rails)
+          // Side Wall Containment
           const prog = Math.max(0, Math.min(1, (b.y - boardBounds.top) / boardBounds.height));
           const topL = leftWall[0].x;
           const botL = leftWall[leftWall.length - 1].x;
@@ -998,26 +996,29 @@
 
           if (b.x - b.r < minX) {
             b.x = minX + b.r;
-            b.vx = Math.abs(b.vx) * wallBounce + 0.4;
+            b.vx = Math.abs(b.vx) * wallBounce + 0.5;
             AudioEngine.playPegHit(Math.abs(b.vx));
           } else if (b.x + b.r > maxX) {
             b.x = maxX - b.r;
-            b.vx = -Math.abs(b.vx) * wallBounce - 0.4;
+            b.vx = -Math.abs(b.vx) * wallBounce - 0.5;
             AudioEngine.playPegHit(Math.abs(b.vx));
           }
 
-          // Clamp horizontal speed to prevent ballistic jumps
-          b.vx = Math.max(-4.2, Math.min(4.2, b.vx));
+          b.vx = Math.max(-4.0, Math.min(4.0, b.vx));
 
-          // Peg Collisions
+          // Peg Collisions (Guaranteed downward roll-off)
           for (const p of pegs) {
-            const pdx = b.x - p.x;
-            const pdy = b.y - p.y;
+            let pdx = b.x - p.x;
+            let pdy = b.y - p.y;
             const distSq = pdx * pdx + pdy * pdy;
             const minDist = b.r + p.r;
 
             if (distSq < minDist * minDist && distSq > 0) {
-              const dist = Math.sqrt(distSq);
+              let dist = Math.sqrt(distSq);
+              if (Math.abs(pdx) < 0.3) {
+                pdx = Math.random() < 0.5 ? 0.4 : -0.4;
+                dist = Math.hypot(pdx, pdy);
+              }
               const overlap = minDist - dist;
               const nx = pdx / dist;
               const ny = pdy / dist;
@@ -1026,8 +1027,8 @@
               b.y += ny * overlap;
 
               const dot = b.vx * nx + b.vy * ny;
-              b.vx = (b.vx - 2 * dot * nx) * bounce + (Math.random() - 0.5) * 0.25;
-              b.vy = (b.vy - 2 * dot * ny) * bounce;
+              b.vx = (b.vx - 1.5 * dot * nx) + (nx > 0 ? 0.35 : -0.35) + (Math.random() - 0.5) * 0.25;
+              b.vy = Math.max(0.4, (b.vy - 1.3 * dot * ny) * 0.45);
 
               p.pulse = 1.0;
               AudioEngine.playPegHit(Math.hypot(b.vx, b.vy));
@@ -1067,7 +1068,6 @@
         }
       }
 
-      // Record Trail for rendering
       State.balls.forEach(b => {
         b.trail.push({ x: b.x, y: b.y });
         if (b.trail.length > 5) b.trail.shift();
@@ -1179,16 +1179,21 @@
       State.balls.forEach(b => {
         b.trail.forEach((t, idx) => {
           ctx.beginPath();
-          ctx.arc(t.x, t.y, b.r * (idx / b.trail.length), 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(251, 191, 36, ${idx * 0.08})`;
+          ctx.arc(t.x, t.y, Math.max(1, b.r * (idx / b.trail.length)), 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(251, 191, 36, ${idx * 0.12})`;
           ctx.fill();
         });
 
         ctx.beginPath();
         ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
-        ctx.fillStyle = b.color;
-        ctx.shadowColor = 'rgba(251, 191, 36, 0.7)';
-        ctx.shadowBlur = 12;
+        ctx.fillStyle = '#fff';
+        ctx.shadowColor = 'rgba(251, 191, 36, 0.9)';
+        ctx.shadowBlur = 10;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.r + 1.2, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(251, 191, 36, 0.7)';
         ctx.fill();
         ctx.shadowBlur = 0;
       });
