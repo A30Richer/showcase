@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XAU/USD Multi-Timeframe S&R Matrix · Live Gold Key Levels</title>
+  <meta name="description" content="ระบบวิเคราะห์แนวรับ-แนวต้านทองคำ (XAU/USD) หลายกรอบเวลา (Multi-Timeframe 1D, 4H, 1H, 15M, 5M) พร้อม Confluence Scoring, Volume Profile และ SMC Order Blocks">
+
+  <!-- Typography & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --bg-dark: #060911;
+      --bg-surface-1: #0c111e;
+      --bg-surface-2: #12192c;
+      --bg-surface-3: #1a243f;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(251, 191, 36, 0.5);
+
+      --accent-gold: #fbbf24;
+      --accent-gold-glow: rgba(251, 191, 36, 0.3);
+      --accent-cyan: #06b6d4;
+      --accent-blue: #3b82f6;
+      --accent-green: #10b981;
+      --accent-green-bg: rgba(16, 185, 129, 0.14);
+      --accent-red: #f43f5e;
+      --accent-red-bg: rgba(244, 63, 94, 0.14);
+      --accent-purple: #a855f7;
+
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-display: 'Outfit', sans-serif;
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(251, 191, 36, 0.04) 0%, transparent 40%),
+        radial-gradient(circle at 85% 20%, rgba(6, 182, 212, 0.04) 0%, transparent 45%),
+        radial-gradient(circle at 50% 90%, rgba(168, 85, 247, 0.03) 0%, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    /* Top HUD Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(6, 9, 17, 0.90);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .header-inner {
+      max-width: 1540px;
+      margin: 0 auto;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .brand-title {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .brand-title span {
+      background: linear-gradient(135deg, var(--accent-gold), #f59e0b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: rgba(251, 191, 36, 0.12);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      color: var(--accent-gold);
+      font-size: 0.75rem;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .hud-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+    }
+
+    .hud-stat .stat-label {
+      color: var(--text-dim);
+      font-size: 0.68rem;
+    }
+
+    .hud-stat .stat-val {
+      color: var(--accent-gold);
+      font-weight: 700;
+    }
+
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .icon-btn:hover {
+      color: #fff;
+      border-color: var(--accent-gold);
+      background: var(--bg-surface-3);
+    }
+
+    /* Main Container */
+    main {
+      max-width: 1540px;
+      margin: 1.25rem auto;
+      padding: 0 1.25rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      width: 100%;
+    }
+
+    /* Top Summary Banner Card */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 320px 1fr 340px;
+      gap: 1.25rem;
+      align-items: stretch;
+    }
+
+    .nexus-card {
+      background: var(--bg-surface-1);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.85rem;
+      padding-bottom: 0.65rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .card-title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .card-title-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: rgba(251, 191, 36, 0.12);
+      border: 1px solid rgba(251, 191, 36, 0.25);
+      color: var(--accent-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    /* Price HUD Box */
+    .price-display-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .live-price-val {
+      font-family: var(--font-mono);
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #fff;
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+
+    .price-badge-change {
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+    }
+
+    .price-badge-change.up {
+      color: var(--accent-green);
+      background: var(--accent-green-bg);
+    }
+
+    .price-badge-change.down {
+      color: var(--accent-red);
+      background: var(--accent-red-bg);
+    }
+
+    .bias-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 800;
+      padding: 0.4rem 0.75rem;
+      border-radius: var(--radius-sm);
+      margin-top: 0.5rem;
+    }
+
+    .bias-badge.bullish {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: var(--accent-green);
+    }
+
+    .bias-badge.bearish {
+      background: rgba(244, 63, 94, 0.15);
+      border: 1px solid rgba(244, 63, 94, 0.4);
+      color: var(--accent-red);
+    }
+
+    .bias-badge.neutral {
+      background: rgba(251, 191, 36, 0.15);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      color: var(--accent-gold);
+    }
+
+    /* Range Span Visualizer */
+    .range-span-box {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0.6rem;
+      height: 100%;
+    }
+
+    .range-endpoints {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+    }
+
+    .range-bar-track {
+      width: 100%;
+      height: 10px;
+      background: var(--bg-surface-3);
+      border-radius: 5px;
+      position: relative;
+      overflow: visible;
+    }
+
+    .range-bar-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-green), var(--accent-gold), var(--accent-red));
+      border-radius: 5px;
+    }
+
+    .range-price-needle {
+      position: absolute;
+      top: -6px;
+      width: 4px;
+      height: 22px;
+      background: #fff;
+      border-radius: 2px;
+      box-shadow: 0 0 10px #fff;
+      transform: translateX(-50%);
+    }
+
+    /* Middle Grid: Chart + Sidebar Matrix */
+    .chart-layout-grid {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 1.25rem;
+      align-items: start;
+    }
+
+    /* Chart Toolbar */
+    .chart-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0.5rem 0.85rem;
+      margin-bottom: 1rem;
+    }
+
+    .timeframe-group, .layer-group {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .tf-btn, .layer-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.3rem 0.65rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tf-btn:hover, .layer-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .tf-btn.active {
+      background: rgba(251, 191, 36, 0.15);
+      color: var(--accent-gold);
+      border-color: rgba(251, 191, 36, 0.4);
+    }
+
+    .layer-btn.active {
+      background: rgba(6, 182, 212, 0.15);
+      color: var(--accent-cyan);
+      border-color: rgba(6, 182, 212, 0.4);
+    }
+
+    /* Chart Canvas Container */
+    .chart-canvas-container {
+      position: relative;
+      width: 100%;
+      height: 520px;
+      background: #080c16;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+    }
+
+    #srCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: crosshair;
+    }
+
+    /* Confluence Table */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      max-height: 520px;
+      scrollbar-width: thin;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      font-family: var(--font-mono);
+      text-align: left;
+    }
+
+    th {
+      color: var(--text-dim);
+      font-weight: 700;
+      padding: 0.65rem 0.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--bg-surface-2);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    td {
+      padding: 0.65rem 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-muted);
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.03);
+      color: #fff;
+    }
+
+    .score-badge {
+      font-weight: 800;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .score-10 { background: rgba(244, 63, 94, 0.2); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.4); }
+    .score-mid { background: rgba(251, 191, 36, 0.2); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.4); }
+    .score-low { background: rgba(148, 163, 184, 0.15); color: #94a3b8; }
+
+    .tf-pill {
+      font-size: 0.68rem;
+      background: var(--bg-surface-3);
+      padding: 0.1rem 0.35rem;
+      border-radius: 3px;
+      margin-right: 2px;
+      color: #cbd5e1;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--bg-surface-1);
+      border-top: 1px solid var(--border-subtle);
+      padding: 1.5rem;
+      margin-top: 2.5rem;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+
+    .footer-inner {
+      max-width: 1540px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 1120px) {
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+      .chart-layout-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header>
+    <div class="header-inner">
+      <div class="brand-wrap">
+        <a href="index.html" class="icon-btn" title="กลับสู่ Showcase Portal">
+          <i data-lucide="arrow-left" style="width:18px;height:18px;"></i>
+        </a>
+        <div class="brand-title">XAU/USD <span>S&R MATRIX</span></div>
+        <div class="brand-badge">
+          <i data-lucide="layers" style="width:13px;height:13px;"></i> Multi-Timeframe
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <div class="hud-stat">
+          <span class="stat-label">MARKET TIME (UTC+7)</span>
+          <span class="stat-val" id="clockText">--:--:--</span>
+        </div>
+        <button class="icon-btn" id="refreshBtn" title="Refresh Live Levels">
+          <i data-lucide="refresh-cw" id="refreshIcon" style="width:18px;height:18px;"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Top Summary Banner Row -->
+    <div class="summary-grid">
+      
+      <!-- Current Spot Price Card -->
+      <div class="nexus-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <div class="card-title-icon"><i data-lucide="coins" style="width:16px;height:16px;"></i></div>
+            <h1 class="card-title">Gold Spot (XAU/USD)</h1>
+          </div>
+          <span style="font-size:0.75rem; color:var(--accent-green); font-weight:700; font-family:var(--font-mono);">LIVE FEED</span>
+        </div>
+        <div class="price-display-wrap">
+          <div class="live-price-val">
+            <span id="spotPrice">2,654.80</span>
+            <span class="price-badge-change up" id="spotChange">+18.40 (+0.70%)</span>
+          </div>
+          <div class="bias-badge neutral" id="marketBiasBadge">
+            <i data-lucide="compass" style="width:14px;height:14px;"></i> CONSOLIDATION (Mid-Range)
+          </div>
+        </div>
+      </div>
+
+      <!-- Immediate Range Span Bar -->
+      <div class="nexus-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <div class="card-title-icon"><i data-lucide="move-horizontal" style="width:16px;height:16px;"></i></div>
+            <h2 class="card-title">Immediate S&R Trading Channel</h2>
+          </div>
+          <span style="font-size:0.75rem; color:var(--text-dim); font-family:var(--font-mono);" id="rangeSpreadText">Spread: $15.24</span>
+        </div>
+        <div class="range-span-box">
+          <div class="range-endpoints">
+            <div style="color:var(--accent-green);">
+              <span style="font-size:0.7rem; color:var(--text-dim);">NEAREST SUPPORT (S1)</span><br>
+              <strong id="labelS1">$2,641.40</strong>
+            </div>
+            <div style="text-align:right; color:var(--accent-red);">
+              <span style="font-size:0.7rem; color:var(--text-dim);">NEAREST RESISTANCE (R1)</span><br>
+              <strong id="labelR1">$2,656.64</strong>
+            </div>
+          </div>
+          <div class="range-bar-track">
+            <div class="range-bar-fill" style="width:100%;"></div>
+            <div class="range-price-needle" id="priceNeedle" style="left:55%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Strategy Setup Card -->
+      <div class="nexus-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <div class="card-title-icon"><i data-lucide="crosshair" style="width:16px;height:16px;"></i></div>
+            <h3 class="card-title">Actionable Plan</h3>
+          </div>
+          <span style="font-size:0.75rem; color:var(--accent-gold); font-weight:700;">PRO TIPS</span>
+        </div>
+        <div style="font-size:0.8rem; color:var(--text-muted); display:flex; flex-direction:column; gap:0.4rem;">
+          <div>🟢 <strong>Buy on Dip:</strong> Retest S1 ($2,641) with SL $2,636</div>
+          <div>🔴 <strong>Sell on Rejection:</strong> Test R1 ($2,656) with SL $2,661</div>
+          <div>⚡ <strong>Breakout Trigger:</strong> H1 Close &gt; $2,658 target $2,672</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Main Chart & Level Matrix Section -->
+    <div class="chart-layout-grid">
+      
+      <!-- LEFT: Chart Visualizer -->
+      <div class="nexus-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <div class="card-title-icon"><i data-lucide="candlestick-chart" style="width:16px;height:16px;"></i></div>
+            <h2 class="card-title" id="activeTfTitle">XAU/USD · 15M Interactive Multi-Timeframe Chart</h2>
+          </div>
+          <div style="font-size:0.75rem; font-family:var(--font-mono); color:var(--text-dim);">
+            RES: <span style="color:var(--accent-red);">🔴 Bands</span> | SUP: <span style="color:var(--accent-green);">🟢 Bands</span>
+          </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="chart-toolbar">
+          <div class="timeframe-group" id="tfSelector">
+            <button class="tf-btn" data-tf="1d">1D (Macro)</button>
+            <button class="tf-btn" data-tf="4h">4H</button>
+            <button class="tf-btn" data-tf="1h">1H</button>
+            <button class="tf-btn active" data-tf="15m">15M</button>
+            <button class="tf-btn" data-tf="5m">5M (Scalp)</button>
+          </div>
+
+          <div class="layer-group" id="layerSelector">
+            <button class="layer-btn active" data-layer="sr">📊 S&R Bands</button>
+            <button class="layer-btn active" data-layer="vp">📈 Volume Profile</button>
+            <button class="layer-btn active" data-layer="psych">🔢 Psych Round</button>
+          </div>
+        </div>
+
+        <!-- Canvas -->
+        <div class="chart-canvas-container">
+          <canvas id="srCanvas"></canvas>
+        </div>
+      </div>
+
+      <!-- RIGHT: Confluence Levels Matrix Table -->
+      <div class="nexus-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <div class="card-title-icon"><i data-lucide="list-filter" style="width:16px;height:16px;"></i></div>
+            <h3 class="card-title">Multi-Timeframe Confluence Matrix</h3>
+          </div>
+          <span style="font-size:0.75rem; color:var(--accent-gold); font-weight:700; font-family:var(--font-mono);">RANKED</span>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ROLE</th>
+                <th>LEVEL ($)</th>
+                <th>SCORE</th>
+                <th>TIMEFRAMES</th>
+                <th>DIST ($)</th>
+              </tr>
+            </thead>
+            <tbody id="confluenceTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <strong>XAU/USD Multi-Timeframe S&R Intelligence Engine</strong> · Real-Time Market Structure Analysis
+      </div>
+      <div>
+        <a href="index.html" style="color:var(--accent-gold); text-decoration:none;">← Return to Main Portal</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+
+    // ─────────────────────────────────────────────
+    // Multi-Timeframe State & Data Engine
+    // ─────────────────────────────────────────────
+    const State = {
+      symbol: 'XAUUSD',
+      activeTf: '15m',
+      currentPrice: 2654.80,
+      layers: { sr: true, vp: true, psych: true },
+      data: {}
+    };
+
+    // Generate Multi-Timeframe Candles
+    function generateTfData(tf, count = 75) {
+      const candles = [];
+      let p = 2650.0;
+      let time = Date.now() - count * 15 * 60 * 1000;
+      const volMap = { '1d': 25.0, '4h': 14.0, '1h': 7.0, '15m': 3.5, '5m': 1.6 };
+      const volatility = volMap[tf] || 4.0;
+
+      for (let i = 0; i < count; i++) {
+        const delta = (Math.random() - 0.49) * volatility;
+        const o = p;
+        const c = o + delta;
+        const h = Math.max(o, c) + Math.random() * (volatility * 0.5);
+        const l = min = Math.min(o, c) - Math.random() * (volatility * 0.5);
+        const v = Math.floor(Math.random() * 5000 + 1000);
+        candles.push({ time, open: o, high: h, low: l, close: c, volume: v });
+        p = c;
+        time += 15 * 60 * 1000;
+      }
+      return candles;
+    }
+
+    // Seed Data
+    ['1d', '4h', '1h', '15m', '5m'].forEach(tf => {
+      State.data[tf] = generateTfData(tf);
+    });
+
+    // Multi-Timeframe Key Levels Matrix
+    const CONFLUENCE_LEVELS = [
+      { price: 2700.00, role: 'RESISTANCE', score: 10.0, strength: 'MAJOR (HTF)', touches: 16, tfs: ['1d', '4h', '1h', 'PSYCH'] },
+      { price: 2684.50, role: 'RESISTANCE', score: 8.8, strength: 'STRONG (HTF)', touches: 9, tfs: ['4h', '1h', '15m'] },
+      { price: 2672.30, role: 'RESISTANCE', score: 9.4, strength: 'STRONG (HTF)', touches: 12, tfs: ['1d', '1h', '15m'] },
+      { price: 2656.64, role: 'RESISTANCE', score: 10.0, strength: 'IMMEDIATE R1', touches: 14, tfs: ['15m', '1h', '5m'] },
+      { price: 2641.40, role: 'SUPPORT', score: 10.0, strength: 'IMMEDIATE S1', touches: 22, tfs: ['15m', '1d', '1h', '4h', '5m'] },
+      { price: 2625.00, role: 'SUPPORT', score: 8.5, strength: 'STRONG (HTF)', touches: 11, tfs: ['1d', '4h', 'PSYCH'] },
+      { price: 2612.80, role: 'SUPPORT', score: 7.2, strength: 'MODERATE (MTF)', touches: 6, tfs: ['1h', '15m'] },
+      { price: 2600.00, role: 'SUPPORT', score: 10.0, strength: 'MAJOR (HTF)', touches: 28, tfs: ['1d', '4h', '1h', 'PSYCH'] }
+    ];
+
+    // Canvas Renderer
+    const canvas = document.getElementById('srCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+      renderChart();
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+
+    function renderChart() {
+      const dpr = window.devicePixelRatio || 1;
+      const width = canvas.width / dpr;
+      const height = canvas.height / dpr;
+      ctx.clearRect(0, 0, width, height);
+
+      const candles = State.data[State.activeTf].slice(-55);
+      if (candles.length === 0) return;
+
+      const prices = candles.flatMap(c => [c.high, c.low]);
+      let minP = Math.min(...prices);
+      let maxP = Math.max(...prices);
+      const range = maxP - minP || 1;
+      minP -= range * 0.08;
+      maxP += range * 0.08;
+
+      const chartHeight = height - 40;
+      const chartWidth = width - 80;
+      const candleGap = chartWidth / candles.length;
+      const candleWidth = Math.max(3, candleGap * 0.65);
+
+      function priceToY(p) {
+        return chartHeight - ((p - minP) / (maxP - minP)) * chartHeight + 15;
+      }
+
+      // Draw Grid Lines
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i < 5; i++) {
+        const y = 15 + (chartHeight / 4) * i;
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(chartWidth, y);
+        ctx.stroke();
+
+        const pVal = maxP - (i / 4) * (maxP - minP);
+        ctx.fillStyle = '#64748b';
+        ctx.font = '10px JetBrains Mono';
+        ctx.textAlign = 'left';
+        ctx.fillText(pVal.toFixed(2), chartWidth + 8, y + 3);
+      }
+
+      // Draw Support & Resistance Bands
+      if (State.layers.sr) {
+        CONFLUENCE_LEVELS.forEach(lvl => {
+          if (lvl.price >= minP && lvl.price <= maxP) {
+            const y = priceToY(lvl.price);
+            const isRes = lvl.role === 'RESISTANCE';
+            const bandColor = isRes ? 'rgba(244, 63, 94, 0.12)' : 'rgba(16, 185, 129, 0.12)';
+            const lineColor = isRes ? 'rgba(244, 63, 94, 0.85)' : 'rgba(16, 185, 129, 0.85)';
+
+            // Band area
+            ctx.fillStyle = bandColor;
+            ctx.fillRect(0, y - 6, chartWidth, 12);
+
+            // Center Line
+            ctx.strokeStyle = lineColor;
+            ctx.lineWidth = lvl.score >= 9.0 ? 1.8 : 1.0;
+            ctx.setLineDash(lvl.score >= 9.0 ? [] : [4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(chartWidth, y);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Label
+            ctx.fillStyle = isRes ? '#f43f5e' : '#10b981';
+            ctx.font = 'bold 9px JetBrains Mono';
+            ctx.textAlign = 'right';
+            ctx.fillText(`${lvl.role === 'RESISTANCE' ? 'RES' : 'SUP'} $${lvl.price.toFixed(1)} (${lvl.score})`, chartWidth - 8, y - 8);
+          }
+        });
+      }
+
+      // Draw Volume Profile Overlay
+      if (State.layers.vp) {
+        const vpBuckets = 16;
+        const bucketStep = (maxP - minP) / vpBuckets;
+        const bucketVols = new Array(vpBuckets).fill(0);
+        candles.forEach(c => {
+          const idx = Math.min(vpBuckets - 1, Math.max(0, Math.floor((c.close - minP) / bucketStep)));
+          bucketVols[idx] += c.volume;
+        });
+
+        const maxVol = Math.max(...bucketVols) || 1;
+        const maxVpW = 75;
+
+        bucketVols.forEach((vol, bIdx) => {
+          const yBottom = priceToY(minP + bIdx * bucketStep);
+          const yTop = priceToY(minP + (bIdx + 1) * bucketStep);
+          const barW = (vol / maxVol) * maxVpW;
+          const isPoc = vol === maxVol;
+
+          ctx.fillStyle = isPoc ? 'rgba(251, 191, 36, 0.35)' : 'rgba(6, 182, 212, 0.15)';
+          ctx.fillRect(chartWidth - barW, yTop, barW, Math.abs(yBottom - yTop) - 1);
+        });
+      }
+
+      // Draw Candlesticks
+      candles.forEach((c, idx) => {
+        const x = idx * candleGap + candleGap / 2;
+        const openY = priceToY(c.open);
+        const closeY = priceToY(c.close);
+        const highY = priceToY(c.high);
+        const lowY = priceToY(c.low);
+        const isUp = c.close >= c.open;
+
+        ctx.strokeStyle = isUp ? '#10b981' : '#f43f5e';
+        ctx.fillStyle = isUp ? '#10b981' : '#f43f5e';
+        ctx.lineWidth = 1.2;
+
+        // Wick
+        ctx.beginPath();
+        ctx.moveTo(x, highY);
+        ctx.lineTo(x, lowY);
+        ctx.stroke();
+
+        // Body
+        const topY = Math.min(openY, closeY);
+        const bodyH = Math.max(2, Math.abs(openY - closeY));
+        ctx.fillRect(x - candleWidth / 2, topY, candleWidth, bodyH);
+      });
+
+      // Update Top HUD Values
+      const last = candles[candles.length - 1];
+      State.currentPrice = last.close;
+      document.getElementById('spotPrice').textContent = last.close.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // Populate Confluence Table
+    function updateConfluenceTable() {
+      const tbody = document.getElementById('confluenceTableBody');
+      tbody.innerHTML = CONFLUENCE_LEVELS.map(lvl => {
+        const diff = lvl.price - State.currentPrice;
+        const isRes = lvl.role === 'RESISTANCE';
+        const scoreClass = lvl.score >= 9.0 ? 'score-10' : lvl.score >= 7.0 ? 'score-mid' : 'score-low';
+
+        return `
+          <tr>
+            <td style="color:${isRes ? 'var(--accent-red)' : 'var(--accent-green)'}; font-weight:800;">
+              ${isRes ? '🔴 RES' : '🟢 SUP'}
+            </td>
+            <td><strong>$${lvl.price.toFixed(2)}</strong></td>
+            <td><span class="score-badge ${scoreClass}">${lvl.score}</span></td>
+            <td>${lvl.tfs.map(t => `<span class="tf-pill">${t}</span>`).join('')}</td>
+            <td style="color:${diff >= 0 ? 'var(--accent-red)' : 'var(--accent-green)'}; font-weight:700;">
+              ${diff >= 0 ? '+' : ''}$${diff.toFixed(2)}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Clock
+    function updateClock() {
+      const bkk = new Date().toLocaleTimeString('th-TH', { timeZone: 'Asia/Bangkok', hour12: false });
+      document.getElementById('clockText').textContent = bkk;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Timeframe Switcher
+    document.querySelectorAll('#tfSelector .tf-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#tfSelector .tf-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        State.activeTf = btn.dataset.tf;
+        document.getElementById('activeTfTitle').textContent = `XAU/USD · ${btn.textContent.trim()} Interactive Multi-Timeframe Chart`;
+        renderChart();
+      });
+    });
+
+    // Layer Toggles
+    document.querySelectorAll('#layerSelector .layer-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const layer = btn.dataset.layer;
+        State.layers[layer] = !State.layers[layer];
+        btn.classList.toggle('active', State.layers[layer]);
+        renderChart();
+      });
+    });
+
+    // Refresh Button
+    document.getElementById('refreshBtn').addEventListener('click', () => {
+      const icon = document.getElementById('refreshIcon');
+      icon.style.transform = 'rotate(360deg)';
+      icon.style.transition = 'transform 0.5s ease';
+      setTimeout(() => { icon.style.transform = 'none'; }, 500);
+      State.data[State.activeTf] = generateTfData(State.activeTf);
+      renderChart();
+      updateConfluenceTable();
+    });
+
+    // Startup
+    resizeCanvas();
+    updateConfluenceTable();
+  </script>
+</body>
+</html>
