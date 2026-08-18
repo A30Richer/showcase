@@ -595,7 +595,7 @@
         </div>
       </div>
 
-      <!-- Rows Selection (10 - 16 rows) -->
+      <!-- Rows Selection (12 - 16 rows) -->
       <div class="form-group">
         <div class="form-label-row">
           <span>Peg Rows</span>
@@ -699,16 +699,16 @@
           if (this.ctx.state === 'suspended') this.ctx.resume();
           const osc = this.ctx.createOscillator();
           const gain = this.ctx.createGain();
-          const freq = 600 + Math.random() * 500;
+          const freq = 620 + Math.random() * 450;
           osc.type = 'triangle';
           osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-          const vol = Math.min(0.08, 0.02 + velocity * 0.015);
+          const vol = Math.min(0.06, 0.015 + velocity * 0.012);
           gain.gain.setValueAtTime(vol, this.ctx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.04);
+          gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.035);
           osc.connect(gain);
           gain.connect(this.ctx.destination);
           osc.start();
-          osc.stop(this.ctx.currentTime + 0.04);
+          osc.stop(this.ctx.currentTime + 0.035);
         } catch (e) {}
       },
       playBucketHit(mult) {
@@ -719,53 +719,50 @@
           if (this.ctx.state === 'suspended') this.ctx.resume();
 
           if (mult >= 100) {
-            // Epic Fanfare Chord
             [523.25, 659.25, 783.99, 1046.50, 1318.51].forEach((f, idx) => {
               setTimeout(() => {
                 const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
                 osc.type = 'sawtooth';
                 osc.frequency.setValueAtTime(f, this.ctx.currentTime);
-                gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.5);
+                gain.gain.setValueAtTime(0.09, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.45);
                 osc.connect(gain);
                 gain.connect(this.ctx.destination);
                 osc.start();
-                osc.stop(this.ctx.currentTime + 0.5);
-              }, idx * 60);
+                osc.stop(this.ctx.currentTime + 0.45);
+              }, idx * 55);
             });
           } else if (mult >= 2) {
-            // High Win Chime
             const osc = this.ctx.createOscillator();
             const gain = this.ctx.createGain();
             osc.type = 'sine';
             osc.frequency.setValueAtTime(587.33, this.ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(880, this.ctx.currentTime + 0.15);
-            gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.2);
+            osc.frequency.exponentialRampToValueAtTime(880, this.ctx.currentTime + 0.12);
+            gain.gain.setValueAtTime(0.07, this.ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.18);
             osc.connect(gain);
             gain.connect(this.ctx.destination);
             osc.start();
-            osc.stop(this.ctx.currentTime + 0.2);
+            osc.stop(this.ctx.currentTime + 0.18);
           } else {
-            // Low Win Pop
             const osc = this.ctx.createOscillator();
             const gain = this.ctx.createGain();
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(320, this.ctx.currentTime);
-            gain.gain.setValueAtTime(0.05, this.ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.08);
+            osc.frequency.setValueAtTime(340, this.ctx.currentTime);
+            gain.gain.setValueAtTime(0.04, this.ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.07);
             osc.connect(gain);
             gain.connect(this.ctx.destination);
             osc.start();
-            osc.stop(this.ctx.currentTime + 0.08);
+            osc.stop(this.ctx.currentTime + 0.07);
           }
         } catch (e) {}
       }
     };
 
     // ─────────────────────────────────────────────
-    // Game Multiplier Configurations (0.5x - 100,000x)
+    // Multiplier Configurations
     // ─────────────────────────────────────────────
     const MULTIPLIER_TABLES = {
       16: {
@@ -788,15 +785,14 @@
       }
     };
 
-    // Color gradient based on multiplier value
     function getMultiplierColor(mult) {
-      if (mult >= 10000) return '#ec4899'; // Pink-Neon 10k - 100k
-      if (mult >= 1000) return '#f43f5e';  // Red-Orange 1k
-      if (mult >= 100) return '#fb923c';   // Orange 100x
-      if (mult >= 10) return '#facc15';    // Yellow 10x
-      if (mult >= 2) return '#10b981';     // Green 2x-5x
-      if (mult >= 1) return '#06b6d4';     // Cyan 1x
-      return '#64748b';                    // Dim Gray < 1x
+      if (mult >= 10000) return '#ec4899';
+      if (mult >= 1000) return '#f43f5e';
+      if (mult >= 100) return '#fb923c';
+      if (mult >= 10) return '#facc15';
+      if (mult >= 2) return '#10b981';
+      if (mult >= 1) return '#06b6d4';
+      return '#64748b';
     }
 
     // ─────────────────────────────────────────────
@@ -809,7 +805,6 @@
       risk: 'extreme',
       balls: [],
       particles: [],
-      bucketHighlights: {},
       autoDrop: false,
       autoDropInterval: null,
       stats: {
@@ -824,6 +819,10 @@
 
     let pegs = [];
     let buckets = [];
+    let leftWall = [];
+    let rightWall = [];
+    let topFunnel = { x: 0, y: 0 };
+    let boardBounds = { top: 0, bottom: 0, height: 0, startX: 0, endX: 0, dx: 0 };
 
     function setupBoard() {
       const rect = canvas.parentElement.getBoundingClientRect();
@@ -837,36 +836,57 @@
 
       pegs = [];
       buckets = [];
+      leftWall = [];
+      rightWall = [];
 
       const rowCount = State.rows;
-      const topPadding = 60;
+      const topPadding = 55;
       const bottomPadding = 65;
       const usableHeight = height - topPadding - bottomPadding;
       const rowSpacing = usableHeight / rowCount;
-      const pegRadius = Math.max(3, Math.min(5.5, width / (rowCount * 7)));
+      const dx = (width * 0.86) / (rowCount + 2);
+      const pegRadius = Math.max(3.2, Math.min(4.8, dx * 0.12));
 
-      // Generate Pegs Grid (Pyramid)
+      topFunnel = { x: width / 2, y: topPadding - 28 };
+
+      // Generate Pegs Matrix (Pyramid)
       for (let r = 0; r <= rowCount; r++) {
         const pegCount = r + 3;
-        const rowWidth = (pegCount - 1) * (width * 0.85 / (rowCount + 2));
+        const rowWidth = (pegCount - 1) * dx;
         const startX = (width - rowWidth) / 2;
         const y = topPadding + r * rowSpacing;
 
         for (let c = 0; c < pegCount; c++) {
-          const x = startX + c * (rowWidth / (pegCount - 1));
+          const x = startX + c * dx;
           pegs.push({ x, y, r: pegRadius, pulse: 0 });
         }
+
+        // Side boundary wall nodes
+        const wallMargin = pegRadius + 8;
+        leftWall.push({ x: startX - wallMargin, y: y });
+        rightWall.push({ x: startX + rowWidth + wallMargin, y: y });
       }
 
-      // Generate Multiplier Buckets at the bottom
+      // Generate Buckets
       const multipliers = MULTIPLIER_TABLES[State.rows][State.risk];
       const bucketCount = multipliers.length;
-      const lastPegRow = pegs.filter(p => p.y === topPadding + rowCount * rowSpacing);
-      const startX = lastPegRow[0].x;
-      const endX = lastPegRow[lastPegRow.length - 1].x;
-      const totalBucketWidth = endX - startX;
-      const bucketWidth = totalBucketWidth / bucketCount;
-      const bucketY = topPadding + rowCount * rowSpacing + 22;
+      const lastRowY = topPadding + rowCount * rowSpacing;
+      const lastPegs = pegs.filter(p => Math.abs(p.y - lastRowY) < 1);
+      const startX = lastPegs[0].x;
+      const endX = lastPegs[lastPegs.length - 1].x;
+      const totalWidth = endX - startX;
+      const bucketWidth = totalWidth / bucketCount;
+      const bucketY = lastRowY + 18;
+
+      boardBounds = {
+        top: topPadding,
+        bottom: lastRowY,
+        height: usableHeight,
+        startX: startX,
+        endX: endX,
+        bucketWidth: bucketWidth,
+        dx: dx
+      };
 
       for (let i = 0; i < bucketCount; i++) {
         const x = startX + i * bucketWidth + bucketWidth / 2;
@@ -875,7 +895,7 @@
           x,
           y: bucketY,
           w: bucketWidth - 2,
-          h: 30,
+          h: 28,
           mult: multipliers[i],
           hitAnim: 0
         });
@@ -885,7 +905,7 @@
     window.addEventListener('resize', setupBoard);
 
     // ─────────────────────────────────────────────
-    // Ball Creation & Physics Step
+    // Spawning & Substep Physics
     // ─────────────────────────────────────────────
     function spawnBall(bet) {
       if (State.balance < bet) {
@@ -897,13 +917,15 @@
       State.balance -= bet;
       updateBalanceUI();
 
-      const startX = canvas.width / (window.devicePixelRatio || 1) / 2 + (Math.random() - 0.5) * 12;
+      const width = canvas.width / (window.devicePixelRatio || 1);
+      const startX = width / 2 + (Math.random() - 0.5) * 6;
+
       State.balls.push({
         x: startX,
-        y: 20,
-        vx: (Math.random() - 0.5) * 1.5,
-        vy: 0.5,
-        r: 6,
+        y: topFunnel.y,
+        vx: (Math.random() - 0.5) * 0.8,
+        vy: 1.2,
+        r: 4.8,
         bet: bet,
         color: '#fbbf24',
         trail: []
@@ -913,134 +935,147 @@
       document.getElementById('statTotalDrops').textContent = State.stats.totalDrops.toLocaleString();
     }
 
-    function createExplosion(x, y, color, count = 25) {
+    function createExplosion(x, y, color, count = 20) {
       for (let i = 0; i < count; i++) {
         const angle = Math.random() * Math.PI * 2;
-        const speed = Math.random() * 5 + 2;
+        const speed = Math.random() * 4 + 1.5;
         State.particles.push({
           x, y,
           vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed,
           color,
-          r: Math.random() * 3 + 1.5,
-          alpha: 1,
-          life: 1
+          r: Math.random() * 2.5 + 1.2,
+          alpha: 1
         });
       }
     }
 
     function updatePhysics() {
-      const gravity = 0.22;
-      const bounce = 0.58;
+      const substeps = 4;
+      const gravity = 0.28 / substeps;
+      const bounce = 0.52;
+      const wallBounce = 0.65;
       const dpr = window.devicePixelRatio || 1;
       const width = canvas.width / dpr;
       const height = canvas.height / dpr;
 
-      // Update Peg pulse animation
+      // Animate Pegs & Buckets decay
       pegs.forEach(p => {
-        if (p.pulse > 0) p.pulse -= 0.05;
+        if (p.pulse > 0) p.pulse -= 0.04;
       });
-
-      // Update Bucket animations
       buckets.forEach(b => {
-        if (b.hitAnim > 0) b.hitAnim -= 0.04;
+        if (b.hitAnim > 0) b.hitAnim -= 0.03;
       });
 
-      // Update Particles
+      // Animate Particles
       for (let i = State.particles.length - 1; i >= 0; i--) {
         const pt = State.particles[i];
         pt.x += pt.vx;
         pt.y += pt.vy;
-        pt.vy += 0.08;
-        pt.alpha -= 0.025;
-        if (pt.alpha <= 0) {
-          State.particles.splice(i, 1);
-        }
+        pt.vy += 0.06;
+        pt.alpha -= 0.022;
+        if (pt.alpha <= 0) State.particles.splice(i, 1);
       }
 
-      // Update Balls
-      for (let i = State.balls.length - 1; i >= 0; i--) {
-        const b = State.balls[i];
-        b.vy += gravity;
-        b.x += b.vx;
-        b.y += b.vy;
+      // Physics Substeps Loop for zero tunneling & perfect collision
+      for (let sub = 0; sub < substeps; sub++) {
+        for (let i = State.balls.length - 1; i >= 0; i--) {
+          const b = State.balls[i];
+          b.vy += gravity;
+          b.vx *= 0.998; // Air resistance
+          b.x += b.vx / substeps;
+          b.y += b.vy / substeps;
 
-        // Trail
-        b.trail.push({ x: b.x, y: b.y });
-        if (b.trail.length > 6) b.trail.shift();
+          // Side Wall Containment (Slanted Funnel Rails)
+          const prog = Math.max(0, Math.min(1, (b.y - boardBounds.top) / boardBounds.height));
+          const topL = leftWall[0].x;
+          const botL = leftWall[leftWall.length - 1].x;
+          const topR = rightWall[0].x;
+          const botR = rightWall[rightWall.length - 1].x;
 
-        // Peg Collisions
-        for (const p of pegs) {
-          const dx = b.x - p.x;
-          const dy = b.y - p.y;
-          const dist = Math.hypot(dx, dy);
-          const minDist = b.r + p.r;
+          const minX = topL * (1 - prog) + botL * prog;
+          const maxX = topR * (1 - prog) + botR * prog;
 
-          if (dist < minDist) {
-            // Collision resolution
-            const angle = Math.atan2(dy, dx);
-            const overlap = minDist - dist;
-            b.x += Math.cos(angle) * overlap;
-            b.y += Math.sin(angle) * overlap;
-
-            // Velocity reflection with random deflection
-            const normalX = Math.cos(angle);
-            const normalY = Math.sin(angle);
-            const dot = b.vx * normalX + b.vy * normalY;
-
-            b.vx = (b.vx - 2 * dot * normalX) * bounce + (Math.random() - 0.5) * 0.4;
-            b.vy = (b.vy - 2 * dot * normalY) * bounce;
-
-            p.pulse = 1.0;
-            AudioEngine.playPegHit(Math.hypot(b.vx, b.vy));
+          if (b.x - b.r < minX) {
+            b.x = minX + b.r;
+            b.vx = Math.abs(b.vx) * wallBounce + 0.4;
+            AudioEngine.playPegHit(Math.abs(b.vx));
+          } else if (b.x + b.r > maxX) {
+            b.x = maxX - b.r;
+            b.vx = -Math.abs(b.vx) * wallBounce - 0.4;
+            AudioEngine.playPegHit(Math.abs(b.vx));
           }
-        }
 
-        // Check Landing in Multiplier Buckets
-        const lastPegY = pegs[pegs.length - 1].y;
-        if (b.y >= lastPegY + 12) {
-          // Find closest bucket
-          let closestBucket = buckets[0];
-          let minDist = 999999;
-          for (const bk of buckets) {
-            const d = Math.abs(b.x - bk.x);
-            if (d < minDist) {
-              minDist = d;
-              closestBucket = bk;
+          // Clamp horizontal speed to prevent ballistic jumps
+          b.vx = Math.max(-4.2, Math.min(4.2, b.vx));
+
+          // Peg Collisions
+          for (const p of pegs) {
+            const pdx = b.x - p.x;
+            const pdy = b.y - p.y;
+            const distSq = pdx * pdx + pdy * pdy;
+            const minDist = b.r + p.r;
+
+            if (distSq < minDist * minDist && distSq > 0) {
+              const dist = Math.sqrt(distSq);
+              const overlap = minDist - dist;
+              const nx = pdx / dist;
+              const ny = pdy / dist;
+
+              b.x += nx * overlap;
+              b.y += ny * overlap;
+
+              const dot = b.vx * nx + b.vy * ny;
+              b.vx = (b.vx - 2 * dot * nx) * bounce + (Math.random() - 0.5) * 0.25;
+              b.vy = (b.vy - 2 * dot * ny) * bounce;
+
+              p.pulse = 1.0;
+              AudioEngine.playPegHit(Math.hypot(b.vx, b.vy));
             }
           }
 
-          const payout = b.bet * closestBucket.mult;
-          State.balance += payout;
-          const profit = payout - b.bet;
-          State.stats.totalProfit += profit;
+          // Check Multiplier Bucket Landing
+          if (b.y >= boardBounds.bottom + 12) {
+            const relX = b.x - boardBounds.startX;
+            let bIdx = Math.floor(relX / boardBounds.bucketWidth);
+            bIdx = Math.max(0, Math.min(buckets.length - 1, bIdx));
 
-          if (closestBucket.mult > State.stats.bestMult) {
-            State.stats.bestMult = closestBucket.mult;
-            document.getElementById('statBestMult').textContent = `${State.stats.bestMult.toLocaleString()}x`;
+            const bucket = buckets[bIdx];
+            const payout = b.bet * bucket.mult;
+            State.balance += payout;
+            const profit = payout - b.bet;
+            State.stats.totalProfit += profit;
+
+            if (bucket.mult > State.stats.bestMult) {
+              State.stats.bestMult = bucket.mult;
+              document.getElementById('statBestMult').textContent = `${State.stats.bestMult.toLocaleString()}x`;
+            }
+
+            bucket.hitAnim = 1.0;
+            createExplosion(bucket.x, bucket.y, getMultiplierColor(bucket.mult), bucket.mult >= 100 ? 45 : 18);
+            AudioEngine.playBucketHit(bucket.mult);
+
+            addHistoryPill(bucket.mult);
+            updateBalanceUI();
+
+            if (bucket.mult >= 1000) {
+              triggerJackpotModal(bucket.mult, payout);
+            }
+
+            State.balls.splice(i, 1);
           }
-
-          closestBucket.hitAnim = 1.0;
-          createExplosion(closestBucket.x, closestBucket.y, getMultiplierColor(closestBucket.mult), closestBucket.mult >= 100 ? 50 : 20);
-          AudioEngine.playBucketHit(closestBucket.mult);
-
-          // Add history pill
-          addHistoryPill(closestBucket.mult);
-          updateBalanceUI();
-
-          // Jackpot Celebration Modal
-          if (closestBucket.mult >= 1000) {
-            triggerJackpotModal(closestBucket.mult, payout);
-          }
-
-          // Remove ball
-          State.balls.splice(i, 1);
         }
       }
+
+      // Record Trail for rendering
+      State.balls.forEach(b => {
+        b.trail.push({ x: b.x, y: b.y });
+        if (b.trail.length > 5) b.trail.shift();
+      });
     }
 
     // ─────────────────────────────────────────────
-    // Canvas Render Loop
+    // Canvas Render Engine
     // ─────────────────────────────────────────────
     function render() {
       const dpr = window.devicePixelRatio || 1;
@@ -1048,10 +1083,51 @@
       const height = canvas.height / dpr;
       ctx.clearRect(0, 0, width, height);
 
+      // Draw Side Funnel Guide Rails (Glass Neon Barriers)
+      if (leftWall.length > 1) {
+        ctx.save();
+        ctx.strokeStyle = 'rgba(6, 182, 212, 0.35)';
+        ctx.lineWidth = 3;
+        ctx.shadowColor = 'rgba(6, 182, 212, 0.5)';
+        ctx.shadowBlur = 10;
+
+        // Left Rail
+        ctx.beginPath();
+        ctx.moveTo(leftWall[0].x, leftWall[0].y - 10);
+        for (let i = 0; i < leftWall.length; i++) {
+          ctx.lineTo(leftWall[i].x, leftWall[i].y);
+        }
+        ctx.stroke();
+
+        // Right Rail
+        ctx.beginPath();
+        ctx.moveTo(rightWall[0].x, rightWall[0].y - 10);
+        for (let i = 0; i < rightWall.length; i++) {
+          ctx.lineTo(rightWall[i].x, rightWall[i].y);
+        }
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // Draw Top Spout / Funnel Nozzle
+      ctx.save();
+      ctx.fillStyle = 'rgba(251, 191, 36, 0.2)';
+      ctx.strokeStyle = 'rgba(251, 191, 36, 0.6)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(width / 2 - 18, topFunnel.y - 12);
+      ctx.lineTo(width / 2 + 18, topFunnel.y - 12);
+      ctx.lineTo(width / 2 + 8, topFunnel.y + 6);
+      ctx.lineTo(width / 2 - 8, topFunnel.y + 6);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+
       // Draw Buckets
       buckets.forEach(b => {
         const color = getMultiplierColor(b.mult);
-        const animScale = 1 + b.hitAnim * 0.25;
+        const animScale = 1 + b.hitAnim * 0.22;
         const w = b.w * animScale;
         const h = b.h * animScale;
         const x = b.x - w / 2;
@@ -1059,17 +1135,15 @@
 
         ctx.fillStyle = color;
         ctx.shadowColor = b.hitAnim > 0 ? color : 'transparent';
-        ctx.shadowBlur = b.hitAnim > 0 ? 20 : 0;
+        ctx.shadowBlur = b.hitAnim > 0 ? 18 : 0;
 
-        // Rounded rect for bucket
         ctx.beginPath();
         ctx.roundRect(x, y, w, h, 6);
         ctx.fill();
         ctx.shadowBlur = 0;
 
-        // Multiplier Text
         ctx.fillStyle = b.mult >= 10000 ? '#fff' : (b.mult < 1 ? '#e2e8f0' : '#000');
-        ctx.font = `bold ${b.w < 35 ? '9px' : '11px'} JetBrains Mono`;
+        ctx.font = `bold ${b.w < 34 ? '8.5px' : '10.5px'} JetBrains Mono`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
@@ -1080,10 +1154,10 @@
       // Draw Pegs
       pegs.forEach(p => {
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r + p.pulse * 2.5, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, p.r + p.pulse * 2.2, 0, Math.PI * 2);
         ctx.fillStyle = p.pulse > 0 ? '#fbbf24' : '#64748b';
         ctx.shadowColor = p.pulse > 0 ? 'rgba(251, 191, 36, 0.8)' : 'transparent';
-        ctx.shadowBlur = p.pulse > 0 ? 12 : 0;
+        ctx.shadowBlur = p.pulse > 0 ? 10 : 0;
         ctx.fill();
         ctx.shadowBlur = 0;
       });
@@ -1094,16 +1168,15 @@
         ctx.globalAlpha = pt.alpha;
         ctx.fillStyle = pt.color;
         ctx.shadowColor = pt.color;
-        ctx.shadowBlur = 10;
+        ctx.shadowBlur = 8;
         ctx.beginPath();
         ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();
       });
 
-      // Draw Balls & Glow
+      // Draw Balls & Glowing Trails
       State.balls.forEach(b => {
-        // Trail
         b.trail.forEach((t, idx) => {
           ctx.beginPath();
           ctx.arc(t.x, t.y, b.r * (idx / b.trail.length), 0, Math.PI * 2);
@@ -1111,12 +1184,11 @@
           ctx.fill();
         });
 
-        // Ball Body
         ctx.beginPath();
         ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
         ctx.fillStyle = b.color;
-        ctx.shadowColor = 'rgba(251, 191, 36, 0.6)';
-        ctx.shadowBlur = 14;
+        ctx.shadowColor = 'rgba(251, 191, 36, 0.7)';
+        ctx.shadowBlur = 12;
         ctx.fill();
         ctx.shadowBlur = 0;
       });
@@ -1126,7 +1198,7 @@
     }
 
     // ─────────────────────────────────────────────
-    // UI Helpers & Event Listeners
+    // UI Helpers & Handlers
     // ─────────────────────────────────────────────
     function updateBalanceUI() {
       document.getElementById('balanceText').textContent = `$${State.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -1155,8 +1227,7 @@
       document.getElementById('modalWinText').textContent = `+$${winAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       modal.classList.add('show');
 
-      // Confetti burst
-      for (let i = 0; i < 150; i++) {
+      for (let i = 0; i < 120; i++) {
         createExplosion(canvas.width / 2 / (window.devicePixelRatio || 1), canvas.height / 2 / (window.devicePixelRatio || 1), '#fbbf24', 2);
       }
 
@@ -1280,7 +1351,7 @@
       }
     });
 
-    // Start Board and Animation Loop
+    // Start Game
     setupBoard();
     render();
   </script>
