@@ -702,17 +702,17 @@
     // Generate Multi-Timeframe Candles
     function generateTfData(tf, count = 75) {
       const candles = [];
-      let p = 2650.0;
+      let p = 4359.14;
       let time = Date.now() - count * 15 * 60 * 1000;
-      const volMap = { '1d': 25.0, '4h': 14.0, '1h': 7.0, '15m': 3.5, '5m': 1.6 };
-      const volatility = volMap[tf] || 4.0;
+      const volMap = { '1d': 32.0, '4h': 18.0, '1h': 10.0, '15m': 4.5, '5m': 2.2 };
+      const volatility = volMap[tf] || 5.0;
 
       for (let i = 0; i < count; i++) {
         const delta = (Math.random() - 0.49) * volatility;
         const o = p;
         const c = o + delta;
         const h = Math.max(o, c) + Math.random() * (volatility * 0.5);
-        const l = min = Math.min(o, c) - Math.random() * (volatility * 0.5);
+        const l = Math.min(o, c) - Math.random() * (volatility * 0.5);
         const v = Math.floor(Math.random() * 5000 + 1000);
         candles.push({ time, open: o, high: h, low: l, close: c, volume: v });
         p = c;
@@ -726,16 +726,16 @@
       State.data[tf] = generateTfData(tf);
     });
 
-    // Multi-Timeframe Key Levels Matrix
+    // Multi-Timeframe Key Levels Matrix (TradingView FOREXCOM:XAUUSD Feed)
     const CONFLUENCE_LEVELS = [
-      { price: 2700.00, role: 'RESISTANCE', score: 10.0, strength: 'MAJOR (HTF)', touches: 16, tfs: ['1d', '4h', '1h', 'PSYCH'] },
-      { price: 2684.50, role: 'RESISTANCE', score: 8.8, strength: 'STRONG (HTF)', touches: 9, tfs: ['4h', '1h', '15m'] },
-      { price: 2672.30, role: 'RESISTANCE', score: 9.4, strength: 'STRONG (HTF)', touches: 12, tfs: ['1d', '1h', '15m'] },
-      { price: 2656.64, role: 'RESISTANCE', score: 10.0, strength: 'IMMEDIATE R1', touches: 14, tfs: ['15m', '1h', '5m'] },
-      { price: 2641.40, role: 'SUPPORT', score: 10.0, strength: 'IMMEDIATE S1', touches: 22, tfs: ['15m', '1d', '1h', '4h', '5m'] },
-      { price: 2625.00, role: 'SUPPORT', score: 8.5, strength: 'STRONG (HTF)', touches: 11, tfs: ['1d', '4h', 'PSYCH'] },
-      { price: 2612.80, role: 'SUPPORT', score: 7.2, strength: 'MODERATE (MTF)', touches: 6, tfs: ['1h', '15m'] },
-      { price: 2600.00, role: 'SUPPORT', score: 10.0, strength: 'MAJOR (HTF)', touches: 28, tfs: ['1d', '4h', '1h', 'PSYCH'] }
+      { price: 4452.50, zone_low: 4451.93, zone_high: 4453.22, role: 'RESISTANCE', score: 10.0, strength: 'MAJOR (HTF)', touches: 16, tfs: ['1w', '1d', '4h', '1h', '15m', '5m'], sources: ['PWH', '$10 round'] },
+      { price: 4410.70, zone_low: 4410.05, zone_high: 4411.37, role: 'RESISTANCE', score: 10.0, strength: 'STRONG (HTF)', touches: 12, tfs: ['1d', '4h', '1h', '15m', '5m'], sources: ['PDH', '$10 round'] },
+      { price: 4367.00, zone_low: 4366.50, zone_high: 4367.56, role: 'RESISTANCE', score: 10.0, strength: 'STRONG (HTF)', touches: 6, tfs: ['1d', '4h', '1h', '15m', '5m'], sources: ['PDL', 'swing low'] },
+      { price: 4363.50, zone_low: 4362.25, zone_high: 4364.81, role: 'RESISTANCE', score: 10.0, strength: 'IMMEDIATE R1', touches: 12, tfs: ['4h', '1h', '15m', '5m'], sources: ['swing high', 'swing low'] },
+      { price: 4358.75, zone_low: 4357.97, zone_high: 4359.52, role: 'TESTING', score: 6.8, strength: 'ACTIVE REACTION', touches: 4, tfs: ['15m', '5m'], sources: ['$10 round', 'swing high'] },
+      { price: 4356.85, zone_low: 4356.32, zone_high: 4357.38, role: 'SUPPORT', score: 10.0, strength: 'IMMEDIATE S1', touches: 8, tfs: ['4h', '1h', '15m'], sources: ['swing low'] },
+      { price: 4311.10, zone_low: 4310.47, zone_high: 4311.70, role: 'SUPPORT', score: 10.0, strength: 'MAJOR (HTF)', touches: 14, tfs: ['1w', '1d', '4h', '1h', '15m', '5m'], sources: ['PWL', '$10 round'] },
+      { price: 4274.78, zone_low: 4274.18, zone_high: 4275.38, role: 'SUPPORT', score: 10.0, strength: 'STRONG (HTF)', touches: 10, tfs: ['1d', '1h', '15m'], sources: ['swing high', 'swing low'] }
     ];
 
     // Canvas Renderer
