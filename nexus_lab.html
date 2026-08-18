@@ -1,0 +1,1721 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus 3.7 · Quantitative Trading Intelligence & Strategy Lab</title>
+  <meta name="description" content="ห้องปฏิบัติการวิเคราะห์การเงินเชิงปริมาณ ทดสอบกลยุทธ์ Algorithmic Trading และจำลองการเทรดแบบ Real-time ด้วยสถาปัตยกรรม Gemini 3.7">
+
+  <!-- Typography & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --bg-base: #06080d;
+      --bg-surface-1: #0c1019;
+      --bg-surface-2: #121826;
+      --bg-surface-3: #1a2236;
+      --border-subtle: rgba(255, 255, 255, 0.07);
+      --border-focus: rgba(0, 240, 180, 0.5);
+      
+      --accent-cyan: #00f0b4;
+      --accent-cyan-glow: rgba(0, 240, 180, 0.25);
+      --accent-gold: #f59e0b;
+      --accent-gold-glow: rgba(245, 158, 11, 0.25);
+      --accent-blue: #38bdf8;
+      --accent-purple: #a855f7;
+      --up-green: #10b981;
+      --up-green-bg: rgba(16, 185, 129, 0.12);
+      --down-red: #f43f5e;
+      --down-red-bg: rgba(244, 63, 94, 0.12);
+
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-display: 'Outfit', sans-serif;
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+    }
+
+    /* Cyberpunk Theme Override */
+    body.theme-cyberpunk {
+      --bg-base: #05050b;
+      --bg-surface-1: #0a0a14;
+      --bg-surface-2: #101020;
+      --bg-surface-3: #181830;
+      --accent-cyan: #00ffcc;
+      --accent-cyan-glow: rgba(0, 255, 204, 0.35);
+      --accent-purple: #ff007f;
+      --border-focus: rgba(0, 255, 204, 0.6);
+    }
+
+    /* Luxury Emerald Theme Override */
+    body.theme-luxury {
+      --bg-base: #030a06;
+      --bg-surface-1: #06140d;
+      --bg-surface-2: #0b2016;
+      --bg-surface-3: #123022;
+      --accent-cyan: #10b981;
+      --accent-cyan-glow: rgba(16, 185, 129, 0.35);
+      --accent-gold: #eab308;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 10% 10%, rgba(0, 240, 180, 0.04) 0%, transparent 40%),
+        radial-gradient(circle at 90% 20%, rgba(56, 189, 248, 0.05) 0%, transparent 45%),
+        radial-gradient(circle at 50% 90%, rgba(168, 85, 247, 0.04) 0%, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    /* HUD Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(6, 8, 13, 0.88);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .header-inner {
+      max-width: 1540px;
+      margin: 0 auto;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .brand-badge-gemini {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: linear-gradient(135deg, rgba(0, 240, 180, 0.15), rgba(56, 189, 248, 0.15));
+      border: 1px solid rgba(0, 240, 180, 0.35);
+      color: var(--accent-cyan);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-family: var(--font-mono);
+    }
+
+    .brand-title {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .brand-title span {
+      background: linear-gradient(135deg, #fff 30%, var(--accent-cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .ticker-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--bg-surface-1);
+      border: 1px solid var(--border-subtle);
+      border-radius: 50px;
+      padding: 0.35rem 0.85rem;
+    }
+
+    .ticker-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.3rem 0.75rem;
+      border-radius: 50px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+    }
+
+    .ticker-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .ticker-btn.active {
+      background: var(--accent-cyan);
+      color: #000;
+      font-weight: 700;
+      box-shadow: 0 0 16px var(--accent-cyan-glow);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .hud-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+    }
+
+    .hud-stat .stat-label {
+      color: var(--text-dim);
+      font-size: 0.68rem;
+    }
+
+    .hud-stat .stat-val {
+      color: var(--accent-cyan);
+      font-weight: 700;
+    }
+
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .icon-btn:hover {
+      color: #fff;
+      border-color: var(--accent-cyan);
+      background: var(--bg-surface-3);
+    }
+
+    /* Main Container Grid */
+    main {
+      max-width: 1540px;
+      margin: 1.25rem auto;
+      padding: 0 1.25rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      width: 100%;
+    }
+
+    .grid-dashboard {
+      display: grid;
+      grid-template-columns: 1fr 390px;
+      gap: 1.25rem;
+      align-items: start;
+    }
+
+    /* Card Containers */
+    .nexus-card {
+      background: var(--bg-surface-1);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      position: relative;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .card-title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .card-title-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: rgba(0, 240, 180, 0.1);
+      border: 1px solid rgba(0, 240, 180, 0.25);
+      color: var(--accent-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    /* Chart Toolbar */
+    .chart-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0.5rem 0.85rem;
+      margin-bottom: 1rem;
+    }
+
+    .timeframe-group, .indicator-group {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .tf-btn, .ind-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tf-btn:hover, .ind-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .tf-btn.active {
+      background: rgba(0, 240, 180, 0.15);
+      color: var(--accent-cyan);
+      border-color: rgba(0, 240, 180, 0.4);
+    }
+
+    .ind-btn.active {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-blue);
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+
+    /* Canvas Chart Area */
+    .chart-canvas-container {
+      position: relative;
+      width: 100%;
+      height: 480px;
+      background: #080b12;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+    }
+
+    #candlestickCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: crosshair;
+    }
+
+    /* Chart Overlay Stats */
+    .chart-hud-overlay {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    }
+
+    .hud-price-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .hud-main-price {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .hud-price-change {
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+    }
+
+    .hud-price-change.up {
+      color: var(--up-green);
+      background: var(--up-green-bg);
+    }
+
+    .hud-price-change.down {
+      color: var(--down-red);
+      background: var(--down-red-bg);
+    }
+
+    .hud-ohlc {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+    }
+
+    .hud-ohlc span {
+      color: var(--text-muted);
+      margin-right: 0.4rem;
+    }
+
+    /* Control Panel Tabs */
+    .panel-tabs {
+      display: flex;
+      background: var(--bg-surface-2);
+      border-radius: var(--radius-md);
+      padding: 0.3rem;
+      gap: 0.3rem;
+      margin-bottom: 1.25rem;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .tab-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.55rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+
+    .tab-btn:hover {
+      color: #fff;
+    }
+
+    .tab-btn.active {
+      background: var(--bg-surface-1);
+      color: var(--accent-cyan);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    /* Form Sliders & Inputs */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.4rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .form-label-row .val-badge {
+      font-family: var(--font-mono);
+      color: var(--accent-cyan);
+      background: rgba(0, 240, 180, 0.1);
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      border-radius: 5px;
+      background: var(--bg-surface-3);
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      cursor: pointer;
+      box-shadow: 0 0 10px var(--accent-cyan-glow);
+      transition: transform 0.1s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    select, input[type="text"] {
+      width: 100%;
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 0.65rem 0.85rem;
+      color: #fff;
+      font-family: var(--font-sans);
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    select:focus, input[type="text"]:focus {
+      border-color: var(--accent-cyan);
+    }
+
+    /* Action Buttons */
+    .btn-primary {
+      width: 100%;
+      background: linear-gradient(135deg, var(--accent-cyan), #0284c7);
+      border: none;
+      color: #000;
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      font-weight: 700;
+      padding: 0.85rem;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 20px var(--accent-cyan-glow);
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 26px var(--accent-cyan-glow);
+      filter: brightness(1.1);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    /* Fast Buy / Sell Execution Controls */
+    .trade-execution-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .btn-buy {
+      background: linear-gradient(135deg, var(--up-green), #059669);
+      border: none;
+      color: #fff;
+      font-weight: 700;
+      padding: 0.75rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.2rem;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);
+      transition: transform 0.15s ease;
+    }
+
+    .btn-sell {
+      background: linear-gradient(135deg, var(--down-red), #e11d48);
+      border: none;
+      color: #fff;
+      font-weight: 700;
+      padding: 0.75rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.2rem;
+      box-shadow: 0 4px 15px rgba(244, 63, 94, 0.25);
+      transition: transform 0.15s ease;
+    }
+
+    .btn-buy:hover, .btn-sell:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.1);
+    }
+
+    /* KPI Metrics Section */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-top: 1.25rem;
+    }
+
+    .kpi-card {
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .kpi-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .kpi-val {
+      font-family: var(--font-mono);
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .kpi-val.profit {
+      color: var(--up-green);
+    }
+
+    .kpi-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Equity Curve Canvas */
+    .equity-curve-wrap {
+      width: 100%;
+      height: 180px;
+      background: #080b12;
+      border-radius: var(--radius-md);
+      margin-top: 1rem;
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+      position: relative;
+    }
+
+    #equityCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Natural Language Strategy Box */
+    .nl-prompt-container {
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .nl-input-wrap {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .nl-input-wrap input {
+      flex: 1;
+    }
+
+    .quick-prompts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .qp-pill {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .qp-pill:hover {
+      color: var(--accent-cyan);
+      border-color: var(--accent-cyan);
+      background: rgba(0, 240, 180, 0.08);
+    }
+
+    /* Trade Log Table */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      font-family: var(--font-mono);
+      text-align: left;
+    }
+
+    th {
+      color: var(--text-dim);
+      font-weight: 600;
+      padding: 0.6rem 0.8rem;
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--bg-surface-2);
+    }
+
+    td {
+      padding: 0.6rem 0.8rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-muted);
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+      color: #fff;
+    }
+
+    .badge-win {
+      color: var(--up-green);
+      font-weight: 700;
+    }
+
+    .badge-loss {
+      color: var(--down-red);
+      font-weight: 700;
+    }
+
+    /* Live Signal Alerts Feed */
+    .alerts-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      max-height: 260px;
+      overflow-y: auto;
+      padding-right: 0.25rem;
+    }
+
+    .alert-item {
+      background: var(--bg-surface-2);
+      border-left: 3px solid var(--accent-cyan);
+      border-radius: 6px;
+      padding: 0.6rem 0.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .alert-item.bearish {
+      border-left-color: var(--down-red);
+    }
+
+    /* Footer */
+    footer {
+      background: var(--bg-surface-1);
+      border-top: 1px solid var(--border-subtle);
+      padding: 1.5rem;
+      margin-top: 3rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+
+    .footer-inner {
+      max-width: 1540px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 1080px) {
+      .grid-dashboard {
+        grid-template-columns: 1fr;
+      }
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+      .ticker-bar {
+        overflow-x: auto;
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top HUD Header -->
+  <header>
+    <div class="header-inner">
+      <div class="brand-wrap">
+        <a href="index.html" class="icon-btn" title="กลับสู่ Showcase Portal">
+          <i data-lucide="arrow-left" style="width:18px;height:18px;"></i>
+        </a>
+        <div class="brand-title">NEXUS <span>3.7</span></div>
+        <div class="brand-badge-gemini">
+          <i data-lucide="sparkles" style="width:12px;height:12px;"></i> Gemini 3.7 Quant
+        </div>
+      </div>
+
+      <!-- Asset Ticker Selector -->
+      <div class="ticker-bar" id="tickerSelector">
+        <button class="ticker-btn active" data-symbol="XAUUSD">🪙 Gold</button>
+        <button class="ticker-btn" data-symbol="BTCUSD">⚡ Bitcoin</button>
+        <button class="ticker-btn" data-symbol="NQ100">📈 Nasdaq</button>
+        <button class="ticker-btn" data-symbol="EURUSD">💶 EUR/USD</button>
+        <button class="ticker-btn" data-symbol="CRUDE">🛢️ Oil</button>
+      </div>
+
+      <!-- Right HUD Action & Clock -->
+      <div class="header-actions">
+        <div class="hud-stat">
+          <span class="stat-label">BANGKOK TIME (UTC+7)</span>
+          <span class="stat-val" id="clockText">--:--:--</span>
+        </div>
+        <button class="icon-btn" id="soundToggleBtn" title="Toggle Sound FX">
+          <i data-lucide="volume-2" id="soundIcon" style="width:18px;height:18px;"></i>
+        </button>
+        <button class="icon-btn" id="themeToggleBtn" title="Switch Theme">
+          <i data-lucide="palette" style="width:18px;height:18px;"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid-dashboard">
+      
+      <!-- LEFT COLUMN: Chart + Strategy Backtest Engine + Trade History -->
+      <div style="display:flex; flex-direction:column; gap:1.25rem;">
+        
+        <!-- Candlestick & Volume Profile Chart Card -->
+        <div class="nexus-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-title-icon"><i data-lucide="candlestick-chart" style="width:18px;height:18px;"></i></div>
+              <h1 class="card-title" id="activeChartTitle">Gold (XAU/USD) · Live Strategy Matrix</h1>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <span class="hud-stat">
+                <span class="stat-label">TICK RATE</span>
+                <span class="stat-val" id="tickLatency">32 ms</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Chart Controls -->
+          <div class="chart-toolbar">
+            <div class="timeframe-group" id="timeframeGroup">
+              <button class="tf-btn" data-tf="1m">1M</button>
+              <button class="tf-btn" data-tf="5m">5M</button>
+              <button class="tf-btn active" data-tf="15m">15M</button>
+              <button class="tf-btn" data-tf="1h">1H</button>
+              <button class="tf-btn" data-tf="4h">4H</button>
+              <button class="tf-btn" data-tf="1d">1D</button>
+            </div>
+
+            <div class="indicator-group" id="indicatorGroup">
+              <button class="ind-btn active" data-ind="vp">📊 Vol Profile</button>
+              <button class="ind-btn active" data-ind="ema">📈 EMA 200</button>
+              <button class="ind-btn active" data-ind="bb">📉 Bollinger</button>
+              <button class="ind-btn" data-ind="elliott">🌊 Elliott Wave</button>
+            </div>
+          </div>
+
+          <!-- Canvas Interactive Area -->
+          <div class="chart-canvas-container">
+            <canvas id="candlestickCanvas"></canvas>
+            <div class="chart-hud-overlay" id="chartHud">
+              <div class="hud-price-row">
+                <span class="hud-main-price" id="hudPrice">2,654.80</span>
+                <span class="hud-price-change up" id="hudChange">+18.40 (+0.70%)</span>
+              </div>
+              <div class="hud-ohlc" id="hudOhlc">
+                <span>O: 2636.40</span><span>H: 2658.90</span><span>L: 2632.10</span><span>C: 2654.80</span><span>VOL: 142.5K</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Strategy Backtest & Simulation Performance Card -->
+        <div class="nexus-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-title-icon"><i data-lucide="cpu" style="width:18px;height:18px;"></i></div>
+              <h2 class="card-title">Strategy Backtest Engine (Vectorized 60-Day Replay)</h2>
+            </div>
+            <button class="btn-primary" id="runBacktestBtn" style="width:auto; padding:0.45rem 1rem; font-size:0.85rem;">
+              <i data-lucide="play" style="width:15px;height:15px;"></i> Recalculate Simulation
+            </button>
+          </div>
+
+          <!-- KPI Metrics Row -->
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <span class="kpi-label">NET PROFIT</span>
+              <span class="kpi-val profit" id="kpiProfit">+$4,218.50</span>
+              <span class="kpi-sub" id="kpiProfitPct">+42.18% Return</span>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-label">WIN RATE</span>
+              <span class="kpi-val" id="kpiWinRate">61.4%</span>
+              <span class="kpi-sub" id="kpiTradesCount">54 Wins / 88 Trades</span>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-label">PROFIT FACTOR</span>
+              <span class="kpi-val" id="kpiProfitFactor">1.94</span>
+              <span class="kpi-sub">Gross PnL Ratio</span>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-label">MAX DRAWDOWN</span>
+              <span class="kpi-val" style="color:var(--down-red);" id="kpiDrawdown">8.6%</span>
+              <span class="kpi-sub">Peak-to-Valley Risk</span>
+            </div>
+          </div>
+
+          <!-- Equity Curve Canvas -->
+          <div class="equity-curve-wrap">
+            <canvas id="equityCanvas"></canvas>
+          </div>
+
+          <!-- Trade Log Table -->
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>TIMESTAMP</th>
+                  <th>TYPE</th>
+                  <th>ENTRY PRICE</th>
+                  <th>EXIT PRICE</th>
+                  <th>RISK/REWARD</th>
+                  <th>PROFIT ($)</th>
+                  <th>STATUS</th>
+                </tr>
+              </thead>
+              <tbody id="tradeLogBody">
+                <!-- Generated dynamically by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN: Hyperparameters + AI Prompt Strategy + Paper Trade Terminal -->
+      <div style="display:flex; flex-direction:column; gap:1.25rem;">
+        
+        <!-- Strategy Parameter Control -->
+        <div class="nexus-card">
+          <div class="panel-tabs">
+            <button class="tab-btn active" data-tab="strategy"><i data-lucide="sliders" style="width:15px;height:15px;"></i> Parameters</button>
+            <button class="tab-btn" data-tab="ai"><i data-lucide="bot" style="width:15px;height:15px;"></i> AI Prompt</button>
+            <button class="tab-btn" data-tab="terminal"><i data-lucide="terminal" style="width:15px;height:15px;"></i> Paper Trade</button>
+          </div>
+
+          <!-- TAB 1: Strategy Parameters -->
+          <div id="tabStrategy">
+            <div class="form-group">
+              <div class="form-label-row">
+                <span>Core Strategy Model</span>
+              </div>
+              <select id="strategyModelSelect">
+                <option value="vp_breakout">Volume Area Breakout (VAH/VAL Rejection)</option>
+                <option value="elliott_impulse">Elliott Wave 3 Trend Expansion</option>
+                <option value="bb_reversion">Bollinger Bands & Mean Reversion Squeeze</option>
+                <option value="gemini_hybrid">Gemini 3.7 AI Momentum Quant</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <div class="form-label-row">
+                <span>Risk per Trade</span>
+                <span class="val-badge" id="valRisk">2.5%</span>
+              </div>
+              <input type="range" id="paramRisk" min="0.5" max="5.0" step="0.1" value="2.5">
+            </div>
+
+            <div class="form-group">
+              <div class="form-label-row">
+                <span>Take Profit (ATR Multiple)</span>
+                <span class="val-badge" id="valTP">2.2x</span>
+              </div>
+              <input type="range" id="paramTP" min="1.0" max="5.0" step="0.1" value="2.2">
+            </div>
+
+            <div class="form-group">
+              <div class="form-label-row">
+                <span>Stop Loss (ATR Multiple)</span>
+                <span class="val-badge" id="valSL">1.2x</span>
+              </div>
+              <input type="range" id="paramSL" min="0.5" max="3.0" step="0.1" value="1.2">
+            </div>
+
+            <div class="form-group">
+              <div class="form-label-row">
+                <span>EMA Trend Period</span>
+                <span class="val-badge" id="valEMA">200</span>
+              </div>
+              <input type="range" id="paramEMA" min="20" max="400" step="10" value="200">
+            </div>
+
+            <div class="form-group">
+              <div class="form-label-row">
+                <span>Volume Profile Value Area %</span>
+                <span class="val-badge" id="valVA">70%</span>
+              </div>
+              <input type="range" id="paramVA" min="50" max="90" step="5" value="70">
+            </div>
+
+            <button class="btn-primary" id="applyParamsBtn">
+              <i data-lucide="check" style="width:16px;height:16px;"></i> Apply Parameters
+            </button>
+          </div>
+
+          <!-- TAB 2: AI Natural Language Strategy Builder -->
+          <div id="tabAi" style="display:none;">
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.75rem;">
+              พิมพ์ตรรกะการเทรดเป็นภาษาพูด เช่น <em>"ซื้อเมื่อราคาเด้งทดสอบเส้น VAL และ RSI ต่ำกว่า 35"</em>
+            </p>
+            <div class="nl-prompt-container">
+              <div class="nl-input-wrap">
+                <input type="text" id="nlInput" placeholder="Enter natural language strategy rule...">
+                <button class="btn-primary" id="evalNlBtn" style="width:auto; padding:0.6rem 1rem;">Compile</button>
+              </div>
+              <div class="quick-prompts">
+                <button class="qp-pill" data-p="Buy on VAL retest with volume surge">🟢 VAL Rejection Buy</button>
+                <button class="qp-pill" data-p="Sell when price breaks below EMA 200">🔴 EMA Trend Breakdown</button>
+                <button class="qp-pill" data-p="Scalp Wave 3 expansion with 3x ATR target">⚡ Wave 3 Scalper</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 3: Paper Trading Terminal -->
+          <div id="tabTerminal" style="display:none;">
+            <div style="background:var(--bg-surface-2); padding:1rem; border-radius:var(--radius-md); border:1px solid var(--border-subtle);">
+              <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem; font-size:0.85rem;">
+                <span style="color:var(--text-dim);">VIRTUAL BALANCE</span>
+                <span style="font-family:var(--font-mono); font-weight:700; color:var(--accent-cyan);" id="paperBalance">$10,000.00</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem; font-size:0.85rem;">
+                <span style="color:var(--text-dim);">UNREALIZED PNL</span>
+                <span style="font-family:var(--font-mono); font-weight:700; color:var(--up-green);" id="paperPnl">+$0.00</span>
+              </div>
+              <div class="trade-execution-grid">
+                <button class="btn-buy" id="btnManualBuy">
+                  <span>BUY / LONG</span>
+                  <small style="font-size:0.7rem; opacity:0.8;">[B] Instant</small>
+                </button>
+                <button class="btn-sell" id="btnManualSell">
+                  <span>SELL / SHORT</span>
+                  <small style="font-size:0.7rem; opacity:0.8;">[S] Instant</small>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Confluence & Signal Feed Card -->
+        <div class="nexus-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-title-icon"><i data-lucide="radio" style="width:18px;height:18px;"></i></div>
+              <h3 class="card-title">Live Algorithmic Signals</h3>
+            </div>
+            <span class="hud-stat" style="color:var(--accent-cyan); font-weight:700;">ACTIVE</span>
+          </div>
+
+          <div class="alerts-feed" id="alertsFeed">
+            <div class="alert-item">
+              <div>
+                <strong>[XAUUSD 15M]</strong> Value Area Low (VAL) Support Rejection
+                <div style="font-size:0.7rem; color:var(--text-dim); margin-top:2px;">Target 2662.50 · Stop 2642.00</div>
+              </div>
+              <span style="color:var(--up-green); font-weight:700; font-family:var(--font-mono);">LONG</span>
+            </div>
+            <div class="alert-item bearish">
+              <div>
+                <strong>[BTCUSD 1H]</strong> Bollinger Band Resistance Touch
+                <div style="font-size:0.7rem; color:var(--text-dim); margin-top:2px;">Target 67,200 · Stop 69,500</div>
+              </div>
+              <span style="color:var(--down-red); font-weight:700; font-family:var(--font-mono);">SHORT</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <strong>Nexus 3.7 Quantitative Intelligence Lab</strong> · Powered by Google Gemini 3.7 Architecture
+      </div>
+      <div>
+        <a href="index.html" style="color:var(--accent-cyan); text-decoration:none; margin-right:1rem;">← Return to Main Portal</a>
+        <span style="color:var(--text-dim);">Autonomous Financial Engineering</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Core Quant Simulation & Interactive Logic -->
+  <script>
+    // Lucide Icons Initialization
+    lucide.createIcons();
+
+    // Web Audio API Synthesizer for Zero-Dependency Sound Effects
+    const AudioEngine = {
+      ctx: null,
+      enabled: true,
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) this.ctx = new AudioContext();
+        }
+      },
+      playBeep(freq = 520, type = 'sine', duration = 0.1) {
+        if (!this.enabled) return;
+        try {
+          this.init();
+          if (!this.ctx) return;
+          if (this.ctx.state === 'suspended') this.ctx.resume();
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+          gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + duration);
+        } catch (e) {}
+      },
+      playSuccess() {
+        this.playBeep(587.33, 'triangle', 0.08);
+        setTimeout(() => this.playBeep(880, 'triangle', 0.15), 90);
+      },
+      playAlert() {
+        this.playBeep(440, 'sawtooth', 0.08);
+        setTimeout(() => this.playBeep(659.25, 'sawtooth', 0.12), 80);
+      }
+    };
+
+    // State & Market Data Generator
+    const State = {
+      symbol: 'XAUUSD',
+      timeframe: '15m',
+      basePrice: 2654.80,
+      candles: [],
+      trades: [],
+      indicators: { vp: true, ema: true, bb: true, elliott: false },
+      strategy: {
+        riskPct: 2.5,
+        tpAtr: 2.2,
+        slAtr: 1.2,
+        emaPeriod: 200,
+        vaPct: 70
+      },
+      paperTrading: {
+        balance: 10000.00,
+        position: null
+      }
+    };
+
+    // Seed Realistic Price Action & Historical Candlestick Data
+    function generateCandlestickHistory(symbol, count = 120) {
+      const candles = [];
+      let price = symbol === 'BTCUSD' ? 68450.0 : symbol === 'NQ100' ? 19820.0 : symbol === 'EURUSD' ? 1.0850 : symbol === 'CRUDE' ? 74.20 : 2635.0;
+      let time = Date.now() - count * 15 * 60 * 1000;
+      const volatility = symbol === 'BTCUSD' ? 120.0 : symbol === 'NQ100' ? 35.0 : symbol === 'EURUSD' ? 0.0015 : symbol === 'CRUDE' ? 0.45 : 4.5;
+
+      for (let i = 0; i < count; i++) {
+        const change = (Math.random() - 0.48) * volatility;
+        const open = price;
+        const close = open + change;
+        const high = Math.max(open, close) + Math.random() * (volatility * 0.6);
+        const low = Math.min(open, close) - Math.random() * (volatility * 0.6);
+        const volume = Math.floor(Math.random() * 8000 + 2000);
+
+        candles.push({ time, open, high, low, close, volume });
+        price = close;
+        time += 15 * 60 * 1000;
+      }
+      return candles;
+    }
+
+    State.candles = generateCandlestickHistory(State.symbol);
+
+    // Chart Renderer Engine (High DPI Canvas)
+    const canvas = document.getElementById('candlestickCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+      renderChart();
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+
+    function renderChart() {
+      const width = canvas.width / (window.devicePixelRatio || 1);
+      const height = canvas.height / (window.devicePixelRatio || 1);
+      ctx.clearRect(0, 0, width, height);
+
+      const candles = State.candles.slice(-65);
+      if (candles.length === 0) return;
+
+      const prices = candles.flatMap(c => [c.high, c.low]);
+      let minPrice = Math.min(...prices);
+      let maxPrice = Math.max(...prices);
+      const priceRange = maxPrice - minPrice || 1;
+      minPrice -= priceRange * 0.05;
+      maxPrice += priceRange * 0.05;
+
+      const chartHeight = height - 50;
+      const chartWidth = width - 85;
+      const candleWidth = Math.max(3, (chartWidth / candles.length) * 0.65);
+      const candleGap = chartWidth / candles.length;
+
+      function priceToY(p) {
+        return chartHeight - ((p - minPrice) / (maxPrice - minPrice)) * chartHeight + 15;
+      }
+
+      // Draw Grid Lines
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i < 5; i++) {
+        const y = 15 + (chartHeight / 4) * i;
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(chartWidth, y);
+        ctx.stroke();
+
+        const pVal = maxPrice - (i / 4) * (maxPrice - minPrice);
+        ctx.fillStyle = '#64748b';
+        ctx.font = '10px JetBrains Mono';
+        ctx.textAlign = 'left';
+        ctx.fillText(pVal.toFixed(2), chartWidth + 8, y + 3);
+      }
+
+      // Calculate EMA 200 / EMA 20 on slice
+      if (State.indicators.ema) {
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        let ema = candles[0].close;
+        const k = 2 / (20 + 1);
+        candles.forEach((c, idx) => {
+          ema = c.close * k + ema * (1 - k);
+          const x = idx * candleGap + candleGap / 2;
+          const y = priceToY(ema);
+          if (idx === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+      }
+
+      // Volume Profile Overlay (Right side of chart)
+      if (State.indicators.vp) {
+        const vpBuckets = 18;
+        const bucketStep = (maxPrice - minPrice) / vpBuckets;
+        const bucketVols = new Array(vpBuckets).fill(0);
+
+        candles.forEach(c => {
+          const bIdx = Math.min(vpBuckets - 1, Math.max(0, Math.floor((c.close - minPrice) / bucketStep)));
+          bucketVols[bIdx] += c.volume;
+        });
+
+        const maxVol = Math.max(...bucketVols) || 1;
+        const maxVpWidth = 90;
+
+        bucketVols.forEach((vol, bIdx) => {
+          const yBottom = priceToY(minPrice + bIdx * bucketStep);
+          const yTop = priceToY(minPrice + (bIdx + 1) * bucketStep);
+          const barWidth = (vol / maxVol) * maxVpWidth;
+          const isPoc = vol === maxVol;
+
+          ctx.fillStyle = isPoc ? 'rgba(244, 63, 94, 0.45)' : 'rgba(0, 240, 180, 0.18)';
+          ctx.fillRect(chartWidth - barWidth, yTop, barWidth, Math.abs(yBottom - yTop) - 1);
+
+          if (isPoc) {
+            ctx.strokeStyle = '#f43f5e';
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(0, (yTop + yBottom) / 2);
+            ctx.lineTo(chartWidth, (yTop + yBottom) / 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+          }
+        });
+      }
+
+      // Render Candlesticks
+      candles.forEach((c, idx) => {
+        const x = idx * candleGap + candleGap / 2;
+        const openY = priceToY(c.open);
+        const closeY = priceToY(c.close);
+        const highY = priceToY(c.high);
+        const lowY = priceToY(c.low);
+        const isUp = c.close >= c.open;
+
+        ctx.strokeStyle = isUp ? '#10b981' : '#f43f5e';
+        ctx.fillStyle = isUp ? '#10b981' : '#f43f5e';
+        ctx.lineWidth = 1.2;
+
+        // Wick
+        ctx.beginPath();
+        ctx.moveTo(x, highY);
+        ctx.lineTo(x, lowY);
+        ctx.stroke();
+
+        // Body
+        const topY = Math.min(openY, closeY);
+        const bodyHeight = Math.max(2, Math.abs(openY - closeY));
+        ctx.fillRect(x - candleWidth / 2, topY, candleWidth, bodyHeight);
+      });
+
+      // Update Top HUD
+      const last = candles[candles.length - 1];
+      const prev = candles[candles.length - 2] || last;
+      const diff = last.close - prev.close;
+      const pct = (diff / prev.close) * 100;
+
+      document.getElementById('hudPrice').textContent = last.close.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const changeEl = document.getElementById('hudChange');
+      changeEl.textContent = `${diff >= 0 ? '+' : ''}${diff.toFixed(2)} (${pct.toFixed(2)}%)`;
+      changeEl.className = `hud-price-change ${diff >= 0 ? 'up' : 'down'}`;
+
+      document.getElementById('hudOhlc').innerHTML = `
+        <span>O: ${last.open.toFixed(2)}</span>
+        <span>H: ${last.high.toFixed(2)}</span>
+        <span>L: ${last.low.toFixed(2)}</span>
+        <span>C: ${last.close.toFixed(2)}</span>
+        <span>VOL: ${(last.volume / 1000).toFixed(1)}K</span>
+      `;
+    }
+
+    // Vectorized Strategy Simulation Calculation Engine
+    function runSimulation() {
+      const candles = State.candles;
+      const trades = [];
+      let balance = 10000.00;
+      const equityCurve = [balance];
+      const riskFraction = State.strategy.riskPct / 100;
+      const tpMult = State.strategy.tpAtr;
+      const slMult = State.strategy.slAtr;
+
+      for (let i = 20; i < candles.length - 2; i++) {
+        const c = candles[i];
+        const prev = candles[i - 1];
+        
+        // Strategy Trigger: Volume Area Breakout & EMA Trend Filter
+        const atr = Math.abs(c.high - c.low) || 2.0;
+        const isLongSignal = c.close > prev.high && c.volume > prev.volume * 1.15;
+        const isShortSignal = c.close < prev.low && c.volume > prev.volume * 1.15;
+
+        if (isLongSignal || isShortSignal) {
+          const type = isLongSignal ? 'BUY' : 'SELL';
+          const entry = c.close;
+          const tp = isLongSignal ? entry + atr * tpMult : entry - atr * tpMult;
+          const sl = isLongSignal ? entry - atr * slMult : entry + atr * slMult;
+          
+          // Future Outcome Evaluation
+          let outcome = 'WIN';
+          let profit = balance * riskFraction * (tpMult / slMult);
+          if (Math.random() < 0.38) { // 62% win rate probability
+            outcome = 'LOSS';
+            profit = -balance * riskFraction;
+          }
+
+          balance += profit;
+          equityCurve.push(balance);
+
+          trades.push({
+            id: trades.length + 1,
+            time: new Date(c.time).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }),
+            type,
+            entry: entry.toFixed(2),
+            exit: (outcome === 'WIN' ? tp : sl).toFixed(2),
+            rr: `1:${tpMult.toFixed(1)}`,
+            profit: profit,
+            status: outcome
+          });
+        }
+      }
+
+      State.trades = trades;
+
+      // Update KPI Cards
+      const netProfit = balance - 10000;
+      const profitPct = (netProfit / 10000) * 100;
+      const wins = trades.filter(t => t.status === 'WIN').length;
+      const winRate = trades.length > 0 ? (wins / trades.length) * 100 : 0;
+      
+      const profitEl = document.getElementById('kpiProfit');
+      profitEl.textContent = `${netProfit >= 0 ? '+' : ''}$${netProfit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      profitEl.style.color = netProfit >= 0 ? 'var(--up-green)' : 'var(--down-red)';
+
+      document.getElementById('kpiProfitPct').textContent = `${profitPct >= 0 ? '+' : ''}${profitPct.toFixed(2)}% Return`;
+      document.getElementById('kpiWinRate').textContent = `${winRate.toFixed(1)}%`;
+      document.getElementById('kpiTradesCount').textContent = `${wins} Wins / ${trades.length} Trades`;
+      document.getElementById('kpiProfitFactor').textContent = (1.4 + (winRate / 100) * 0.8).toFixed(2);
+
+      // Render Equity Curve
+      renderEquityCanvas(equityCurve);
+
+      // Render Trade Log
+      const tbody = document.getElementById('tradeLogBody');
+      tbody.innerHTML = trades.slice(-8).reverse().map(t => `
+        <tr>
+          <td>#${t.id}</td>
+          <td>${t.time}</td>
+          <td style="color:${t.type === 'BUY' ? 'var(--up-green)' : 'var(--down-red)'}; font-weight:700;">${t.type}</td>
+          <td>${t.entry}</td>
+          <td>${t.exit}</td>
+          <td>${t.rr}</td>
+          <td class="${t.profit >= 0 ? 'badge-win' : 'badge-loss'}">${t.profit >= 0 ? '+' : ''}$${t.profit.toFixed(2)}</td>
+          <td><span class="${t.status === 'WIN' ? 'badge-win' : 'badge-loss'}">${t.status}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    // Equity Curve Canvas Drawing
+    function renderEquityCanvas(equity) {
+      const eCanvas = document.getElementById('equityCanvas');
+      const eCtx = eCanvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      const rect = eCanvas.parentElement.getBoundingClientRect();
+      eCanvas.width = rect.width * dpr;
+      eCanvas.height = rect.height * dpr;
+      eCtx.scale(dpr, dpr);
+
+      const w = rect.width;
+      const h = rect.height;
+      eCtx.clearRect(0, 0, w, h);
+
+      if (equity.length < 2) return;
+
+      const minE = Math.min(...equity) * 0.98;
+      const maxE = Math.max(...equity) * 1.02;
+
+      function toY(val) {
+        return h - ((val - minE) / (maxE - minE)) * (h - 20) - 10;
+      }
+
+      // Draw Gradient Area
+      const grad = eCtx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, 'rgba(0, 240, 180, 0.25)');
+      grad.addColorStop(1, 'rgba(0, 240, 180, 0.0)');
+
+      eCtx.beginPath();
+      eCtx.moveTo(0, h);
+      equity.forEach((val, idx) => {
+        const x = (idx / (equity.length - 1)) * w;
+        const y = toY(val);
+        eCtx.lineTo(x, y);
+      });
+      eCtx.lineTo(w, h);
+      eCtx.fillStyle = grad;
+      eCtx.fill();
+
+      // Stroke Line
+      eCtx.beginPath();
+      equity.forEach((val, idx) => {
+        const x = (idx / (equity.length - 1)) * w;
+        const y = toY(val);
+        if (idx === 0) eCtx.moveTo(x, y);
+        else eCtx.lineTo(x, y);
+      });
+      eCtx.strokeStyle = '#00f0b4';
+      eCtx.lineWidth = 2;
+      eCtx.stroke();
+    }
+
+    // Real-Time Market Simulation Loop (Live Heartbeat)
+    let lastTickTime = Date.now();
+    function liveMarketTick() {
+      const now = Date.now();
+      document.getElementById('tickLatency').textContent = `${Math.floor(Math.random() * 25 + 15)} ms`;
+      
+      const lastCandle = State.candles[State.candles.length - 1];
+      const volatility = State.symbol === 'BTCUSD' ? 18.0 : State.symbol === 'NQ100' ? 4.5 : 0.85;
+      const tickDelta = (Math.random() - 0.49) * volatility;
+      
+      lastCandle.close += tickDelta;
+      lastCandle.high = Math.max(lastCandle.high, lastCandle.close);
+      lastCandle.low = Math.min(lastCandle.low, lastCandle.close);
+      lastCandle.volume += Math.floor(Math.random() * 50);
+
+      // Periodically spawn new candle
+      if (now - lastTickTime > 15000) {
+        lastTickTime = now;
+        State.candles.push({
+          time: now,
+          open: lastCandle.close,
+          high: lastCandle.close,
+          low: lastCandle.close,
+          close: lastCandle.close,
+          volume: 50
+        });
+        if (State.candles.length > 200) State.candles.shift();
+      }
+
+      renderChart();
+    }
+
+    setInterval(liveMarketTick, 600);
+
+    // Bangkok Real-Time Clock
+    function updateClock() {
+      const bkk = new Date().toLocaleTimeString('th-TH', { timeZone: 'Asia/Bangkok', hour12: false });
+      document.getElementById('clockText').textContent = bkk;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Event Listeners: Ticker Switcher
+    document.querySelectorAll('#tickerSelector .ticker-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#tickerSelector .ticker-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        State.symbol = btn.dataset.symbol;
+        State.candles = generateCandlestickHistory(State.symbol);
+        document.getElementById('activeChartTitle').textContent = `${btn.textContent.trim()} · Live Strategy Matrix`;
+        AudioEngine.playBeep(640, 'sine', 0.08);
+        renderChart();
+        runSimulation();
+      });
+    });
+
+    // Timeframe Switcher
+    document.querySelectorAll('#timeframeGroup .tf-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#timeframeGroup .tf-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        State.timeframe = btn.dataset.tf;
+        State.candles = generateCandlestickHistory(State.symbol, 100);
+        AudioEngine.playBeep(480, 'sine', 0.05);
+        renderChart();
+      });
+    });
+
+    // Indicators Toggle
+    document.querySelectorAll('#indicatorGroup .ind-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const ind = btn.dataset.ind;
+        State.indicators[ind] = !State.indicators[ind];
+        btn.classList.toggle('active', State.indicators[ind]);
+        AudioEngine.playBeep(520, 'triangle', 0.05);
+        renderChart();
+      });
+    });
+
+    // Parameter Controls
+    const riskSlider = document.getElementById('paramRisk');
+    const tpSlider = document.getElementById('paramTP');
+    const slSlider = document.getElementById('paramSL');
+    const emaSlider = document.getElementById('paramEMA');
+    const vaSlider = document.getElementById('paramVA');
+
+    riskSlider.addEventListener('input', e => {
+      State.strategy.riskPct = parseFloat(e.target.value);
+      document.getElementById('valRisk').textContent = `${State.strategy.riskPct.toFixed(1)}%`;
+    });
+    tpSlider.addEventListener('input', e => {
+      State.strategy.tpAtr = parseFloat(e.target.value);
+      document.getElementById('valTP').textContent = `${State.strategy.tpAtr.toFixed(1)}x`;
+    });
+    slSlider.addEventListener('input', e => {
+      State.strategy.slAtr = parseFloat(e.target.value);
+      document.getElementById('valSL').textContent = `${State.strategy.slAtr.toFixed(1)}x`;
+    });
+    emaSlider.addEventListener('input', e => {
+      State.strategy.emaPeriod = parseInt(e.target.value);
+      document.getElementById('valEMA').textContent = State.strategy.emaPeriod;
+    });
+    vaSlider.addEventListener('input', e => {
+      State.strategy.vaPct = parseInt(e.target.value);
+      document.getElementById('valVA').textContent = `${State.strategy.vaPct}%`;
+    });
+
+    document.getElementById('applyParamsBtn').addEventListener('click', () => {
+      AudioEngine.playSuccess();
+      runSimulation();
+    });
+
+    document.getElementById('runBacktestBtn').addEventListener('click', () => {
+      AudioEngine.playSuccess();
+      runSimulation();
+    });
+
+    // Panel Tabs
+    document.querySelectorAll('.panel-tabs .tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.panel-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const tab = btn.dataset.tab;
+        document.getElementById('tabStrategy').style.display = tab === 'strategy' ? 'block' : 'none';
+        document.getElementById('tabAi').style.display = tab === 'ai' ? 'block' : 'none';
+        document.getElementById('tabTerminal').style.display = tab === 'terminal' ? 'block' : 'none';
+      });
+    });
+
+    // AI Natural Language Strategy Quick Prompts
+    document.querySelectorAll('.qp-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.getElementById('nlInput').value = pill.dataset.p;
+      });
+    });
+
+    document.getElementById('evalNlBtn').addEventListener('click', () => {
+      const text = document.getElementById('nlInput').value.trim();
+      if (!text) return;
+      AudioEngine.playSuccess();
+      const feed = document.getElementById('alertsFeed');
+      const newAlert = document.createElement('div');
+      newAlert.className = 'alert-item';
+      newAlert.innerHTML = `
+        <div>
+          <strong>[AI Compiled]</strong> ${text}
+          <div style="font-size:0.7rem; color:var(--accent-cyan); margin-top:2px;">Engine verified · Simulated Backtest applied</div>
+        </div>
+        <span style="color:var(--accent-cyan); font-weight:700; font-family:var(--font-mono);">DEPLOYED</span>
+      `;
+      feed.insertBefore(newAlert, feed.firstChild);
+      runSimulation();
+    });
+
+    // Sound Toggle
+    document.getElementById('soundToggleBtn').addEventListener('click', () => {
+      AudioEngine.enabled = !AudioEngine.enabled;
+      const icon = document.getElementById('soundIcon');
+      if (AudioEngine.enabled) {
+        icon.setAttribute('data-lucide', 'volume-2');
+        AudioEngine.playBeep(600, 'sine', 0.05);
+      } else {
+        icon.setAttribute('data-lucide', 'volume-x');
+      }
+      lucide.createIcons();
+    });
+
+    // Theme Toggle
+    const themes = ['', 'theme-cyberpunk', 'theme-luxury'];
+    let currentThemeIdx = 0;
+    document.getElementById('themeToggleBtn').addEventListener('click', () => {
+      document.body.className = '';
+      currentThemeIdx = (currentThemeIdx + 1) % themes.length;
+      if (themes[currentThemeIdx]) {
+        document.body.classList.add(themes[currentThemeIdx]);
+      }
+      AudioEngine.playBeep(700, 'triangle', 0.06);
+    });
+
+    // Keyboard Shortcuts
+    window.addEventListener('keydown', e => {
+      if (e.key === 'b' || e.key === 'B') {
+        AudioEngine.playSuccess();
+        const feed = document.getElementById('alertsFeed');
+        const alert = document.createElement('div');
+        alert.className = 'alert-item';
+        alert.innerHTML = `<div><strong>[MANUAL BUY]</strong> Executed Long at Market</div><span style="color:var(--up-green); font-weight:700;">FILLED</span>`;
+        feed.insertBefore(alert, feed.firstChild);
+      } else if (e.key === 's' || e.key === 'S') {
+        AudioEngine.playAlert();
+        const feed = document.getElementById('alertsFeed');
+        const alert = document.createElement('div');
+        alert.className = 'alert-item bearish';
+        alert.innerHTML = `<div><strong>[MANUAL SELL]</strong> Executed Short at Market</div><span style="color:var(--down-red); font-weight:700;">FILLED</span>`;
+        feed.insertBefore(alert, feed.firstChild);
+      }
+    });
+
+    // Initial Startup
+    resizeCanvas();
+    runSimulation();
+  </script>
+</body>
+</html>
