@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantitative EA Backtest Reports & Trading Showcase Hub</title>
+  <meta name="description" content="Central Hub for Gold & US100 Quantitative Trading EAs, Volume Profile Strategies, and Intermarket Analytics Backtest Reports.">
+  
+  <!-- Google Fonts & Lucide Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --bg-dark: #0b0f17;
+      --card-bg: #111827;
+      --card-border: #1f2937;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --accent-emerald: #10b981;
+      --accent-gold: #f59e0b;
+      --accent-blue: #3b82f6;
+      --accent-purple: #8b5cf6;
+      --accent-red: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, .brand {
+      font-family: 'Outfit', sans-serif;
+    }
+
+    /* Navbar */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(11, 15, 23, 0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, var(--accent-gold), var(--accent-emerald));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #000;
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 1rem;
+    }
+
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.92rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+    nav a:hover, nav a.active {
+      color: #fff;
+      background: var(--card-border);
+    }
+
+    /* Hero Section */
+    .hero {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 4rem 1.5rem 2.5rem 1.5rem;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--accent-emerald);
+      padding: 0.35rem 1rem;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #ffffff 40%, var(--accent-gold) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      max-width: 760px;
+      margin: 0 auto 2.5rem auto;
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    /* Strategy Grid Cards */
+    .grid-section {
+      max-width: 1200px;
+      margin: 0 auto 4rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-subtitle {
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+
+    .reports-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 1.75rem;
+    }
+
+    .report-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.25s ease, border-color 0.25s ease;
+      position: relative;
+    }
+
+    .report-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent-emerald);
+    }
+
+    .card-thumb {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .card-content {
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .card-tag {
+      align-self: flex-start;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      margin-bottom: 0.75rem;
+    }
+
+    .tag-gold { background: rgba(245, 158, 11, 0.15); color: var(--accent-gold); }
+    .tag-micro { background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); }
+    .tag-nasdaq { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); }
+    .tag-macro { background: rgba(139, 92, 246, 0.15); color: var(--accent-purple); }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+      flex-grow: 1;
+    }
+
+    .card-stats {
+      display: flex;
+      justify-content: space-between;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      margin-bottom: 1.25rem;
+      border: 1px solid var(--card-border);
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .stat-val {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .stat-val.positive { color: var(--accent-emerald); }
+
+    .btn-view {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background: var(--card-border);
+      color: #fff;
+      text-decoration: none;
+      padding: 0.7rem 1.25rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .btn-view:hover {
+      background: var(--accent-emerald);
+      color: #000;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--card-border);
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header>
+    <div class="nav-container">
+      <a href="main.html" class="brand">
+        <div class="brand-icon">
+          <i data-lucide="cpu"></i>
+        </div>
+        <span>Quantitative EA Showcase Hub</span>
+      </a>
+      <nav>
+        <ul>
+          <li><a href="main.html" class="active">Main Hub</a></li>
+          <li><a href="reports/gold-small-account.html">$100 Micro EA</a></li>
+          <li><a href="reports/vp-breakout.html">VP Breakout EA</a></li>
+          <li><a href="reports/gold-high-profit.html">Gold Trend EA</a></li>
+          <li><a href="reports/us100-daytrade.html">US100 EA</a></li>
+          <li><a href="reports/market-monitor.html">Market Monitor</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="badge">
+      <i data-lucide="shield-check"></i> Verified Quantitative Strategy Performance Hub
+    </div>
+    <h1>Algorithmic Trading & EA Backtest Reports</h1>
+    <p>
+      Central repository for all automated trading strategies, backtest empirical findings, 
+      Volume Profile zone analysis, and real-time intermarket correlation reports.
+    </p>
+  </section>
+
+  <!-- Reports Grid Section -->
+  <section class="grid-section">
+    <h2 class="section-title">
+      <i data-lucide="layers" style="color: var(--accent-gold);"></i>
+      Strategy & Backtest Report Catalog
+    </h2>
+    <p class="section-subtitle">Select a sub-page report below to view detailed equity curves, trade logs, and metrics.</p>
+
+    <div class="reports-grid">
+
+      <!-- New Report Card: Gold $100 Micro Account EA -->
+      <div class="report-card">
+        <img src="assets/images/gold_micro_100_backtest_chart.png" alt="Gold $100 Micro EA" class="card-thumb">
+        <div class="card-content">
+          <span class="card-tag tag-micro">XAUUSD | $100 Account (0.01 Lot)</span>
+          <h3 class="card-title">Gold $100 Micro Account EA</h3>
+          <p class="card-desc">
+            High-profit strategy tailored for small $100 accounts using 0.01 lot size, EMA 50/200 pullback triggers, and 3-period empirical backtest (includes Last Week).
+          </p>
+          <div class="card-stats">
+            <div class="stat-item">
+              <span class="stat-label">Capital / Lot</span>
+              <span class="stat-val">$100 / 0.01</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Max Risk/Trade</span>
+              <span class="stat-val">$2.50 (2.5%)</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Target Reward</span>
+              <span class="stat-val positive">$6.50 (R:R 1:2.6)</span>
+            </div>
+          </div>
+          <a href="reports/gold-small-account.html" class="btn-view">
+            View Full Report & Setup Guide <i data-lucide="arrow-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Report Card 1: VP Breakout -->
+      <div class="report-card">
+        <img src="assets/images/vp_breakout_best_chart.png" alt="VP Breakout EA" class="card-thumb">
+        <div class="card-content">
+          <span class="card-tag tag-gold">XAUUSD | Volume Profile</span>
+          <h3 class="card-title">Gold Volume Profile Breakout EA</h3>
+          <p class="card-desc">
+            High-performance day trade strategy entering on Volume Area High/Low breakouts with EMA 200 trend filter and ATR dynamic risk sizing.
+          </p>
+          <div class="card-stats">
+            <div class="stat-item">
+              <span class="stat-label">Net Profit (60d)</span>
+              <span class="stat-val positive">+37.01%</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Win Rate</span>
+              <span class="stat-val">50.6%</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Profit Factor</span>
+              <span class="stat-val">1.56</span>
+            </div>
+          </div>
+          <a href="reports/vp-breakout.html" class="btn-view">
+            View Full Report <i data-lucide="arrow-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Report Card 2: Gold High Profit -->
+      <div class="report-card">
+        <img src="assets/images/gold_backtest_results.png" alt="Gold High Profit EA" class="card-thumb">
+        <div class="card-content">
+          <span class="card-tag tag-gold">XAUUSD | Trend Following</span>
+          <h3 class="card-title">Gold High Profit Trend EA</h3>
+          <p class="card-desc">
+            Trend-following EA combining EMA trend confirmation, ATR dynamic trailing stops, and multi-timeframe volatility filters.
+          </p>
+          <div class="card-stats">
+            <div class="stat-item">
+              <span class="stat-label">Net Profit (60d)</span>
+              <span class="stat-val positive">+28.40%</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Win Rate</span>
+              <span class="stat-val">54.2%</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Profit Factor</span>
+              <span class="stat-val">1.62</span>
+            </div>
+          </div>
+          <a href="reports/gold-high-profit.html" class="btn-view">
+            View Full Report <i data-lucide="arrow-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Report Card 3: US100 Daytrade EA -->
+      <div class="report-card">
+        <img src="assets/images/us100_backtest_results.png" alt="US100 Daytrade EA" class="card-thumb">
+        <div class="card-content">
+          <span class="card-tag tag-nasdaq">US100 NQ | Index Daytrade</span>
+          <h3 class="card-title">US100 Nasdaq Daytrade EA</h3>
+          <p class="card-desc">
+            Specialized index daytrading algorithm targeting NY session momentum breakouts and session range expansion.
+          </p>
+          <div class="card-stats">
+            <div class="stat-item">
+              <span class="stat-label">Net Profit (60d)</span>
+              <span class="stat-val positive">+31.20%</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Win Rate</span>
+              <span class="stat-val">52.8%</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Profit Factor</span>
+              <span class="stat-val">1.48</span>
+            </div>
+          </div>
+          <a href="reports/us100-daytrade.html" class="btn-view">
+            View Full Report <i data-lucide="arrow-right"></i>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2026 Quantitative EA Showcase Hub. Open-Source Public Presentation Suite.</p>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

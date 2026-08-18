@@ -7,8 +7,3 @@
 .DS_Store
 .vscode/
 .idea/
-
-# Agent and CLI internal metadata
-.agents/
-.gemini/
-*.tmp

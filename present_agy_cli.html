@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AGY CLI & Slash Commands Complete Guide</title>
+
+  <!-- Google Fonts: Space Grotesk, Mitr & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600&family=Outfit:wght@400;600;700;800;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --card-bg: rgba(21, 28, 44, 0.75);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --accent-cyan: #06b6d4;
+      --accent-purple: #a855f7;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --code-bg: #0f172a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Space Grotesk', 'Mitr', sans-serif;
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(6, 182, 212, 0.12) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.12) 0px, transparent 50%);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 2.5rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 950px;
+    }
+
+    /* Header Presentation Banner */
+    .present-banner {
+      text-align: center;
+      margin-bottom: 3.5rem;
+      position: relative;
+    }
+
+    .badge-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(6, 182, 212, 0.12);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      color: var(--accent-cyan);
+      padding: 0.4rem 1rem;
+      border-radius: 99px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      margin-bottom: 1rem;
+    }
+
+    .present-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #ffffff 30%, var(--accent-cyan) 70%, var(--accent-purple) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.8rem;
+    }
+
+    .present-subtitle {
+      font-size: 1.05rem;
+      color: var(--text-sub);
+      max-width: 720px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Section Category Titles */
+    .section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 1.5rem;
+      margin-top: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 0.6rem;
+    }
+
+    .section-title i {
+      color: var(--accent-cyan);
+    }
+
+    .cmd-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      margin-bottom: 3.5rem;
+    }
+
+    /* Command Card Styling */
+    .cmd-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 1.4rem 1.6rem;
+      backdrop-filter: blur(12px);
+      transition: all 0.25s ease;
+    }
+
+    .cmd-card:hover {
+      border-color: rgba(6, 182, 212, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .cmd-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.6rem;
+    }
+
+    .cmd-name {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      background: rgba(6, 182, 212, 0.1);
+      padding: 0.3rem 0.8rem;
+      border-radius: 8px;
+      border: 1px solid rgba(6, 182, 212, 0.2);
+    }
+
+    .cmd-name.sub {
+      color: var(--accent-emerald);
+      background: rgba(16, 185, 129, 0.1);
+      border-color: rgba(16, 185, 129, 0.2);
+    }
+
+    .cmd-name.flag {
+      color: var(--accent-amber);
+      background: rgba(245, 158, 11, 0.1);
+      border-color: rgba(245, 158, 11, 0.2);
+    }
+
+    .cmd-name.slash {
+      color: var(--accent-purple);
+      background: rgba(168, 85, 247, 0.1);
+      border-color: rgba(168, 85, 247, 0.2);
+    }
+
+    .cmd-purpose-tag {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      background: rgba(255, 255, 255, 0.06);
+      padding: 0.25rem 0.7rem;
+      border-radius: 99px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .cmd-desc {
+      font-size: 0.95rem;
+      color: var(--text-sub);
+      line-height: 1.6;
+    }
+
+    /* Accordion Scenario Dropdown */
+    .scenario-toggle {
+      margin-top: 1rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 0.65rem 1rem;
+      font-size: 0.88rem;
+      color: var(--text-main);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.2s ease;
+      user-select: none;
+    }
+
+    .scenario-toggle:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .scenario-toggle i.fa-chevron-down {
+      transition: transform 0.3s ease;
+    }
+
+    .scenario-toggle.active i.fa-chevron-down {
+      transform: rotate(180deg);
+    }
+
+    .scenario-content {
+      display: none;
+      margin-top: 0.8rem;
+      background: var(--code-bg);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 1.2rem;
+      font-size: 0.9rem;
+      line-height: 1.65;
+    }
+
+    .scenario-block {
+      margin-bottom: 0.8rem;
+    }
+    .scenario-block:last-child { margin-bottom: 0; }
+
+    .scenario-label {
+      font-weight: 700;
+      color: var(--accent-cyan);
+      margin-bottom: 0.2rem;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .code-box {
+      background: #020617;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0.6rem 0.9rem;
+      border-radius: 8px;
+      font-family: monospace;
+      color: #38bdf8;
+      margin-top: 0.3rem;
+      word-break: break-all;
+    }
+
+    /* Back Link */
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-sub);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+      margin-bottom: 2rem;
+    }
+    .back-btn:hover { color: var(--accent-cyan); }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> กลับหน้า Showcase Portal</a>
+
+    <!-- Banner -->
+    <div class="present-banner">
+      <div class="badge-tag"><i class="fa-solid fa-terminal"></i> AUTHORITATIVE COMMAND REFERENCE</div>
+      <h1 class="present-title">AGY CLI & Slash Commands Complete Guide</h1>
+      <p class="present-subtitle">
+        คู่มือสรุปคำสั่งทั้งหมดอย่างครอบคลุมถ้วนหน้า อ้างอิงจากคำสั่ง <code>agy --help</code> และ TUI Slash Commands พร้อมระบบจำลองสถานการณ์ตัวอย่าง (Scenario Dropdown)
+      </p>
+    </div>
+
+    <!-- ════════ SECTION 1: CLI SUBCOMMANDS ════════ -->
+    <div class="section-title">
+      <i class="fa-solid fa-folder-tree" style="color:var(--accent-emerald);"></i> 1. คำสั่งย่อยของ AGY CLI (Subcommands)
+    </div>
+
+    <div class="cmd-grid">
+
+      <div class="cmd-card">
+        <div class="cmd-header">
+          <span class="cmd-name sub">agy agent / agents</span>
+          <span class="cmd-purpose-tag">ดูรายชื่อ Agent</span>
+        </div>
+        <p class="cmd-desc">แสดงรายการ Agents ทั้งหมดที่เปิดใช้งานได้ในระบบ</p>
+      </div>
+
+      <div class="cmd-card">
+        <div class="cmd-header">
+          <span class="cmd-name sub">agy changelog</span>
+          <span class="cmd-purpose-tag">บันทึกการอัปเดต</span>
+        </div>
+        <p class="cmd-desc">แสดงรายการอัปเดตเวอร์ชันและฟีเจอร์ใหม่ล่าสุดของ Antigravity CLI</p>
+      </div>
+
+      <div class="cmd-card">
+        <div class="cmd-header">
+          <span class="cmd-name sub">agy help [command]</span>
+          <span class="cmd-purpose-tag">ช่วยเหลือ</span>
+        </div>
+        <p class="cmd-desc">แสดงเมนูช่วยเหลือและคู่มือการใช้งานคำสั่งย่อยต่างๆ</p>
+      </div>
+
+      <div class="cmd-card">
+        <div class="cmd-header">
+          <span class="cmd-name sub">agy install</span>
+          <span class="cmd-purpose-tag">ติดตั้ง Environment</span>
+        </div>
+        <p class="cmd-desc">ตั้งค่า Environment PATHS และ Shell Completion สำหรับการใช้งานระบบ CLI</p>
+      </div>
+
+      <div class="cmd-card">
+        <div class="cmd-header">
+          <span class="cmd-name sub">agy models</span>
+          <span class="cmd-purpose-tag">เช็กโมเดล AI</span>
+        </div>
+        <p class="cmd-desc">แสดงรายชื่อโมเดล AI ทั้งหมดที่มีให้เลือกรันในระบบ (เช่น Gemini 3.6 Flash, Pro, ฯลฯ)</p>
+      </div>
+
+      <div class="cmd-card">
+        <div class="cmd-header">
+          <span class="cmd-name sub">agy plugin / plugins</span>
+          <span class="cmd-purpose-tag">จัดการพัคอิน</span>
+        </div>
+        <p class="cmd-desc">บริหารจัดการส่วนเสริม Plugins (install, uninstall, list, enable, disable)</p>
+        
+        <div class="scenario-toggle" onclick="toggleScenario(this)">
+          <span><i class="fa-solid fa-vial-circle-check"></i> จำลองสถานการณ์: <code>agy plugin</code></span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </div>
+        <div class="scenario-content">
+          <div class="scenario-block">
+            <div class="scenario-label">📌 สถานการณ์</div>
+            <div>คุณต้องการติดตั้งหรือดูปลั๊กอินส่วนเสริมเพื่อขยายความสามารถของ CLI</div>
+          </div>
+          <div class="scenario-block">
+            <div class="scenario-label">💬 คำสั่งที่ใช้</div>
+            <div class="code-box">agy plugin list</div>
+            <div class="code-box" style="margin-top:0.4rem;">agy plugin enable my-extension</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cmd-card">
+        <div class="cmd-header">
+          <span class="cmd-name sub">agy update</span>
+          <span class="cmd-purpose-tag">อัปเดตเวอร์ชัน</span>
+        </div>
+        <p class="cmd-desc">ตรวจสอบและอัปเดต Antigravity CLI ให้เป็นเวอร์ชันล่าสุดโดยอัตโนมัติ</p>
+      </div>
+
+    </div>
+
+    <!-- ════════ SECTION 2: CLI FLAGS & OPTIONS ════════ -->
+    <div class="section-title">
+      <i class="fa-solid fa-sliders" style="color:var(--accent-amber);"></i> 2. พารามิเตอร์และตัวเลือก CLI Flags (`agy --flag`)
+    </div>
+
+    <div class="cmd-grid">
+
+      <div class="cmd-card">
+        <div class="cmd-header">
+          <span class="cmd-name flag">--add-dir &lt;path&gt;</span>
+          <span class="cmd-purpose-tag">เพิ่มไดเรกทอรีทำงาน</span>
+        </div>
+        <p class="cmd-desc">เพิ่มโฟลเดอร์ภายนอกเข้าเป็นส่วนหนึ่งของ Workspace การทำงาน (สามารถพิมพ์ซ้ำหลายโฟลเดอร์ได้)</p>
+      </div>
+
+      <div class="cmd-card">
+        <div class="cmd-header">
+          <span class="cmd-name flag">-c | --continue</span>
+          <span class="cmd-purpose-tag">สานต่อแชทล่าสุด</span>
+        </div>
+        <p class="cmd-desc">เปิดใช้งาน CLI และสานต่อบทสนทนาจาก Session ล่าสุดทันที</p>
+      </div>
+
+      <div class="cmd-card">
+        <div class="cmd-header">
+          <span class="cmd-name flag">--conversation &lt;id&gt;</span>
+          <span class="cmd-purpose-tag">เจาะจง Session ID</span>
+        </div>
+        <p class="cmd-desc">เปิดโหลดบทสนทนาเก่าเฉพาะเจาะจงตาม Conversation ID</p>
+      </div>
+
+      <div class="cmd-card">
+        <div class="cmd-header">
+          <span class="cmd-name flag">--dangerously-skip-permissions</span>
+          <span class="cmd-purpose-tag">ข้ามการขออนุมัติ</span>
+        </div>
+        <p class="cmd-desc">อนุมัติคำขอสิทธิ์การเขียนไฟล์และรันคำสั่งทั้งหมดโดยอัตโนมัติ ไม่ต้องเด้งถามผู้ใช้</p>
+
+        <div class="scenario-toggle" onclick="toggleScenario(this)">
+          <span><i class="fa-solid fa-vial-circle-check"></i> จำลองสถานการณ์: <code>--dangerously-skip-permissions</code></span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </div>
+        <div class="scenario-content">
+          <div class="scenario-block">
+            <div class="scenario-label">📌 สถานการณ์</div>
+            <div>คุณต้องการรันสคริปต์อัตโนมัติใน CI/CD ที่มั่นใจความปลอดภัยแล้ว และไม่ต้องการให้กระบวนการหยุดรอการกดยืนยันจากมนุษย์</div>
+          </div>
+          <div class="scenario-block">
+            <div class="scenario-label">💬 คำสั่งที่ใช้</div>
+            <div class="code-box">agy run "รันเทสต์ทั้งหมดและแก้ลิ้นท์" --dangerously-skip-permissions</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cmd-card">
+        <div class="cmd-header">
+          <span class="cmd-name flag">--effort &lt;low | medium | high&gt;</span>
+          <span class="cmd-purpose-tag">ปรับระดับความคิด</span>
+        </div>
+        <p class="cmd-desc">กำหนดระดับความลึกในการประมวลผลให้ AI (Low = เร็วประหยัด, High = คิดวิเคราะห์ซับซ้อน)</p>
+      </div>
+
+      <div class="cmd-card">
+        <div class="cmd-header">
+          <span class="cmd-name flag">-p | --print | --prompt &lt;text&gt;</span>
+          <span class="cmd-purpose-tag">รันคำสั่งสั้นจบในตัว</span>
+        </div>
+        <p class="cmd-desc">สั่งรันงานสั้นๆ แบบ Non-Interactive แล้วพิมพ์ผลลัพธ์ออกหน้า Terminal ทันทีแล้วจบ</p>
+
+        <div class="scenario-toggle" onclick="toggleScenario(this)">
+          <span><i class="fa-solid fa-vial-circle-check"></i> จำลองสถานการณ์: <code>-p / --print</code></span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </div>
+        <div class="scenario-content">
+          <div class="scenario-block">
+            <div class="scenario-label">📌 สถานการณ์</div>
+            <div>คุณต้องการส่ง Prompt สั้นๆ จาก Bash script เพื่อตรวจคำผิดในไฟล์</div>
+          </div>
+          <div class="scenario-block">
+            <div class="scenario-label">💬 คำสั่งที่ใช้</div>
+            <div class="code-box">agy -p "ตรวจทานคำผิดใน README.md"</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cmd-card">
+        <div class="cmd-header">
+          <span class="cmd-name flag">--mode &lt;accept-edits | plan&gt;</span>
+          <span class="cmd-purpose-tag">กำหนดโหมดการทำงาน</span>
+        </div>
+        <p class="cmd-desc">ตั้งค่าโหมดเริ่มต้นของ Agent ใน Session เช่น โหมดเขียนไฟล์ทันที หรือโหมดเน้นวางแผนก่อน</p>
+      </div>
+
+      <div class="cmd-card">
+        <div class="cmd-header">
+          <span class="cmd-name flag">--sandbox</span>
+          <span class="cmd-purpose-tag">โหมดปลอดภัย Sandbox</span>
+        </div>
+        <p class="cmd-desc">เปิดใช้งานโหมดจำกัดสิทธิ์ความปลอดภัย ห้ามรันคำสั่งอันตรายนอกพื้นที่ที่กำหนด</p>
+      </div>
+
+    </div>
+
+    <!-- ════════ SECTION 3: TUI SLASH COMMANDS ════════ -->
+    <div class="section-title">
+      <i class="fa-solid fa-wand-magic-sparkles" style="color:var(--accent-purple);"></i> 3. คำสั่ง Slash Commands ในหน้าแชท TUI (`/`)
+    </div>
+
+    <div class="cmd-grid">
+
+      <div class="cmd-card">
+        <div class="cmd-header">
+          <span class="cmd-name slash">/goal [คำอธิบายเป้าหมาย]</span>
+          <span class="cmd-purpose-tag">โหมดลุยงานยาวข้ามคืน</span>
+        </div>
+        <p class="cmd-desc">สั่ง AI ลุยเป้าหมายใหญ่ต่อเนื่อง แก้โค้ด รันเทสต์ วนลูปไม่หยุดจนกว่าเป้าหมายจะสำเร็จ 100%</p>
+
+        <div class="scenario-toggle" onclick="toggleScenario(this)">
+          <span><i class="fa-solid fa-vial-circle-check"></i> จำลองสถานการณ์: <code>/goal</code></span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </div>
+        <div class="scenario-content">
+          <div class="scenario-block">
+            <div class="scenario-label">📌 สถานการณ์</div>
+            <div>สั่งให้ทำ Refactor และเพิ่ม Unit Test ให้ครบทั้ง 50 ไฟล์ในโปรเจกต์ ปล่อยให้ระบบรันข้ามคืน</div>
+          </div>
+          <div class="scenario-block">
+            <div class="scenario-label">💬 คำสั่งที่ใช้</div>
+            <div class="code-box">/goal เขียน Unit Test ให้ครบทุกไฟล์ใน tests/ และห้ามหยุดจนกว่าจะผ่าน 100%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cmd-card">
+        <div class="cmd-header">
+          <span class="cmd-name slash">/schedule [ระยะเวลา / เงื่อนไข]</span>
+          <span class="cmd-purpose-tag">ตั้งเวลา / Cron Job</span>
+        </div>
+        <p class="cmd-desc">ตั้งเวลานาฬิกาปลุก หรือตั้ง Cron Schedule ให้ AI กลับมาตรวจเช็กงานหรือแจ้งเตือนตามรอบเวลา</p>
+
+        <div class="scenario-toggle" onclick="toggleScenario(this)">
+          <span><i class="fa-solid fa-vial-circle-check"></i> จำลองสถานการณ์: <code>/schedule</code></span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </div>
+        <div class="scenario-content">
+          <div class="scenario-block">
+            <div class="scenario-label">📌 สถานการณ์</div>
+            <div>เพิ่งสั่ง Deploy หน้าเว็บ แล้วอยากให้ AI กลับมาตรวจเช็ก HTTP Status Code ในอีก 5 นาที</div>
+          </div>
+          <div class="scenario-block">
+            <div class="scenario-label">💬 คำสั่งที่ใช้</div>
+            <div class="code-box">/schedule ในอีก 5 นาที ให้ยิงเช็ก URL ว่าขึ้น 200 OK หรือยัง</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cmd-card">
+        <div class="cmd-header">
+          <span class="cmd-name slash">/plan [เป้าหมาย]</span>
+          <span class="cmd-purpose-tag">วางแผนพิมพ์เขียวก่อนแตะโค้ด</span>
+        </div>
+        <p class="cmd-desc">บังคับให้ AI สรุปแผนงานเป็นข้อๆ (Blueprint Plan) ให้มนุษย์กดอนุมตรก่อนลงมือแก้ไฟล์จริง</p>
+      </div>
+
+      <div class="cmd-card">
+        <div class="cmd-header">
+          <span class="cmd-name slash">/grill-me</span>
+          <span class="cmd-purpose-tag">สัมภาษณ์ปรับความเข้าใจ</span>
+        </div>
+        <p class="cmd-desc">ให้ AI ยิงคำถามสัมภาษณ์คุณยิบๆ (Interview Mode) เพื่อเก็บความต้องการและเคลียร์ข้อสงสัยก่อนเริ่มงาน</p>
+      </div>
+
+      <div class="cmd-card">
+        <div class="cmd-header">
+          <span class="cmd-name slash">/teamwork-preview</span>
+          <span class="cmd-purpose-tag">แตกงานให้ทีม Subagents</span>
+        </div>
+        <p class="cmd-desc">สปอว์นทีมงาน Subagents หลายตัวมาช่วยกันรันงานขนานกันไปพร้อมๆ กัน</p>
+      </div>
+
+      <div class="cmd-card">
+        <div class="cmd-header">
+          <span class="cmd-name slash">/learn</span>
+          <span class="cmd-purpose-tag">บันทึกความจำ / กฎระเบียบ</span>
+        </div>
+        <p class="cmd-desc">บันทึกสไตล์การโค้ดหรือคำแนะนำของคุณลงโฟลเดอร์ <code>.gemini/rules/</code> ให้ AI จำไว้ใช้ตลอดไป</p>
+      </div>
+
+      <div class="cmd-card">
+        <div class="cmd-header">
+          <span class="cmd-name slash">/compact</span>
+          <span class="cmd-purpose-tag">ย่อประวัติแชท</span>
+        </div>
+        <p class="cmd-desc">สรุปรวมประวัติบทสนทนาที่ยาวเกินไปให้สั้นลง เพื่อประหยัด Context Window ในการทำงาน</p>
+      </div>
+
+      <div class="cmd-card">
+        <div class="cmd-header">
+          <span class="cmd-name slash">/copy</span>
+          <span class="cmd-purpose-tag">คัดลอกคำตอบ</span>
+        </div>
+        <p class="cmd-desc">คัดลอกโค้ดหรือข้อความตอบกลับล่าสุดของ AI เข้าสู่ Clipboard ของเครื่องทันที</p>
+      </div>
+
+      <div class="cmd-card">
+        <div class="cmd-header">
+          <span class="cmd-name slash">/clear | /help | /exit</span>
+          <span class="cmd-purpose-tag">คำสั่งควบคุมระบบ</span>
+        </div>
+        <p class="cmd-desc">
+          <b>/clear</b>: ล้างประวัติแชทเริ่มต้นใหม่ | <b>/help</b>: ดูเมนูคำสั่งช่วยเหลือ | <b>/exit</b>: ปิดและออกจากโปรแกรม
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    function toggleScenario(btn) {
+      btn.classList.toggle('active');
+      const content = btn.nextElementSibling;
+      if (content.style.display === 'block') {
+        content.style.display = 'none';
+      } else {
+        content.style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>
