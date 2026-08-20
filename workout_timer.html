@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>⚡ FitTimer · นาฬิกาจับเวลาพัก & Plank | A30 Showcase</title>
+  <meta name="description" content="นาฬิกาออกกำลังกายสำหรับจับเวลาพักฟื้นกล้ามเนื้อ (30s, 60s, 90s) และเวลา Plank (40s, 45s, 50s) พร้อมเสียงเตือนและอนิเมชั่น">
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Outfit:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            kanit: ['Kanit', 'sans-serif'],
+            outfit: ['Outfit', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+            inter: ['Inter', 'sans-serif']
+          },
+          colors: {
+            rest: {
+              glow: '#10b981',
+              start: '#10b981',
+              end: '#06b6d4',
+              badge: '#064e3b',
+              accent: '#34d399',
+            },
+            plank: {
+              glow: '#f97316',
+              start: '#f97316',
+              end: '#ef4444',
+              badge: '#7c2d12',
+              accent: '#fb923c',
+            },
+            routine: {
+              glow: '#8b5cf6',
+              start: '#8b5cf6',
+              end: '#ec4899',
+              badge: '#4c1d95',
+              accent: '#a78bfa',
+            }
+          },
+          boxShadow: {
+            'glow-rest': '0 0 45px -5px rgba(16, 185, 129, 0.45)',
+            'glow-plank': '0 0 45px -5px rgba(249, 115, 22, 0.45)',
+            'glow-routine': '0 0 45px -5px rgba(139, 92, 246, 0.45)',
+            'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Animations & Micro-Interactions */
+    * {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      box-sizing: border-box;
+    }
+
+    body {
+      touch-action: manipulation;
+      background-color: #07090e;
+    }
+
+    /* Ripple Effect */
+    .ripple-btn {
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s ease;
+    }
+
+    .ripple-btn:active {
+      transform: scale(0.94);
+    }
+
+    .ripple-effect {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.35);
+      transform: scale(0);
+      animation: ripple-anim 0.55s ease-out;
+      pointer-events: none;
+    }
+
+    @keyframes ripple-anim {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    /* Heartbeat / Second Pulse */
+    .timer-pulse {
+      animation: timer-beat 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes timer-beat {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+
+    /* Warning Countdown State (< 5 seconds) */
+    .warning-pulse {
+      animation: urgent-pulse 0.6s infinite alternate cubic-bezier(0.4, 0, 0.6, 1);
+      color: #ef4444 !important;
+      text-shadow: 0 0 25px rgba(239, 68, 68, 0.8);
+    }
+
+    @keyframes urgent-pulse {
+      from {
+        transform: scale(1);
+        opacity: 0.9;
+      }
+      to {
+        transform: scale(1.09);
+        opacity: 1;
+        filter: drop-shadow(0 0 16px rgba(239, 68, 68, 0.9));
+      }
+    }
+
+    /* Floating Feedback Badge (+5s, -5s) */
+    .floating-badge {
+      position: absolute;
+      left: 50%;
+      top: 40%;
+      transform: translate(-50%, -50%);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      font-size: 1.25rem;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      pointer-events: none;
+      z-index: 30;
+      animation: float-and-fade 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes float-and-fade {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, 0) scale(0.6);
+      }
+      20% {
+        opacity: 1;
+        transform: translate(-50%, -20px) scale(1.15);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -60px) scale(0.9);
+      }
+    }
+
+    /* Finish Flash Animation */
+    @keyframes finish-flash {
+      0% { background-color: rgba(16, 185, 129, 0.4); }
+      50% { background-color: rgba(255, 255, 255, 0.2); }
+      100% { background-color: transparent; }
+    }
+
+    .flash-bg {
+      animation: finish-flash 0.8s ease-out;
+    }
+
+    #progress-circle {
+      transition: stroke-dashoffset 0.25s linear, stroke 0.4s ease;
+      transform-origin: center;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-kanit min-h-screen flex flex-col items-center justify-between overflow-x-hidden selection:bg-emerald-500 selection:text-white antialiased">
+  
+  <!-- Background Animated Glow Blobs -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+    <div id="bg-blob-1" class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-emerald-500/15 blur-3xl transition-all duration-700"></div>
+    <div id="bg-blob-2" class="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-cyan-500/15 blur-3xl transition-all duration-700"></div>
+    <div id="bg-blob-center" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] rounded-full bg-emerald-500/5 blur-[120px] transition-all duration-700"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:24px_24px] opacity-20"></div>
+  </div>
+
+  <!-- Showcase Global Top Navigation -->
+  <nav class="w-full bg-slate-950/80 backdrop-blur-md border-b border-slate-800/80 sticky top-0 z-40 px-4 py-2.5">
+    <div class="max-w-4xl mx-auto flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2.5 text-decoration-none group">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-amber-500 to-emerald-500 flex items-center justify-center text-slate-950 font-black shadow-md shadow-amber-500/20 group-hover:scale-105 transition-transform">
+          <i data-lucide="layout-grid" class="w-4 h-4 text-black"></i>
+        </div>
+        <div class="text-xs sm:text-sm font-bold font-outfit text-white">
+          A30 <span class="bg-gradient-to-r from-amber-400 to-emerald-400 bg-clip-text text-transparent">Showcase</span>
+        </div>
+      </a>
+
+      <a href="index.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-300 hover:text-white transition-all shadow-sm active:scale-95">
+        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+        <span>กลับ Portal</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- App Header / Toolbar -->
+  <header class="w-full max-w-md px-4 pt-3 pb-1 z-10 flex items-center justify-between">
+    <div class="flex items-center gap-2.5 group cursor-pointer" id="app-logo" onclick="testSound()">
+      <div id="logo-icon-box" class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-cyan-400 p-[2px] shadow-lg shadow-emerald-500/20 transition-transform duration-300 group-hover:scale-105 group-active:scale-95">
+        <div class="w-full h-full bg-slate-900/90 rounded-[14px] flex items-center justify-center backdrop-blur-sm">
+          <i data-lucide="timer" id="logo-icon" class="w-5 h-5 text-emerald-400"></i>
+        </div>
+      </div>
+      <div>
+        <h1 class="text-xl font-bold font-outfit tracking-tight flex items-center gap-1.5 leading-none text-white">
+          FitTimer <span id="mode-mini-tag" class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-kanit font-medium">พักฟื้น</span>
+        </h1>
+        <p class="text-[11px] text-slate-400 font-normal">จับเวลาพักกล้ามเนื้อ & Plank</p>
+      </div>
+    </div>
+
+    <!-- Quick Utility Actions -->
+    <div class="flex items-center gap-2">
+      <!-- Sound Toggle -->
+      <button id="btn-sound-toggle" class="relative w-9 h-9 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white hover:border-slate-700 transition-all active:scale-90 shadow-sm" title="เปิด/ปิดเสียง (คีย์ลัด: M)">
+        <i data-lucide="volume-2" id="icon-sound" class="w-4 h-4 text-emerald-400"></i>
+        <span id="sound-indicator-dot" class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+      </button>
+
+      <!-- Wake Lock Indicator -->
+      <button id="btn-wake-lock" class="w-9 h-9 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white hover:border-slate-700 transition-all active:scale-90 shadow-sm" title="ป้องกันหน้าจอดับ (Always Awake)">
+        <i data-lucide="sun" id="icon-wake" class="w-4 h-4 text-amber-400"></i>
+      </button>
+
+      <!-- Settings -->
+      <button id="btn-settings-open" class="w-9 h-9 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white hover:border-slate-700 transition-all active:scale-90 shadow-sm" title="ตั้งค่าเสียง & ตัวเลือก">
+        <i data-lucide="settings-2" class="w-4 h-4 text-slate-300"></i>
+      </button>
+
+      <!-- Fullscreen Toggle -->
+      <button id="btn-fullscreen" class="w-9 h-9 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white hover:border-slate-700 transition-all active:scale-90 shadow-sm" title="โหมดเต็มจอ (คีย์ลัด: F)">
+        <i data-lucide="maximize" id="icon-fullscreen" class="w-4 h-4"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="w-full max-w-md px-4 py-2 flex flex-col items-center gap-3.5 z-10">
+
+    <!-- Mode Selector Tabs -->
+    <div class="w-full bg-slate-900/90 backdrop-blur-md p-1.5 rounded-2xl border border-slate-800/80 flex items-center relative shadow-lg">
+      <div id="tab-indicator" class="absolute top-1.5 bottom-1.5 left-1.5 w-[calc(33.333%-4px)] bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl transition-all duration-300 ease-out shadow-md"></div>
+      
+      <button id="tab-rest" class="relative z-10 flex-1 py-2.5 px-2 sm:px-3 rounded-xl text-center text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-colors text-white ripple-btn" onclick="switchMode('rest')">
+        <i data-lucide="coffee" class="w-4 h-4"></i>
+        <span>พักกล้ามเนื้อ</span>
+      </button>
+
+      <button id="tab-plank" class="relative z-10 flex-1 py-2.5 px-2 sm:px-3 rounded-xl text-center text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-colors text-slate-400 hover:text-white ripple-btn" onclick="switchMode('plank')">
+        <i data-lucide="zap" class="w-4 h-4"></i>
+        <span>Plank</span>
+      </button>
+
+      <button id="tab-routine" class="relative z-10 flex-1 py-2.5 px-2 sm:px-3 rounded-xl text-center text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-colors text-slate-400 hover:text-white ripple-btn" onclick="switchMode('routine')">
+        <i data-lucide="repeat" class="w-4 h-4"></i>
+        <span>Plank+พัก</span>
+      </button>
+    </div>
+
+    <!-- Quick Presets Row -->
+    <div class="w-full flex flex-col gap-1.5">
+      <div class="flex items-center justify-between text-xs text-slate-400 px-1 font-medium">
+        <span class="flex items-center gap-1"><i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i> เลือกเวลาด่วน:</span>
+        <span id="preset-mode-hint" class="text-[11px] text-emerald-400 font-medium">โหมดพักผ่อน</span>
+      </div>
+
+      <!-- Presets Buttons Grid -->
+      <div id="presets-container" class="grid grid-cols-3 gap-2.5">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- Central Timer Display Circular Card -->
+    <div class="relative w-full aspect-square max-w-[330px] flex items-center justify-center my-0.5 group">
+      
+      <!-- Ambient Glow Behind Ring -->
+      <div id="ambient-glow" class="absolute inset-6 rounded-full bg-emerald-500/20 blur-3xl transition-all duration-500 scale-90 opacity-70"></div>
+
+      <!-- Circular SVG Progress Ring -->
+      <svg class="w-full h-full -rotate-90 transform drop-shadow-2xl" viewBox="0 0 280 280">
+        <defs>
+          <!-- Rest Gradient -->
+          <linearGradient id="gradient-rest" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#10b981" />
+            <stop offset="50%" stop-color="#06b6d4" />
+            <stop offset="100%" stop-color="#3b82f6" />
+          </linearGradient>
+
+          <!-- Plank Gradient -->
+          <linearGradient id="gradient-plank" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#f97316" />
+            <stop offset="50%" stop-color="#ef4444" />
+            <stop offset="100%" stop-color="#f43f5e" />
+          </linearGradient>
+
+          <!-- Routine Gradient -->
+          <linearGradient id="gradient-routine" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#8b5cf6" />
+            <stop offset="50%" stop-color="#ec4899" />
+            <stop offset="100%" stop-color="#f43f5e" />
+          </linearGradient>
+
+          <!-- Warning Pulsing Gradient -->
+          <linearGradient id="gradient-warning" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ef4444" />
+            <stop offset="100%" stop-color="#f59e0b" />
+          </linearGradient>
+
+          <!-- Glow Filter -->
+          <filter id="glow-filter" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3.5" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+        </defs>
+
+        <!-- Track Background -->
+        <circle
+          cx="140"
+          cy="140"
+          r="115"
+          class="stroke-slate-800/70"
+          stroke-width="12"
+          fill="none"
+        />
+
+        <!-- Secondary Sub-ticks circle -->
+        <circle
+          cx="140"
+          cy="140"
+          r="126"
+          class="stroke-slate-700/30"
+          stroke-width="2"
+          stroke-dasharray="3 14"
+          fill="none"
+        />
+
+        <!-- Animated Progress Circle -->
+        <circle
+          id="progress-circle"
+          cx="140"
+          cy="140"
+          r="115"
+          stroke="url(#gradient-rest)"
+          stroke-width="12"
+          stroke-linecap="round"
+          stroke-dasharray="722.56"
+          stroke-dashoffset="0"
+          fill="none"
+          class="transition-all duration-200 ease-linear"
+          filter="url(#glow-filter)"
+        />
+      </svg>
+
+      <!-- Center Countdown Info -->
+      <div class="absolute inset-0 flex flex-col items-center justify-center text-center select-none pointer-events-auto">
+        
+        <!-- Status / Set Badge -->
+        <div id="status-badge" class="mb-1 px-3 py-0.5 rounded-full text-xs font-semibold tracking-wide bg-slate-800/90 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 transition-all duration-300">
+          <span id="status-dot" class="w-2 h-2 rounded-full bg-emerald-400"></span>
+          <span id="status-text">พร้อมเริ่ม</span>
+        </div>
+
+        <!-- Big Main Digital Timer -->
+        <div class="relative flex items-baseline justify-center">
+          <div id="timer-display" class="font-mono text-6xl sm:text-7xl font-extrabold tracking-tighter text-white transition-all duration-100 tabular-nums drop-shadow-md cursor-pointer hover:scale-105" title="กดเพื่อตั้งเวลาเอง" onclick="openCustomTimeModal()">
+            00:30
+          </div>
+        </div>
+
+        <!-- Sub Info / Progress Percent & Total Time -->
+        <div class="flex items-center gap-2 mt-1 text-xs text-slate-400 font-medium">
+          <span id="timer-percent" class="px-2 py-0.5 rounded-md bg-slate-900/90 border border-slate-800 text-slate-300">100%</span>
+          <span class="text-slate-600">•</span>
+          <span id="total-time-badge">เวลาเต็ม: 30 วิ</span>
+        </div>
+
+        <!-- Floating Popups Layer (for +5s / -5s clicks) -->
+        <div id="floating-feedback-container" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+      </div>
+    </div>
+
+    <!-- Quick Time Modifiers (-10s, -5s, +5s, +10s) -->
+    <div class="w-full flex items-center justify-center gap-2 px-2">
+      <button class="adjust-time-btn px-3 py-1.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-xs font-bold text-slate-300 hover:text-white transition-all active:scale-90 flex items-center gap-0.5 ripple-btn" onclick="adjustTime(-10)">
+        -10s
+      </button>
+      <button class="adjust-time-btn px-3.5 py-1.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-xs font-bold text-slate-300 hover:text-white transition-all active:scale-90 flex items-center gap-0.5 ripple-btn" onclick="adjustTime(-5)">
+        -5s
+      </button>
+      
+      <div class="h-4 w-px bg-slate-800 mx-1"></div>
+
+      <button class="adjust-time-btn px-3.5 py-1.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-xs font-bold text-slate-300 hover:text-white transition-all active:scale-90 flex items-center gap-0.5 ripple-btn" onclick="adjustTime(5)">
+        +5s
+      </button>
+      <button class="adjust-time-btn px-3 py-1.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-xs font-bold text-slate-300 hover:text-white transition-all active:scale-90 flex items-center gap-0.5 ripple-btn" onclick="adjustTime(10)">
+        +10s
+      </button>
+    </div>
+
+    <!-- Main Action Controls (Start / Pause / Reset / Custom) -->
+    <div class="w-full flex items-center justify-center gap-3.5 mt-0.5">
+      
+      <!-- Reset Button -->
+      <button id="btn-reset" class="w-14 h-14 rounded-2xl bg-slate-900/90 hover:bg-slate-800 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white shadow-lg transition-all active:scale-90 group ripple-btn" onclick="resetTimer()" title="รีเซ็ต (R)">
+        <i data-lucide="rotate-ccw" id="icon-reset" class="w-6 h-6 transition-transform duration-300 group-hover:-rotate-90"></i>
+      </button>
+
+      <!-- Primary Big Play / Pause Button -->
+      <button id="btn-toggle-main" class="flex-1 max-w-[200px] h-16 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-bold text-lg flex items-center justify-center gap-2.5 shadow-xl shadow-emerald-500/25 transition-all duration-200 active:scale-95 active:shadow-sm font-outfit uppercase tracking-wider ripple-btn" onclick="toggleTimer()">
+        <i data-lucide="play" id="icon-main-play" class="w-7 h-7 fill-slate-950"></i>
+        <span id="label-main-btn" class="font-extrabold">START</span>
+      </button>
+
+      <!-- Custom Time Modal Button -->
+      <button id="btn-custom" class="w-14 h-14 rounded-2xl bg-slate-900/90 hover:bg-slate-800 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white shadow-lg transition-all active:scale-90 group ripple-btn" onclick="openCustomTimeModal()" title="กำหนดเวลาเอง">
+        <i data-lucide="sliders" class="w-6 h-6 transition-transform duration-300 group-hover:scale-110"></i>
+      </button>
+    </div>
+
+    <!-- Workout Sets & Routine Summary Bar -->
+    <div class="w-full bg-slate-900/70 backdrop-blur-md rounded-2xl p-3 border border-slate-800/80 flex items-center justify-between shadow-sm">
+      <div class="flex items-center gap-3">
+        <div id="set-icon-box" class="w-9 h-9 rounded-xl bg-slate-800/90 flex items-center justify-center text-emerald-400">
+          <i data-lucide="dumbbell" class="w-4 h-4"></i>
+        </div>
+        <div>
+          <div class="text-[11px] text-slate-400 font-medium">บันทึกจำนวนเซ็ต (Sets)</div>
+          <div class="text-sm sm:text-base font-bold font-outfit flex items-center gap-2 text-white">
+            <span id="set-count" class="text-emerald-400 text-base sm:text-lg">เซ็ตที่ 1</span>
+            <span class="text-xs text-slate-500 font-normal">| เสร็จ: <span id="total-completed-sets" class="text-slate-300 font-semibold">0</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Set increment / decrement controls -->
+      <div class="flex items-center gap-1 bg-slate-950/80 p-1 rounded-xl border border-slate-800">
+        <button class="w-7 h-7 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition-all active:scale-90 ripple-btn" onclick="changeSetCount(-1)">
+          <i data-lucide="minus" class="w-3.5 h-3.5"></i>
+        </button>
+        <span id="current-set-num" class="w-6 text-center font-bold text-xs text-emerald-300">1</span>
+        <button class="w-7 h-7 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition-all active:scale-90 ripple-btn" onclick="changeSetCount(1)">
+          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Sound & Settings Modal -->
+  <div id="modal-settings" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 w-full max-w-sm shadow-2xl scale-95 transition-all duration-300" id="modal-settings-content">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-bold flex items-center gap-2 text-white">
+          <i data-lucide="settings" class="w-5 h-5 text-emerald-400"></i> ตั้งค่าเสียง & การทำงาน
+        </h3>
+        <button class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition-all active:scale-90" onclick="closeSettingsModal()">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4">
+        <!-- Sound Type Selector -->
+        <div>
+          <label class="text-xs font-semibold text-slate-400 mb-1.5 block">เสียงแจ้งเตือนเมื่อหมดเวลา:</label>
+          <div class="grid grid-cols-3 gap-2">
+            <button class="sound-tone-btn py-2 px-1 rounded-xl text-xs font-semibold border border-emerald-500 bg-emerald-500/20 text-emerald-300 transition-all ripple-btn" data-tone="fanfare" onclick="setSoundTone('fanfare')">
+              🏆 ชัยชนะ
+            </button>
+            <button class="sound-tone-btn py-2 px-1 rounded-xl text-xs font-semibold border border-slate-800 bg-slate-800/60 text-slate-300 hover:border-slate-700 transition-all ripple-btn" data-tone="buzzer" onclick="setSoundTone('buzzer')">
+              🚨 บัสเซอร์
+            </button>
+            <button class="sound-tone-btn py-2 px-1 rounded-xl text-xs font-semibold border border-slate-800 bg-slate-800/60 text-slate-300 hover:border-slate-700 transition-all ripple-btn" data-tone="chime" onclick="setSoundTone('chime')">
+              🔔 ระฆังใส
+            </button>
+          </div>
+        </div>
+
+        <!-- Volume Slider -->
+        <div>
+          <div class="flex justify-between text-xs font-semibold text-slate-400 mb-1">
+            <span>ระดับเสียง (Volume)</span>
+            <span id="volume-label" class="text-emerald-400 font-mono">80%</span>
+          </div>
+          <input type="range" id="volume-slider" min="0" max="100" value="80" class="w-full accent-emerald-500 h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer" oninput="updateVolume(this.value)">
+        </div>
+
+        <!-- Beep on 3-2-1 toggle -->
+        <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-800/50 border border-slate-800">
+          <div>
+            <div class="text-xs font-semibold text-white">เสียงนับถอยหลัง 3, 2, 1</div>
+            <div class="text-[10px] text-slate-400">ส่งสัญญาณเสียงเตือนก่อนจบ</div>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="chk-countdown-beep" checked class="sr-only peer" onchange="toggleCountdownBeep(this.checked)">
+            <div class="w-10 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+          </label>
+        </div>
+
+        <!-- Button Click Sound Toggle -->
+        <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-800/50 border border-slate-800">
+          <div>
+            <div class="text-xs font-semibold text-white">เสียงตอบรับเวลากดปุ่ม (Click Sound)</div>
+            <div class="text-[10px] text-slate-400">เสียงคลิกสัมผัส</div>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="chk-click-sound" checked class="sr-only peer" onchange="toggleClickSound(this.checked)">
+            <div class="w-10 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+          </label>
+        </div>
+
+        <!-- Voice Announcement Toggle -->
+        <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-800/50 border border-slate-800">
+          <div>
+            <div class="text-xs font-semibold text-white">เสียงพูดภาษาไทย (Voice Guide)</div>
+            <div class="text-[10px] text-slate-400">เช่น "เริ่มได้", "พักครบแล้ว"</div>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="chk-voice" checked class="sr-only peer" onchange="toggleVoice(this.checked)">
+            <div class="w-10 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+          </label>
+        </div>
+
+        <!-- Test Sound Button -->
+        <button class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center justify-center gap-2 transition-all active:scale-95 ripple-btn" onclick="testSound()">
+          <i data-lucide="play-circle" class="w-4 h-4 text-emerald-400"></i> ทดสอบเสียงเตือน
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Time Input Modal -->
+  <div id="modal-custom-time" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 w-full max-w-xs shadow-2xl scale-95 transition-all duration-300" id="modal-custom-content">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-bold flex items-center gap-2 text-white">
+          <i data-lucide="clock" class="w-5 h-5 text-emerald-400"></i> กำหนดเวลาเอง
+        </h3>
+        <button class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition-all active:scale-90" onclick="closeCustomTimeModal()">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="flex items-center justify-center gap-3 my-5">
+        <div class="text-center">
+          <label class="text-[11px] text-slate-400 mb-1 block">นาที</label>
+          <input type="number" id="input-minutes" min="0" max="59" value="0" class="w-20 text-center font-mono text-3xl font-bold bg-slate-800 text-white rounded-2xl p-3 border border-slate-700 focus:outline-none focus:border-emerald-500">
+        </div>
+        <span class="text-3xl font-bold text-slate-500 mt-5">:</span>
+        <div class="text-center">
+          <label class="text-[11px] text-slate-400 mb-1 block">วินาที</label>
+          <input type="number" id="input-seconds" min="1" max="59" value="30" class="w-20 text-center font-mono text-3xl font-bold bg-slate-800 text-white rounded-2xl p-3 border border-slate-700 focus:outline-none focus:border-emerald-500">
+        </div>
+      </div>
+
+      <div class="flex gap-2">
+        <button class="flex-1 py-3 rounded-xl bg-slate-800 text-slate-300 font-semibold text-sm hover:bg-slate-700 ripple-btn" onclick="closeCustomTimeModal()">
+          ยกเลิก
+        </button>
+        <button class="flex-1 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm ripple-btn" onclick="applyCustomTime()">
+          ใช้เวลานี้
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Routine Config Modal (for Plank + Rest auto combo) -->
+  <div id="modal-routine-config" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 w-full max-w-sm shadow-2xl scale-95 transition-all duration-300">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-bold flex items-center gap-2 text-white">
+          <i data-lucide="repeat" class="w-5 h-5 text-purple-400"></i> ตั้งค่าโหมดผสม (Routine)
+        </h3>
+        <button class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition-all active:scale-90" onclick="closeRoutineModal()">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="font-semibold text-orange-400 block mb-1">เวลา Plank ในแต่ละเซ็ต:</label>
+          <select id="routine-plank-time" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white font-medium">
+            <option value="40">40 วินาที</option>
+            <option value="45" selected>45 วินาที</option>
+            <option value="50">50 วินาที</option>
+            <option value="60">1 นาที (60 วิ)</option>
+          </select>
+        </div>
+        <div>
+          <label class="font-semibold text-emerald-400 block mb-1">เวลาพักกล้ามเนื้อระหว่างเซ็ต:</label>
+          <select id="routine-rest-time" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white font-medium">
+            <option value="30" selected>30 วินาที</option>
+            <option value="60">1 นาที (60 วิ)</option>
+            <option value="90">1 นาที 30 วินาที (90 วิ)</option>
+          </select>
+        </div>
+        <div>
+          <label class="font-semibold text-purple-400 block mb-1">จำนวนเซ็ตทั้งหมด (Total Sets):</label>
+          <select id="routine-total-sets" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white font-medium">
+            <option value="3">3 เซ็ต</option>
+            <option value="4" selected>4 เซ็ต</option>
+            <option value="5">5 เซ็ต</option>
+            <option value="6">6 เซ็ต</option>
+          </select>
+        </div>
+        <button class="w-full mt-2 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-sm ripple-btn" onclick="saveRoutineConfig()">
+          บันทึกและเริ่มใช้
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Keyboard Shortcuts Hint Footer -->
+  <footer class="w-full max-w-lg px-4 py-3 text-center text-[11px] text-slate-500 flex flex-wrap items-center justify-center gap-3 z-10 border-t border-slate-900/80">
+    <span class="flex items-center gap-1"><kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 font-mono">Space</kbd> เริ่ม/หยุด</span>
+    <span class="flex items-center gap-1"><kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 font-mono">R</kbd> รีเซ็ต</span>
+    <span class="flex items-center gap-1"><kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 font-mono">1-3</kbd> ปุ่มด่วน</span>
+    <span class="flex items-center gap-1"><kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 font-mono">M</kbd> เสียง</span>
+  </footer>
+
+  <!-- Application Logic -->
+  <script>
+    // State Management
+    const state = {
+      mode: 'rest', // 'rest' | 'plank' | 'routine'
+      status: 'idle', // 'idle' | 'running' | 'paused' | 'finished'
+      totalTime: 30,
+      remainingTime: 30,
+      
+      presets: {
+        rest: [
+          { label: '30 วิ', seconds: 30, desc: 'เซ็ตเบา / Cardio' },
+          { label: '1 นาที', seconds: 60, desc: 'มาตรฐาน Hypertrophy' },
+          { label: '1:30 นาที', seconds: 90, desc: 'เซ็ตหนัก / Strength' }
+        ],
+        plank: [
+          { label: '40 วิ', seconds: 40, desc: 'ระดับเริ่มต้น' },
+          { label: '45 วิ', seconds: 45, desc: 'ระดับมาตรฐาน' },
+          { label: '50 วิ', seconds: 50, desc: 'ระดับท้าทาย 🔥' }
+        ],
+        routine: [
+          { label: 'สั้น (30/40)', plank: 40, rest: 30 },
+          { label: 'กลาง (45/45)', plank: 45, rest: 45 },
+          { label: 'เข้มข้น (50/60)', plank: 50, rest: 60 }
+        ]
+      },
+
+      routine: {
+        phase: 'plank',
+        plankTime: 45,
+        restTime: 30,
+        currentSet: 1,
+        totalSets: 4
+      },
+
+      setCount: 1,
+      totalCompletedSets: 0,
+
+      soundEnabled: true,
+      soundTone: 'fanfare',
+      volume: 0.8,
+      countdownBeep: true,
+      clickSound: true,
+      voiceEnabled: true,
+      wakeLockActive: false
+    };
+
+    const CIRCLE_RADIUS = 115;
+    const CIRCUMFERENCE = 2 * Math.PI * CIRCLE_RADIUS;
+
+    let timerInterval = null;
+    let lastTimestamp = null;
+    let audioCtx = null;
+    let wakeLock = null;
+
+    // Web Audio Synthesizer
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) audioCtx = new AudioContextClass();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playClickSound() {
+      if (!state.soundEnabled || !state.clickSound) return;
+      try {
+        initAudio();
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.04);
+        gain.gain.setValueAtTime(0.12 * state.volume, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.04);
+      } catch (e) {}
+    }
+
+    function playCountdownBeep(num) {
+      if (!state.soundEnabled || !state.countdownBeep) return;
+      try {
+        initAudio();
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const freqs = { 3: 659.25, 2: 783.99, 1: 987.77 };
+        const freq = freqs[num] || 880;
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.35 * state.volume, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.18);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.18);
+        if (navigator.vibrate) navigator.vibrate(60);
+      } catch (e) {}
+    }
+
+    function playFinishSound() {
+      if (!state.soundEnabled) return;
+      try {
+        initAudio();
+        if (!audioCtx) return;
+        const vol = state.volume;
+        const now = audioCtx.currentTime;
+
+        if (state.soundTone === 'buzzer') {
+          for (let i = 0; i < 3; i++) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(320, now + (i * 0.22));
+            gain.gain.setValueAtTime(0.35 * vol, now + (i * 0.22));
+            gain.gain.exponentialRampToValueAtTime(0.01, now + (i * 0.22) + 0.18);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + (i * 0.22));
+            osc.stop(now + (i * 0.22) + 0.18);
+          }
+        } else if (state.soundTone === 'chime') {
+          const notes = [523.25, 659.25, 783.99, 1046.50];
+          notes.forEach((freq, idx) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+            gain.gain.setValueAtTime(0.3 * vol, now + idx * 0.08);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 1.2);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + idx * 0.08);
+            osc.stop(now + idx * 0.08 + 1.2);
+          });
+        } else {
+          // Fanfare
+          const chord = [
+            { f: 523.25, time: 0, dur: 0.2 },
+            { f: 659.25, time: 0.12, dur: 0.2 },
+            { f: 783.99, time: 0.24, dur: 0.2 },
+            { f: 1046.50, time: 0.38, dur: 0.8 },
+            { f: 1318.51, time: 0.42, dur: 0.8 },
+          ];
+          chord.forEach(note => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(note.f, now + note.time);
+            gain.gain.setValueAtTime(0.4 * vol, now + note.time);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + note.time + note.dur);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + note.time);
+            osc.stop(now + note.time + note.dur);
+          });
+        }
+        if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 400]);
+      } catch (e) {}
+    }
+
+    function speakVoice(text) {
+      if (!state.voiceEnabled || !('speechSynthesis' in window)) return;
+      try {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'th-TH';
+        utterance.rate = 1.05;
+        utterance.volume = state.volume;
+        window.speechSynthesis.speak(utterance);
+      } catch (e) {}
+    }
+
+    // DOM Elements Cache
+    const dom = {
+      tabIndicator: document.getElementById('tab-indicator'),
+      tabRest: document.getElementById('tab-rest'),
+      tabPlank: document.getElementById('tab-plank'),
+      tabRoutine: document.getElementById('tab-routine'),
+      modeMiniTag: document.getElementById('mode-mini-tag'),
+      presetModeHint: document.getElementById('preset-mode-hint'),
+      presetsContainer: document.getElementById('presets-container'),
+
+      progressCircle: document.getElementById('progress-circle'),
+      ambientGlow: document.getElementById('ambient-glow'),
+      timerDisplay: document.getElementById('timer-display'),
+      statusBadge: document.getElementById('status-badge'),
+      statusDot: document.getElementById('status-dot'),
+      statusText: document.getElementById('status-text'),
+      timerPercent: document.getElementById('timer-percent'),
+      totalTimeBadge: document.getElementById('total-time-badge'),
+      floatingContainer: document.getElementById('floating-feedback-container'),
+
+      btnToggleMain: document.getElementById('btn-toggle-main'),
+      iconMainPlay: document.getElementById('icon-main-play'),
+      labelMainBtn: document.getElementById('label-main-btn'),
+      btnReset: document.getElementById('btn-reset'),
+      iconReset: document.getElementById('icon-reset'),
+
+      setCount: document.getElementById('set-count'),
+      currentSetNum: document.getElementById('current-set-num'),
+      totalCompletedSets: document.getElementById('total-completed-sets'),
+      setIconBox: document.getElementById('set-icon-box'),
+
+      btnSoundToggle: document.getElementById('btn-sound-toggle'),
+      iconSound: document.getElementById('icon-sound'),
+      soundIndicatorDot: document.getElementById('sound-indicator-dot'),
+      btnWakeLock: document.getElementById('btn-wake-lock'),
+      iconWake: document.getElementById('icon-wake'),
+      btnFullscreen: document.getElementById('btn-fullscreen'),
+      iconFullscreen: document.getElementById('icon-fullscreen'),
+      btnSettingsOpen: document.getElementById('btn-settings-open'),
+
+      bgBlob1: document.getElementById('bg-blob-1'),
+      bgBlob2: document.getElementById('bg-blob-2'),
+      bgBlobCenter: document.getElementById('bg-blob-center'),
+      logoIconBox: document.getElementById('logo-icon-box'),
+      logoIcon: document.getElementById('logo-icon'),
+
+      modalSettings: document.getElementById('modal-settings'),
+      modalCustomTime: document.getElementById('modal-custom-time'),
+      modalRoutineConfig: document.getElementById('modal-routine-config'),
+      inputMinutes: document.getElementById('input-minutes'),
+      inputSeconds: document.getElementById('input-seconds'),
+      volumeSlider: document.getElementById('volume-slider'),
+      volumeLabel: document.getElementById('volume-label'),
+      chkCountdownBeep: document.getElementById('chk-countdown-beep'),
+      chkVoice: document.getElementById('chk-voice'),
+      chkClickSound: document.getElementById('chk-click-sound')
+    };
+
+    function formatTime(totalSeconds) {
+      const mins = Math.floor(totalSeconds / 60);
+      const secs = totalSeconds % 60;
+      return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+
+    function formatTimeFriendly(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      if (mins === 0) return `${secs} วิ`;
+      if (secs === 0) return `${mins} นาที`;
+      return `${mins}:${String(secs).padStart(2, '0')} นาที`;
+    }
+
+    function renderPresets() {
+      dom.presetsContainer.innerHTML = '';
+      if (state.mode === 'routine') {
+        state.presets.routine.forEach((preset) => {
+          const isCurrent = state.routine.plankTime === preset.plank && state.routine.restTime === preset.rest;
+          const btn = document.createElement('button');
+          btn.className = `group relative p-2.5 rounded-2xl border transition-all duration-200 flex flex-col items-center justify-center ripple-btn ${
+            isCurrent 
+              ? 'border-purple-500 bg-purple-500/20 shadow-lg shadow-purple-500/20 text-white font-bold -translate-y-0.5' 
+              : 'border-slate-800 bg-slate-900/80 hover:bg-slate-800 hover:border-slate-700 text-slate-300'
+          }`;
+          btn.innerHTML = `
+            <span class="text-xs font-bold font-outfit ${isCurrent ? 'text-purple-300' : 'text-slate-200'}">${preset.label}</span>
+            <span class="text-[10px] text-slate-400 mt-0.5">P:${preset.plank}s | R:${preset.rest}s</span>
+          `;
+          btn.onclick = () => {
+            playClickSound();
+            state.routine.plankTime = preset.plank;
+            state.routine.restTime = preset.rest;
+            selectTime(state.routine.phase === 'plank' ? preset.plank : preset.rest);
+            renderPresets();
+          };
+          dom.presetsContainer.appendChild(btn);
+        });
+        return;
+      }
+
+      state.presets[state.mode].forEach((preset) => {
+        const isSelected = state.totalTime === preset.seconds;
+        const isRest = state.mode === 'rest';
+        const activeColorClasses = isRest 
+          ? 'border-emerald-500 bg-emerald-500/20 shadow-lg shadow-emerald-500/20 text-emerald-300'
+          : 'border-orange-500 bg-orange-500/20 shadow-lg shadow-orange-500/20 text-orange-300';
+        const inactiveColorClasses = 'border-slate-800 bg-slate-900/80 hover:bg-slate-800 hover:border-slate-700 text-slate-300';
+
+        const btn = document.createElement('button');
+        btn.className = `group relative p-2.5 rounded-2xl border transition-all duration-200 flex flex-col items-center justify-center ripple-btn ${
+          isSelected ? `${activeColorClasses} font-bold -translate-y-0.5` : inactiveColorClasses
+        }`;
+        btn.innerHTML = `
+          <span class="text-sm font-bold font-outfit ${isSelected ? (isRest ? 'text-emerald-300' : 'text-orange-300') : 'text-slate-200'}">${preset.label}</span>
+          <span class="text-[10px] text-slate-400 mt-0.5">${preset.desc}</span>
+        `;
+        btn.onclick = () => {
+          playClickSound();
+          selectTime(preset.seconds);
+        };
+        dom.presetsContainer.appendChild(btn);
+      });
+    }
+
+    function selectTime(seconds) {
+      if (state.status === 'running') pauseTimer();
+      state.totalTime = seconds;
+      state.remainingTime = seconds;
+      state.status = 'idle';
+      updateUI();
+    }
+
+    function switchMode(newMode) {
+      if (state.mode === newMode) return;
+      playClickSound();
+      state.mode = newMode;
+      if (timerInterval) clearInterval(timerInterval);
+      state.status = 'idle';
+
+      if (newMode === 'rest') {
+        state.totalTime = 30;
+        state.remainingTime = 30;
+        dom.tabIndicator.style.transform = 'translateX(0%)';
+        dom.tabIndicator.className = 'absolute top-1.5 bottom-1.5 left-1.5 w-[calc(33.333%-4px)] bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl transition-all duration-300 ease-out shadow-md';
+        dom.modeMiniTag.textContent = 'พักฟื้น';
+        dom.modeMiniTag.className = 'text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-kanit font-medium';
+        dom.presetModeHint.textContent = 'เวลาพักยอดนิยม (30วิ, 1นาที, 1:30นาที)';
+        dom.presetModeHint.className = 'text-[11px] text-emerald-400 font-medium';
+        dom.progressCircle.setAttribute('stroke', 'url(#gradient-rest)');
+        dom.ambientGlow.className = 'absolute inset-6 rounded-full bg-emerald-500/20 blur-3xl transition-all duration-500 scale-90 opacity-70';
+        dom.btnToggleMain.className = 'flex-1 max-w-[200px] h-16 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-bold text-lg flex items-center justify-center gap-2.5 shadow-xl shadow-emerald-500/25 transition-all duration-200 active:scale-95 active:shadow-sm font-outfit uppercase tracking-wider ripple-btn';
+        dom.bgBlob1.className = 'absolute -top-32 -left-32 w-96 h-96 rounded-full bg-emerald-500/15 blur-3xl transition-all duration-700';
+        dom.bgBlob2.className = 'absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-cyan-500/15 blur-3xl transition-all duration-700';
+        dom.bgBlobCenter.className = 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] rounded-full bg-emerald-500/5 blur-[120px] transition-all duration-700';
+        dom.logoIconBox.className = 'w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-cyan-400 p-[2px] shadow-lg shadow-emerald-500/20 transition-transform duration-300 group-hover:scale-105 group-active:scale-95';
+        dom.logoIcon.className = 'w-5 h-5 text-emerald-400';
+        dom.setIconBox.className = 'w-9 h-9 rounded-xl bg-slate-800/90 flex items-center justify-center text-emerald-400';
+        dom.setCount.className = 'text-emerald-400 text-base sm:text-lg';
+        dom.currentSetNum.className = 'w-6 text-center font-bold text-xs text-emerald-300';
+      } else if (newMode === 'plank') {
+        state.totalTime = 45;
+        state.remainingTime = 45;
+        dom.tabIndicator.style.transform = 'translateX(100%)';
+        dom.tabIndicator.className = 'absolute top-1.5 bottom-1.5 left-1.5 w-[calc(33.333%-4px)] bg-gradient-to-r from-orange-500 to-red-500 rounded-xl transition-all duration-300 ease-out shadow-md';
+        dom.modeMiniTag.textContent = 'Plank Challenge';
+        dom.modeMiniTag.className = 'text-xs px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-300 font-kanit font-medium';
+        dom.presetModeHint.textContent = 'เวลา Plank ยอดนิยม (40วิ, 45วิ, 50วิ)';
+        dom.presetModeHint.className = 'text-[11px] text-orange-400 font-medium';
+        dom.progressCircle.setAttribute('stroke', 'url(#gradient-plank)');
+        dom.ambientGlow.className = 'absolute inset-6 rounded-full bg-orange-500/20 blur-3xl transition-all duration-500 scale-90 opacity-70';
+        dom.btnToggleMain.className = 'flex-1 max-w-[200px] h-16 rounded-2xl bg-gradient-to-r from-orange-500 to-red-500 text-slate-950 font-bold text-lg flex items-center justify-center gap-2.5 shadow-xl shadow-orange-500/25 transition-all duration-200 active:scale-95 active:shadow-sm font-outfit uppercase tracking-wider ripple-btn';
+        dom.bgBlob1.className = 'absolute -top-32 -left-32 w-96 h-96 rounded-full bg-orange-500/15 blur-3xl transition-all duration-700';
+        dom.bgBlob2.className = 'absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-red-500/15 blur-3xl transition-all duration-700';
+        dom.bgBlobCenter.className = 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] rounded-full bg-orange-500/5 blur-[120px] transition-all duration-700';
+        dom.logoIconBox.className = 'w-10 h-10 rounded-2xl bg-gradient-to-tr from-orange-500 to-red-400 p-[2px] shadow-lg shadow-orange-500/20 transition-transform duration-300 group-hover:scale-105 group-active:scale-95';
+        dom.logoIcon.className = 'w-5 h-5 text-orange-400';
+        dom.setIconBox.className = 'w-9 h-9 rounded-xl bg-slate-800/90 flex items-center justify-center text-orange-400';
+        dom.setCount.className = 'text-orange-400 text-base sm:text-lg';
+        dom.currentSetNum.className = 'w-6 text-center font-bold text-xs text-orange-300';
+      } else if (newMode === 'routine') {
+        state.routine.phase = 'plank';
+        state.totalTime = state.routine.plankTime;
+        state.remainingTime = state.routine.plankTime;
+        dom.tabIndicator.style.transform = 'translateX(200%)';
+        dom.tabIndicator.className = 'absolute top-1.5 bottom-1.5 left-1.5 w-[calc(33.333%-4px)] bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl transition-all duration-300 ease-out shadow-md';
+        dom.modeMiniTag.textContent = 'Routine เซ็ตคู่';
+        dom.modeMiniTag.className = 'text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-kanit font-medium';
+        dom.presetModeHint.textContent = 'Plank สลับ พักกล้ามเนื้อ อัตโนมัติ';
+        dom.presetModeHint.className = 'text-[11px] text-purple-400 font-medium';
+        dom.progressCircle.setAttribute('stroke', 'url(#gradient-routine)');
+        dom.ambientGlow.className = 'absolute inset-6 rounded-full bg-purple-500/20 blur-3xl transition-all duration-500 scale-90 opacity-70';
+        dom.btnToggleMain.className = 'flex-1 max-w-[200px] h-16 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold text-lg flex items-center justify-center gap-2.5 shadow-xl shadow-purple-500/25 transition-all duration-200 active:scale-95 active:shadow-sm font-outfit uppercase tracking-wider ripple-btn';
+        dom.bgBlob1.className = 'absolute -top-32 -left-32 w-96 h-96 rounded-full bg-purple-500/15 blur-3xl transition-all duration-700';
+        dom.bgBlob2.className = 'absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-pink-500/15 blur-3xl transition-all duration-700';
+        dom.bgBlobCenter.className = 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] rounded-full bg-purple-500/5 blur-[120px] transition-all duration-700';
+        dom.logoIconBox.className = 'w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-500 to-pink-400 p-[2px] shadow-lg shadow-purple-500/20 transition-transform duration-300 group-hover:scale-105 group-active:scale-95';
+        dom.logoIcon.className = 'w-5 h-5 text-purple-400';
+        dom.setIconBox.className = 'w-9 h-9 rounded-xl bg-slate-800/90 flex items-center justify-center text-purple-400';
+        dom.setCount.className = 'text-purple-400 text-base sm:text-lg';
+        dom.currentSetNum.className = 'w-6 text-center font-bold text-xs text-purple-300';
+      }
+
+      [dom.tabRest, dom.tabPlank, dom.tabRoutine].forEach(tab => tab.className = tab.className.replace('text-white', 'text-slate-400'));
+      if (newMode === 'rest') dom.tabRest.className = dom.tabRest.className.replace('text-slate-400', 'text-white');
+      if (newMode === 'plank') dom.tabPlank.className = dom.tabPlank.className.replace('text-slate-400', 'text-white');
+      if (newMode === 'routine') dom.tabRoutine.className = dom.tabRoutine.className.replace('text-slate-400', 'text-white');
+
+      updateUI();
+    }
+
+    function updateUI() {
+      dom.timerDisplay.textContent = formatTime(state.remainingTime);
+      dom.totalTimeBadge.textContent = `เวลาเต็ม: ${formatTimeFriendly(state.totalTime)}`;
+      
+      const progressRatio = state.totalTime > 0 ? (state.remainingTime / state.totalTime) : 0;
+      const percent = Math.round(progressRatio * 100);
+      dom.timerPercent.textContent = `${percent}%`;
+
+      const offset = CIRCUMFERENCE * (1 - progressRatio);
+      dom.progressCircle.style.strokeDashoffset = `${offset}`;
+
+      if (state.status === 'running' && state.remainingTime <= 5 && state.remainingTime > 0) {
+        dom.timerDisplay.classList.add('warning-pulse');
+        dom.progressCircle.setAttribute('stroke', 'url(#gradient-warning)');
+      } else {
+        dom.timerDisplay.classList.remove('warning-pulse');
+        if (state.mode === 'rest') dom.progressCircle.setAttribute('stroke', 'url(#gradient-rest)');
+        else if (state.mode === 'plank') dom.progressCircle.setAttribute('stroke', 'url(#gradient-plank)');
+        else dom.progressCircle.setAttribute('stroke', 'url(#gradient-routine)');
+      }
+
+      if (state.status === 'running') {
+        if (state.mode === 'routine') {
+          const isPlank = state.routine.phase === 'plank';
+          dom.statusText.textContent = isPlank ? `กำลัง Plank (${state.routine.currentSet}/${state.routine.totalSets})` : `กำลังพักฟื้น (${state.routine.currentSet})`;
+          dom.statusDot.className = 'w-2 h-2 rounded-full bg-purple-400 animate-ping';
+          dom.statusBadge.className = 'mb-1 px-3 py-0.5 rounded-full text-xs font-semibold tracking-wide bg-purple-950/80 text-purple-300 border border-purple-500/40 flex items-center gap-1.5';
+        } else {
+          const isRest = state.mode === 'rest';
+          dom.statusText.textContent = isRest ? 'กำลังพักผ่อน...' : '🔥 ลุย Plank อยู่!';
+          dom.statusDot.className = `w-2 h-2 rounded-full ${isRest ? 'bg-emerald-400' : 'bg-orange-400'} animate-ping`;
+          dom.statusBadge.className = `mb-1 px-3 py-0.5 rounded-full text-xs font-semibold tracking-wide ${isRest ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/40' : 'bg-orange-950/80 text-orange-300 border border-orange-500/40'} flex items-center gap-1.5`;
+        }
+      } else if (state.status === 'paused') {
+        dom.statusText.textContent = 'หยุดชั่วคราว (Paused)';
+        dom.statusDot.className = 'w-2 h-2 rounded-full bg-amber-400';
+        dom.statusBadge.className = 'mb-1 px-3 py-0.5 rounded-full text-xs font-semibold tracking-wide bg-amber-950/80 text-amber-300 border border-amber-500/40 flex items-center gap-1.5';
+      } else if (state.status === 'finished') {
+        dom.statusText.textContent = '🎉 เสร็จสมบูรณ์!';
+        dom.statusDot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse';
+        dom.statusBadge.className = 'mb-1 px-3 py-0.5 rounded-full text-xs font-semibold tracking-wide bg-emerald-950/90 text-emerald-300 border border-emerald-400 flex items-center gap-1.5 shadow-lg shadow-emerald-500/20';
+      } else {
+        dom.statusText.textContent = 'พร้อมเริ่ม (Ready)';
+        dom.statusDot.className = 'w-2 h-2 rounded-full bg-slate-400';
+        dom.statusBadge.className = 'mb-1 px-3 py-0.5 rounded-full text-xs font-semibold tracking-wide bg-slate-800/90 text-slate-300 border border-slate-700 flex items-center gap-1.5';
+      }
+
+      if (state.status === 'running') {
+        dom.labelMainBtn.textContent = 'PAUSE';
+        dom.iconMainPlay.setAttribute('data-lucide', 'pause');
+      } else if (state.status === 'paused') {
+        dom.labelMainBtn.textContent = 'RESUME';
+        dom.iconMainPlay.setAttribute('data-lucide', 'play');
+      } else {
+        dom.labelMainBtn.textContent = 'START';
+        dom.iconMainPlay.setAttribute('data-lucide', 'play');
+      }
+
+      dom.setCount.textContent = `เซ็ตที่ ${state.setCount}`;
+      dom.currentSetNum.textContent = `${state.setCount}`;
+      dom.totalCompletedSets.textContent = `${state.totalCompletedSets}`;
+
+      renderPresets();
+      lucide.createIcons();
+    }
+
+    function startTimer() {
+      initAudio();
+      requestWakeLock();
+
+      if (state.status === 'idle') {
+        if (state.mode === 'rest') speakVoice('เริ่มจับเวลาพัก');
+        else if (state.mode === 'plank') speakVoice('เริ่ม Plank ได้!');
+        else if (state.mode === 'routine') speakVoice(state.routine.phase === 'plank' ? 'เริ่ม Plank!' : 'เริ่มเวลาพัก');
+      }
+
+      state.status = 'running';
+      lastTimestamp = performance.now();
+
+      if (timerInterval) clearInterval(timerInterval);
+
+      timerInterval = setInterval(() => {
+        if (state.remainingTime > 0) {
+          const prevSeconds = Math.ceil(state.remainingTime);
+          state.remainingTime = Math.max(0, state.remainingTime - 1);
+          const currentSeconds = Math.ceil(state.remainingTime);
+
+          triggerTimerTick();
+
+          if (currentSeconds <= 3 && currentSeconds >= 1 && prevSeconds !== currentSeconds) {
+            playCountdownBeep(currentSeconds);
+          }
+
+          if (state.remainingTime <= 0) {
+            timerCompleted();
+          } else {
+            updateUI();
+          }
+        }
+      }, 1000);
+
+      updateUI();
+    }
+
+    function pauseTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+      state.status = 'paused';
+      updateUI();
+    }
+
+    function toggleTimer() {
+      playClickSound();
+      if (state.status === 'running') {
+        pauseTimer();
+      } else {
+        if (state.remainingTime <= 0) {
+          state.remainingTime = state.totalTime;
+        }
+        startTimer();
+      }
+    }
+
+    function resetTimer() {
+      playClickSound();
+      if (timerInterval) clearInterval(timerInterval);
+      dom.iconReset.classList.add('-rotate-180');
+      setTimeout(() => dom.iconReset.classList.remove('-rotate-180'), 400);
+
+      state.status = 'idle';
+      state.remainingTime = state.totalTime;
+      updateUI();
+    }
+
+    function timerCompleted() {
+      if (timerInterval) clearInterval(timerInterval);
+      state.status = 'finished';
+      state.remainingTime = 0;
+
+      playFinishSound();
+      if (state.mode === 'rest') speakVoice('พักฟื้นครบเวลาแล้ว!');
+      else if (state.mode === 'plank') speakVoice('Plank เสร็จสมบูรณ์ ยอดเยี่ยมมาก!');
+      else if (state.mode === 'routine') {
+        if (state.routine.phase === 'plank') speakVoice('Plank ครบแล้ว ต่อด้วยพักฟื้น');
+        else speakVoice('พักครบแล้ว ลุยต่อเซ็ตถัดไป');
+      }
+
+      triggerConfetti();
+      document.body.classList.add('flash-bg');
+      setTimeout(() => document.body.classList.remove('flash-bg'), 800);
+
+      state.totalCompletedSets++;
+      
+      if (state.mode === 'routine') {
+        setTimeout(() => {
+          if (state.routine.phase === 'plank') {
+            state.routine.phase = 'rest';
+            state.totalTime = state.routine.restTime;
+            state.remainingTime = state.routine.restTime;
+            startTimer();
+          } else {
+            state.routine.phase = 'plank';
+            state.routine.currentSet++;
+            state.setCount = state.routine.currentSet;
+            if (state.routine.currentSet <= state.routine.totalSets) {
+              state.totalTime = state.routine.plankTime;
+              state.remainingTime = state.routine.plankTime;
+              startTimer();
+            } else {
+              speakVoice('จบครบทุกเซ็ตแล้ว เก่งมากๆ!');
+              state.routine.currentSet = 1;
+              state.routine.phase = 'plank';
+              state.totalTime = state.routine.plankTime;
+              state.remainingTime = state.routine.plankTime;
+              state.status = 'finished';
+              updateUI();
+            }
+          }
+        }, 2000);
+      } else {
+        state.setCount++;
+      }
+
+      updateUI();
+    }
+
+    function adjustTime(secondsOffset) {
+      playClickSound();
+      const newTime = Math.max(5, state.remainingTime + secondsOffset);
+      state.remainingTime = newTime;
+      if (state.status === 'idle') state.totalTime = newTime;
+      showFloatingBadge(secondsOffset > 0 ? `+${secondsOffset}s` : `${secondsOffset}s`, secondsOffset > 0);
+      updateUI();
+    }
+
+    function triggerTimerTick() {
+      dom.timerDisplay.classList.remove('timer-pulse');
+      void dom.timerDisplay.offsetWidth;
+      dom.timerDisplay.classList.add('timer-pulse');
+    }
+
+    function showFloatingBadge(text, isPositive) {
+      const badge = document.createElement('div');
+      badge.className = `floating-badge ${
+        isPositive 
+          ? 'bg-emerald-500/90 text-slate-950 shadow-lg shadow-emerald-500/30' 
+          : 'bg-red-500/90 text-white shadow-lg shadow-red-500/30'
+      }`;
+      badge.textContent = text;
+      dom.floatingContainer.appendChild(badge);
+      setTimeout(() => badge.remove(), 750);
+    }
+
+    function triggerConfetti() {
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 75,
+          spread: 70,
+          origin: { y: 0.65 },
+          colors: ['#10b981', '#06b6d4', '#f97316', '#ef4444', '#a855f7']
+        });
+      }
+    }
+
+    function changeSetCount(delta) {
+      playClickSound();
+      state.setCount = Math.max(1, state.setCount + delta);
+      updateUI();
+    }
+
+    function openSettingsModal() {
+      playClickSound();
+      dom.modalSettings.classList.remove('opacity-0', 'pointer-events-none');
+    }
+
+    function closeSettingsModal() {
+      playClickSound();
+      dom.modalSettings.classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    function setSoundTone(tone) {
+      playClickSound();
+      state.soundTone = tone;
+      document.querySelectorAll('.sound-tone-btn').forEach(btn => {
+        if (btn.dataset.tone === tone) {
+          btn.className = 'sound-tone-btn py-2 px-1 rounded-xl text-xs font-semibold border border-emerald-500 bg-emerald-500/20 text-emerald-300 transition-all ripple-btn';
+        } else {
+          btn.className = 'sound-tone-btn py-2 px-1 rounded-xl text-xs font-semibold border border-slate-800 bg-slate-800/60 text-slate-300 hover:border-slate-700 transition-all ripple-btn';
+        }
+      });
+      playFinishSound();
+    }
+
+    function updateVolume(val) {
+      state.volume = val / 100;
+      dom.volumeLabel.textContent = `${val}%`;
+    }
+
+    function toggleCountdownBeep(checked) {
+      playClickSound();
+      state.countdownBeep = checked;
+    }
+
+    function toggleClickSound(checked) {
+      state.clickSound = checked;
+      playClickSound();
+    }
+
+    function toggleVoice(checked) {
+      playClickSound();
+      state.voiceEnabled = checked;
+      if (checked) speakVoice('เปิดเสียงพูดแล้ว');
+    }
+
+    function testSound() {
+      playFinishSound();
+    }
+
+    function openCustomTimeModal() {
+      playClickSound();
+      const mins = Math.floor(state.remainingTime / 60);
+      const secs = state.remainingTime % 60;
+      dom.inputMinutes.value = mins;
+      dom.inputSeconds.value = secs;
+      dom.modalCustomTime.classList.remove('opacity-0', 'pointer-events-none');
+    }
+
+    function closeCustomTimeModal() {
+      playClickSound();
+      dom.modalCustomTime.classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    function applyCustomTime() {
+      playClickSound();
+      const mins = parseInt(dom.inputMinutes.value, 10) || 0;
+      const secs = parseInt(dom.inputSeconds.value, 10) || 0;
+      const total = Math.max(5, mins * 60 + secs);
+      selectTime(total);
+      closeCustomTimeModal();
+    }
+
+    function openRoutineModal() {
+      playClickSound();
+      dom.modalRoutineConfig.classList.remove('opacity-0', 'pointer-events-none');
+    }
+
+    function closeRoutineModal() {
+      playClickSound();
+      dom.modalRoutineConfig.classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    function saveRoutineConfig() {
+      playClickSound();
+      const plank = parseInt(document.getElementById('routine-plank-time').value, 10);
+      const rest = parseInt(document.getElementById('routine-rest-time').value, 10);
+      const sets = parseInt(document.getElementById('routine-total-sets').value, 10);
+
+      state.routine.plankTime = plank;
+      state.routine.restTime = rest;
+      state.routine.totalSets = sets;
+      state.routine.currentSet = 1;
+      state.routine.phase = 'plank';
+
+      selectTime(plank);
+      closeRoutineModal();
+      updateUI();
+    }
+
+    dom.btnSoundToggle.onclick = () => {
+      state.soundEnabled = !state.soundEnabled;
+      if (state.soundEnabled) {
+        playClickSound();
+        dom.iconSound.setAttribute('data-lucide', 'volume-2');
+        dom.iconSound.className = 'w-4 h-4 text-emerald-400';
+        dom.soundIndicatorDot.classList.remove('hidden');
+      } else {
+        dom.iconSound.setAttribute('data-lucide', 'volume-x');
+        dom.iconSound.className = 'w-4 h-4 text-slate-500';
+        dom.soundIndicatorDot.classList.add('hidden');
+      }
+      lucide.createIcons();
+    };
+
+    dom.btnFullscreen.onclick = () => {
+      playClickSound();
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => console.warn(err));
+        dom.iconFullscreen.setAttribute('data-lucide', 'minimize');
+      } else {
+        document.exitFullscreen().catch(err => console.warn(err));
+        dom.iconFullscreen.setAttribute('data-lucide', 'maximize');
+      }
+      lucide.createIcons();
+    };
+
+    async function requestWakeLock() {
+      if ('wakeLock' in navigator && !state.wakeLockActive) {
+        try {
+          wakeLock = await navigator.wakeLock.request('screen');
+          state.wakeLockActive = true;
+          dom.iconWake.className = 'w-4 h-4 text-amber-400 animate-pulse';
+          wakeLock.addEventListener('release', () => {
+            state.wakeLockActive = false;
+            dom.iconWake.className = 'w-4 h-4 text-slate-500';
+          });
+        } catch (err) {}
+      }
+    }
+
+    dom.btnWakeLock.onclick = async () => {
+      playClickSound();
+      if (state.wakeLockActive && wakeLock) {
+        await wakeLock.release();
+        wakeLock = null;
+        state.wakeLockActive = false;
+        dom.iconWake.className = 'w-4 h-4 text-slate-500';
+      } else {
+        await requestWakeLock();
+      }
+    };
+
+    dom.btnSettingsOpen.onclick = openSettingsModal;
+
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('.ripple-btn');
+      if (!btn) return;
+      const rect = btn.getBoundingClientRect();
+      const circle = document.createElement('span');
+      const diameter = Math.max(rect.width, rect.height);
+      const radius = diameter / 2;
+      circle.style.width = circle.style.height = `${diameter}px`;
+      circle.style.left = `${e.clientX - rect.left - radius}px`;
+      circle.style.top = `${e.clientY - rect.top - radius}px`;
+      circle.classList.add('ripple-effect');
+      const existingRipple = btn.querySelector('.ripple-effect');
+      if (existingRipple) existingRipple.remove();
+      btn.appendChild(circle);
+      setTimeout(() => circle.remove(), 600);
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT') return;
+      if (e.code === 'Space') {
+        e.preventDefault();
+        toggleTimer();
+      } else if (e.code === 'KeyR') {
+        e.preventDefault();
+        resetTimer();
+      } else if (e.code === 'Digit1') {
+        const p = state.presets[state.mode];
+        if (p && p[0]) selectTime(p[0].seconds || p[0].plank);
+      } else if (e.code === 'Digit2') {
+        const p = state.presets[state.mode];
+        if (p && p[1]) selectTime(p[1].seconds || p[1].plank);
+      } else if (e.code === 'Digit3') {
+        const p = state.presets[state.mode];
+        if (p && p[2]) selectTime(p[2].seconds || p[2].plank);
+      } else if (e.code === 'KeyM') {
+        dom.btnSoundToggle.click();
+      } else if (e.code === 'KeyF') {
+        dom.btnFullscreen.click();
+      } else if (e.code === 'ArrowUp' || e.code === 'Equal') {
+        adjustTime(5);
+      } else if (e.code === 'ArrowDown' || e.code === 'Minus') {
+        adjustTime(-5);
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      switchMode('rest');
+      selectTime(30);
+      lucide.createIcons();
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && state.status === 'running') {
+          requestWakeLock();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
