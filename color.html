@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ดูดสี — เครื่องมือดูดสีจากภาพ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#121014;
+    --surface:#1B1920;
+    --surface-2:#242229;
+    --border:#332F3A;
+    --text:#F4F2EE;
+    --text-muted:#948E9C;
+    --accent:#FF3D7F;
+    --accent-soft: rgba(255,61,127,0.16);
+    --radius: 14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1200px 600px at 15% -10%, var(--accent-soft), transparent 60%),
+      radial-gradient(900px 500px at 100% 110%, var(--accent-soft), transparent 55%),
+      var(--bg);
+    background-attachment: fixed;
+    transition: background 0.6s ease;
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    min-height:100vh;
+  }
+  .mono{ font-family:'JetBrains Mono', monospace; }
+  .display{ font-family:'Space Grotesk', sans-serif; }
+
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:22px clamp(16px,4vw,48px);
+    border-bottom:1px solid var(--border);
+  }
+  .brand{ display:flex; align-items:center; gap:10px; }
+  .brand .dot{
+    width:14px; height:14px; border-radius:50%;
+    background:var(--accent);
+    box-shadow:0 0 0 4px var(--accent-soft);
+    transition: background 0.4s ease, box-shadow 0.4s ease;
+  }
+  .brand h1{ font-size:19px; font-weight:700; margin:0; letter-spacing:-0.01em; }
+  .brand span{ color:var(--text-muted); font-size:13px; }
+
+  header .actions{ display:flex; gap:10px; }
+  button{
+    font-family:inherit; cursor:pointer;
+  }
+  .btn{
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:9px 16px;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:500;
+    transition: border-color 0.2s ease, transform 0.15s ease;
+  }
+  .btn:hover{ border-color:var(--accent); }
+  .btn:active{ transform:scale(0.97); }
+  .btn:disabled{ opacity:0.35; cursor:not-allowed; }
+  .btn:disabled:hover{ border-color:var(--border); }
+
+  main{
+    max-width:1180px;
+    margin:0 auto;
+    padding:clamp(20px,4vw,48px);
+  }
+
+  /* ---- Empty state / dropzone ---- */
+  #dropzone{
+    border:1.5px dashed var(--border);
+    border-radius:20px;
+    min-height:62vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:40px 20px;
+    transition: border-color 0.2s ease, background 0.2s ease;
+    cursor:pointer;
+  }
+  #dropzone.drag{
+    border-color:var(--accent);
+    background:var(--accent-soft);
+  }
+  .eyedrop-icon{
+    width:64px; height:64px; margin-bottom:22px;
+    opacity:0.9;
+  }
+  #dropzone h2{
+    font-size:clamp(24px,3.2vw,34px);
+    margin:0 0 10px;
+    font-weight:600;
+    letter-spacing:-0.01em;
+  }
+  #dropzone p{
+    color:var(--text-muted);
+    font-size:15px;
+    margin:0 0 22px;
+    max-width:420px;
+    line-height:1.6;
+  }
+  #fileInput{ display:none; }
+
+  /* ---- Workspace ---- */
+  #workspace{ display:none; gap:28px; }
+  .workspace-grid{
+    display:grid;
+    grid-template-columns: 1fr 320px;
+    gap:28px;
+  }
+  @media (max-width: 860px){
+    .workspace-grid{ grid-template-columns: 1fr; }
+  }
+
+  .canvas-panel{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:16px;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:420px;
+    overflow:hidden;
+  }
+  #imgCanvas{
+    max-width:100%;
+    max-height:70vh;
+    border-radius:6px;
+    cursor:none;
+    display:block;
+  }
+  .canvas-hint{
+    position:absolute;
+    bottom:14px; left:50%;
+    transform:translateX(-50%);
+    font-size:12px;
+    color:var(--text-muted);
+    background:rgba(0,0,0,0.4);
+    backdrop-filter: blur(6px);
+    padding:6px 14px;
+    border-radius:999px;
+    pointer-events:none;
+  }
+
+  /* Loupe */
+  #loupe{
+    position:fixed;
+    width:120px; height:120px;
+    border-radius:50%;
+    border:2px solid var(--text);
+    box-shadow:0 8px 24px rgba(0,0,0,0.5);
+    pointer-events:none;
+    overflow:hidden;
+    display:none;
+    z-index:50;
+    background:#000;
+  }
+  #loupeCanvas{ image-rendering: pixelated; width:100%; height:100%; }
+  #loupe::after{
+    content:'';
+    position:absolute;
+    top:50%; left:50%;
+    width:11px; height:11px;
+    transform:translate(-50%,-50%);
+    border:1.5px solid rgba(255,255,255,0.9);
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.6);
+    pointer-events:none;
+  }
+  #loupeReadout{
+    position:fixed;
+    z-index:51;
+    pointer-events:none;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    padding:5px 10px;
+    border-radius:8px;
+    font-size:12px;
+    display:none;
+    white-space:nowrap;
+  }
+
+  /* ---- Side panel ---- */
+  .side{ display:flex; flex-direction:column; gap:18px; }
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:18px;
+  }
+  .card h3{
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--text-muted);
+    margin:0 0 14px;
+    font-weight:600;
+  }
+
+  .current-swatch{
+    display:flex; gap:14px; align-items:center;
+  }
+  .swatch-block{
+    width:56px; height:56px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,0.12);
+    flex-shrink:0;
+    transition: background 0.15s ease;
+  }
+  .current-values{ display:flex; flex-direction:column; gap:4px; flex:1; min-width:0; }
+  .value-row{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:8px;
+  }
+  .value-row .val{
+    font-size:14px; font-weight:500;
+  }
+  .copy-mini{
+    background:none; border:none; color:var(--text-muted);
+    font-size:11px; padding:2px 6px; border-radius:6px;
+  }
+  .copy-mini:hover{ color:var(--accent); background:var(--surface-2); }
+
+  .palette-empty{
+    color:var(--text-muted);
+    font-size:13px;
+    line-height:1.6;
+  }
+  .palette-grid{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap:10px;
+  }
+  .palette-item{
+    position:relative;
+    aspect-ratio:1;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,0.1);
+    cursor:pointer;
+    transition: transform 0.15s ease;
+  }
+  .palette-item:hover{ transform:scale(1.06); }
+  .palette-item .remove{
+    position:absolute; top:-6px; right:-6px;
+    width:18px; height:18px;
+    border-radius:50%;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    color:var(--text-muted);
+    font-size:11px;
+    line-height:1;
+    display:flex; align-items:center; justify-content:center;
+    opacity:0;
+    transition: opacity 0.15s ease;
+  }
+  .palette-item:hover .remove{ opacity:1; }
+  .palette-item .remove:hover{ color:var(--accent); border-color:var(--accent); }
+
+  .clear-link{
+    margin-top:14px;
+    background:none; border:none;
+    color:var(--text-muted);
+    font-size:12px;
+    text-decoration:underline;
+    text-underline-offset:3px;
+    padding:0;
+  }
+  .clear-link:hover{ color:var(--accent); }
+
+  #toast{
+    position:fixed;
+    bottom:26px; left:50%;
+    transform:translateX(-50%) translateY(20px);
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    padding:10px 20px;
+    border-radius:999px;
+    font-size:13px;
+    opacity:0;
+    pointer-events:none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index:100;
+  }
+  #toast.show{
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
+  }
+
+  footer{
+    text-align:center;
+    padding:30px 20px 40px;
+    color:var(--text-muted);
+    font-size:12px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="dot" id="brandDot"></div>
+    <h1 class="display">ดูดสี</h1>
+    <span>เก็บทุกสีจากภาพ ทีละจุด</span>
+  </div>
+  <div class="actions">
+    <button class="btn" id="changeBtn" style="display:none;">เปลี่ยนรูป</button>
+  </div>
+</header>
+
+<main>
+
+  <div id="dropzone">
+    <svg class="eyedrop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+      <path d="M14.5 3.5 20.5 9.5 17 13 11 7Z"/>
+      <path d="M11 7 4 14v3.5H7.5L14.5 10.5"/>
+      <circle cx="6" cy="18" r="1.4" fill="currentColor" stroke="none"/>
+    </svg>
+    <h2 class="display">ลากรูปมาวางตรงนี้</h2>
+    <p>หรือคลิกเพื่อเลือกไฟล์จากเครื่อง — รองรับ JPG, PNG, WebP<br>ทุกอย่างประมวลผลในเบราว์เซอร์ ไม่มีการอัปโหลดขึ้นเซิร์ฟเวอร์</p>
+    <button class="btn" style="background:var(--accent); border-color:var(--accent); color:#160b10;">เลือกรูปภาพ</button>
+    <input type="file" id="fileInput" accept="image/*">
+  </div>
+
+  <div id="workspace">
+    <div class="workspace-grid">
+      <div class="canvas-panel">
+        <canvas id="imgCanvas"></canvas>
+        <div class="canvas-hint">เลื่อนเมาส์เพื่อส่อง • คลิกเพื่อเก็บสี</div>
+      </div>
+
+      <div class="side">
+        <div class="card">
+          <h3>สีล่าสุด</h3>
+          <div class="current-swatch">
+            <div class="swatch-block" id="currentBlock" style="background:#242229;"></div>
+            <div class="current-values" id="currentValues">
+              <div class="value-row"><span class="val mono" id="valHex">—</span></div>
+              <div class="value-row"><span class="val mono" id="valRgb" style="color:var(--text-muted); font-size:12px;">คลิกบนภาพเพื่อดูดสี</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>พาเลตต์ที่เก็บไว้ (<span id="paletteCount">0</span>)</h3>
+          <div id="paletteEmpty" class="palette-empty">ยังไม่มีสีที่เก็บไว้ — คลิกบนภาพเพื่อเริ่มเก็บสี แล้วจะมาโผล่ตรงนี้</div>
+          <div id="paletteGrid" class="palette-grid"></div>
+          <button class="clear-link" id="clearBtn" style="display:none;">ล้างพาเลตต์ทั้งหมด</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>ดูดสี — ทำงานทั้งหมดในเบราว์เซอร์ของคุณ ไม่เก็บภาพหรือสีไว้ที่ไหน</footer>
+
+<div id="loupe"><canvas id="loupeCanvas" width="120" height="120"></canvas></div>
+<div id="loupeReadout" class="mono"></div>
+<div id="toast"></div>
+
+<script>
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const workspace = document.getElementById('workspace');
+const changeBtn = document.getElementById('changeBtn');
+const canvas = document.getElementById('imgCanvas');
+const ctx = canvas.getContext('2d', { willReadFrequently: true });
+const loupe = document.getElementById('loupe');
+const loupeCanvas = document.getElementById('loupeCanvas');
+const loupeCtx = loupeCanvas.getContext('2d');
+const loupeReadout = document.getElementById('loupeReadout');
+const currentBlock = document.getElementById('currentBlock');
+const valHex = document.getElementById('valHex');
+const valRgb = document.getElementById('valRgb');
+const paletteGrid = document.getElementById('paletteGrid');
+const paletteEmpty = document.getElementById('paletteEmpty');
+const paletteCount = document.getElementById('paletteCount');
+const clearBtn = document.getElementById('clearBtn');
+const toast = document.getElementById('toast');
+const brandDot = document.getElementById('brandDot');
+
+let palette = [];
+let imgLoaded = false;
+
+// ---------- Upload handling ----------
+dropzone.addEventListener('click', () => fileInput.click());
+changeBtn.addEventListener('click', () => fileInput.click());
+
+['dragenter','dragover'].forEach(evt=>{
+  dropzone.addEventListener(evt, e=>{
+    e.preventDefault(); dropzone.classList.add('drag');
+  });
+});
+['dragleave','drop'].forEach(evt=>{
+  dropzone.addEventListener(evt, e=>{
+    e.preventDefault(); dropzone.classList.remove('drag');
+  });
+});
+dropzone.addEventListener('drop', e=>{
+  const file = e.dataTransfer.files[0];
+  if(file) loadImage(file);
+});
+fileInput.addEventListener('change', e=>{
+  const file = e.target.files[0];
+  if(file) loadImage(file);
+});
+
+function loadImage(file){
+  if(!file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = e=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const maxW = 1100, maxH = 720;
+      let w = img.width, h = img.height;
+      const scale = Math.min(1, maxW/w, maxH/h);
+      w = Math.round(w*scale); h = Math.round(h*scale);
+      canvas.width = w; canvas.height = h;
+      ctx.drawImage(img, 0, 0, w, h);
+      imgLoaded = true;
+      dropzone.style.display='none';
+      workspace.style.display='block';
+      changeBtn.style.display='inline-block';
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ---------- Color reading ----------
+function getPixel(x,y){
+  const d = ctx.getImageData(x,y,1,1).data;
+  return {r:d[0], g:d[1], b:d[2]};
+}
+function toHex({r,g,b}){
+  return '#' + [r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('').toUpperCase();
+}
+function toRgbStr({r,g,b}){ return `rgb(${r}, ${g}, ${b})`; }
+
+function setAccent(hex){
+  document.documentElement.style.setProperty('--accent', hex);
+  const soft = hexToRgba(hex, 0.16);
+  document.documentElement.style.setProperty('--accent-soft', soft);
+}
+function hexToRgba(hex, a){
+  const n = hex.replace('#','');
+  const r = parseInt(n.substring(0,2),16), g = parseInt(n.substring(2,4),16), b = parseInt(n.substring(4,6),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+// ---------- Mouse interaction over canvas ----------
+canvas.addEventListener('mouseenter', ()=>{
+  loupe.style.display='block';
+  loupeReadout.style.display='block';
+});
+canvas.addEventListener('mouseleave', ()=>{
+  loupe.style.display='none';
+  loupeReadout.style.display='none';
+});
+
+canvas.addEventListener('mousemove', e=>{
+  if(!imgLoaded) return;
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  const x = Math.min(canvas.width-1, Math.max(0, Math.floor((e.clientX-rect.left)*scaleX)));
+  const y = Math.min(canvas.height-1, Math.max(0, Math.floor((e.clientY-rect.top)*scaleY)));
+
+  drawLoupe(x,y);
+
+  const px = getPixel(x,y);
+  const hex = toHex(px);
+
+  loupe.style.left = (e.clientX - 60) + 'px';
+  loupe.style.top = (e.clientY - 150) + 'px';
+  loupe.style.borderColor = '#fff';
+
+  loupeReadout.textContent = hex;
+  loupeReadout.style.left = (e.clientX - 32) + 'px';
+  loupeReadout.style.top = (e.clientY - 172) + 'px';
+});
+
+function drawLoupe(cx, cy){
+  const region = 11; // pixels sampled
+  const half = Math.floor(region/2);
+  const sx = Math.max(0, cx-half);
+  const sy = Math.max(0, cy-half);
+  loupeCtx.imageSmoothingEnabled = false;
+  loupeCtx.clearRect(0,0,120,120);
+  loupeCtx.drawImage(canvas, sx, sy, region, region, 0, 0, 120, 120);
+  // grid overlay
+  loupeCtx.strokeStyle = 'rgba(255,255,255,0.12)';
+  loupeCtx.lineWidth = 1;
+  const cell = 120/region;
+  for(let i=1;i<region;i++){
+    loupeCtx.beginPath();
+    loupeCtx.moveTo(i*cell,0); loupeCtx.lineTo(i*cell,120); loupeCtx.stroke();
+    loupeCtx.beginPath();
+    loupeCtx.moveTo(0,i*cell); loupeCtx.lineTo(120,i*cell); loupeCtx.stroke();
+  }
+}
+
+canvas.addEventListener('click', e=>{
+  if(!imgLoaded) return;
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  const x = Math.min(canvas.width-1, Math.max(0, Math.floor((e.clientX-rect.left)*scaleX)));
+  const y = Math.min(canvas.height-1, Math.max(0, Math.floor((e.clientY-rect.top)*scaleY)));
+  const px = getPixel(x,y);
+  commitColor(px);
+});
+
+function commitColor(px){
+  const hex = toHex(px);
+  currentBlock.style.background = hex;
+  valHex.textContent = hex;
+  valRgb.textContent = toRgbStr(px);
+  valRgb.style.color = 'var(--text)';
+  valRgb.style.fontSize = '12px';
+  setAccent(hex);
+  addToPalette(hex);
+  showToast('เก็บสี ' + hex + ' แล้ว');
+}
+
+// ---------- Palette ----------
+function addToPalette(hex){
+  palette.unshift(hex);
+  if(palette.length>24) palette.pop();
+  renderPalette();
+}
+function removeFromPalette(idx){
+  palette.splice(idx,1);
+  renderPalette();
+}
+function renderPalette(){
+  paletteGrid.innerHTML='';
+  paletteCount.textContent = palette.length;
+  if(palette.length===0){
+    paletteEmpty.style.display='block';
+    paletteGrid.style.display='none';
+    clearBtn.style.display='none';
+    return;
+  }
+  paletteEmpty.style.display='none';
+  paletteGrid.style.display='grid';
+  clearBtn.style.display='inline-block';
+  palette.forEach((hex, idx)=>{
+    const item = document.createElement('div');
+    item.className='palette-item';
+    item.style.background = hex;
+    item.title = hex + ' — คลิกเพื่อคัดลอก';
+    item.addEventListener('click', (e)=>{
+      if(e.target.classList.contains('remove')) return;
+      copyText(hex);
+    });
+    const rm = document.createElement('button');
+    rm.className='remove';
+    rm.textContent='×';
+    rm.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      removeFromPalette(idx);
+    });
+    item.appendChild(rm);
+    paletteGrid.appendChild(item);
+  });
+}
+clearBtn.addEventListener('click', ()=>{
+  palette=[];
+  renderPalette();
+});
+
+// ---------- Copy / toast ----------
+function copyText(text){
+  navigator.clipboard.writeText(text).then(()=>{
+    showToast('คัดลอก ' + text + ' แล้ว');
+  }).catch(()=>{
+    showToast('คัดลอกไม่สำเร็จ');
+  });
+}
+let toastTimer;
+function showToast(msg){
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> toast.classList.remove('show'), 1600);
+}
+
+valHex.addEventListener('click', ()=>{ if(valHex.textContent!=='—') copyText(valHex.textContent); });
+valHex.style.cursor='pointer';
+</script>
+
+</body>
+</html>
