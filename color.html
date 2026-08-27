@@ -304,6 +304,169 @@
     color:var(--text-muted);
     font-size:12px;
   }
+
+  /* ---- Recipe row inside current-color card ---- */
+  .recipe-row{
+    margin-top:14px;
+    padding-top:14px;
+    border-top:1px solid var(--border);
+  }
+  .recipe-row .recipe-label{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    color:var(--text-muted);
+    margin-bottom:6px;
+  }
+  .recipe-row .recipe-text{
+    font-size:13px;
+    line-height:1.6;
+  }
+  .recipe-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    padding:3px 9px 3px 6px;
+    border-radius:999px;
+    font-size:12px;
+    margin:2px 4px 2px 0;
+  }
+  .recipe-chip .dot{
+    width:9px; height:9px; border-radius:50%; flex-shrink:0;
+  }
+  .load-recipe-btn{
+    margin-top:10px;
+    background:none;
+    border:1px solid var(--border);
+    color:var(--text-muted);
+    font-size:12px;
+    padding:6px 12px;
+    border-radius:999px;
+  }
+  .load-recipe-btn:hover{ color:var(--accent); border-color:var(--accent); }
+  .load-recipe-btn:disabled{ opacity:0.3; cursor:not-allowed; }
+  .load-recipe-btn:disabled:hover{ color:var(--text-muted); border-color:var(--border); }
+
+  /* ---- Mixing Lab ---- */
+  #mixlab{
+    margin-top:36px;
+    padding-top:6px;
+  }
+  .section-heading{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    margin-bottom:6px;
+  }
+  .section-heading h2{
+    font-size:22px;
+    font-weight:600;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  .section-heading p{
+    margin:0 0 20px;
+    color:var(--text-muted);
+    font-size:13.5px;
+    line-height:1.6;
+    max-width:560px;
+  }
+  .mixlab-grid{
+    display:grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap:28px;
+    align-items:start;
+  }
+  @media (max-width: 860px){
+    .mixlab-grid{ grid-template-columns: 1fr; }
+  }
+  .sliders{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+  .slider-row{
+    display:grid;
+    grid-template-columns: 78px 1fr 46px;
+    align-items:center;
+    gap:12px;
+  }
+  .slider-row label{
+    display:flex; align-items:center; gap:8px;
+    font-size:13px;
+    font-weight:500;
+  }
+  .slider-row label .swatch-dot{
+    width:12px; height:12px; border-radius:4px; flex-shrink:0;
+    border:1px solid rgba(255,255,255,0.15);
+  }
+  .slider-row input[type=range]{
+    -webkit-appearance:none;
+    appearance:none;
+    width:100%;
+    height:6px;
+    border-radius:999px;
+    background:var(--surface-2);
+    outline:none;
+  }
+  .slider-row input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:18px; height:18px;
+    border-radius:50%;
+    background:var(--text);
+    border:3px solid var(--surface);
+    box-shadow:0 0 0 1px var(--border);
+    cursor:pointer;
+  }
+  .slider-row input[type=range]::-moz-range-thumb{
+    width:18px; height:18px;
+    border-radius:50%;
+    background:var(--text);
+    border:3px solid var(--surface);
+    box-shadow:0 0 0 1px var(--border);
+    cursor:pointer;
+  }
+  .slider-row .pct{
+    font-size:12px;
+    color:var(--text-muted);
+    text-align:right;
+  }
+  .mixlab-actions{
+    display:flex; gap:10px; margin-top:6px;
+  }
+
+  .mix-preview-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:20px;
+  }
+  .mix-preview-block{
+    width:100%;
+    height:130px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,0.12);
+    margin-bottom:16px;
+    transition:background 0.1s ease;
+  }
+  .mix-values{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:14px;
+  }
+  .mix-values .mono{ font-size:15px; font-weight:500; cursor:pointer; }
+  .mix-caption{
+    background:var(--surface-2);
+    border-radius:10px;
+    padding:12px 14px;
+    font-size:13px;
+    line-height:1.6;
+    min-height:20px;
+    color:var(--text);
+  }
 </style>
 </head>
 <body>
@@ -350,6 +513,11 @@
               <div class="value-row"><span class="val mono" id="valRgb" style="color:var(--text-muted); font-size:12px;">คลิกบนภาพเพื่อดูดสี</span></div>
             </div>
           </div>
+          <div class="recipe-row" id="recipeRow" style="display:none;">
+            <div class="recipe-label">สูตรผสมโดยประมาณ (แม่สี + ขาว/ดำ)</div>
+            <div class="recipe-text" id="recipeText"></div>
+            <button class="load-recipe-btn" id="loadRecipeBtn">ปรับต่อในห้องผสมสี ↓</button>
+          </div>
         </div>
 
         <div class="card">
@@ -358,6 +526,54 @@
           <div id="paletteGrid" class="palette-grid"></div>
           <button class="clear-link" id="clearBtn" style="display:none;">ล้างพาเลตต์ทั้งหมด</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="mixlab">
+    <div class="section-heading">
+      <h2 class="display">ห้องผสมสี</h2>
+    </div>
+    <p>ผสมจากแม่สี 3 สี — แดง เหลือง น้ำเงิน — บวกขาวกับดำ แล้วดูว่าสีที่ได้เฟสไปทิศทางไหนเมื่อเพิ่มสัดส่วนแต่ละสี เหมือนผสมสีจริงบนจานสี</p>
+    <div class="mixlab-grid">
+      <div class="sliders">
+        <div class="slider-row">
+          <label><span class="swatch-dot" style="background:#ED1C24;"></span>แดง</label>
+          <input type="range" id="sldR" min="0" max="100" value="0">
+          <span class="pct mono" id="pctR">0%</span>
+        </div>
+        <div class="slider-row">
+          <label><span class="swatch-dot" style="background:#FFE300;"></span>เหลือง</label>
+          <input type="range" id="sldY" min="0" max="100" value="0">
+          <span class="pct mono" id="pctY">0%</span>
+        </div>
+        <div class="slider-row">
+          <label><span class="swatch-dot" style="background:#2A5FA8;"></span>น้ำเงิน</label>
+          <input type="range" id="sldB" min="0" max="100" value="0">
+          <span class="pct mono" id="pctB">0%</span>
+        </div>
+        <div class="slider-row">
+          <label><span class="swatch-dot" style="background:#F4F2EE; border-color:#665F6E;"></span>ขาว</label>
+          <input type="range" id="sldW" min="0" max="100" value="0">
+          <span class="pct mono" id="pctW">0%</span>
+        </div>
+        <div class="slider-row">
+          <label><span class="swatch-dot" style="background:#0A090C;"></span>ดำ</label>
+          <input type="range" id="sldK" min="0" max="100" value="0">
+          <span class="pct mono" id="pctK">0%</span>
+        </div>
+        <div class="mixlab-actions">
+          <button class="btn" id="resetMixBtn">ล้างเป็นค่าเริ่มต้น</button>
+        </div>
+      </div>
+
+      <div class="mix-preview-card">
+        <div class="mix-preview-block" id="mixPreviewBlock" style="background:#1B1920;"></div>
+        <div class="mix-values">
+          <span class="mono" id="mixHex" title="คลิกเพื่อคัดลอก">#1B1920</span>
+          <span class="mono" id="mixRgb" style="color:var(--text-muted); font-size:13px;">rgb(27, 25, 32)</span>
+        </div>
+        <div class="mix-caption" id="mixCaption">เลื่อนแถบด้านซ้ายเพื่อเริ่มผสมสี — จะบอกทิศทางที่สีเปลี่ยนไปให้ทุกครั้ง</div>
       </div>
     </div>
   </div>
@@ -532,6 +748,7 @@ function commitColor(px){
   valRgb.style.fontSize = '12px';
   setAccent(hex);
   addToPalette(hex);
+  renderRecipe(hex);
   showToast('เก็บสี ' + hex + ' แล้ว');
 }
 
@@ -600,6 +817,194 @@ function showToast(msg){
 
 valHex.addEventListener('click', ()=>{ if(valHex.textContent!=='—') copyText(valHex.textContent); });
 valHex.style.cursor='pointer';
+
+// =========================================================
+// ห้องผสมสี — RYB paint-mixing engine (Gossett–Chen cube model)
+// =========================================================
+const CORNERS = {
+  white:  [1, 1, 1],
+  blue:   [0.163, 0.373, 0.6],
+  yellow: [1, 1, 0],
+  green:  [0, 0.66, 0.2],
+  red:    [1, 0, 0],
+  violet: [0.5, 0, 0.5],
+  orange: [1, 0.5, 0],
+  black:  [0.2, 0.094, 0]
+};
+function lerp3(t, A, B){
+  const w = t*t*(3-2*t); // cubic smoothstep weighting
+  return [0,1,2].map(i => A[i] + w*(B[i]-A[i]));
+}
+function rybMix(iR, iY, iB){
+  const x0 = lerp3(iB, CORNERS.white,  CORNERS.blue);
+  const x1 = lerp3(iB, CORNERS.red,    CORNERS.violet);
+  const x2 = lerp3(iB, CORNERS.yellow, CORNERS.green);
+  const x3 = lerp3(iB, CORNERS.orange, CORNERS.black);
+  const y0 = lerp3(iY, x0, x2);
+  const y1 = lerp3(iY, x1, x3);
+  return lerp3(iR, y0, y1); // [r,g,b] 0..1
+}
+function applyTint(rgb, whiteAmt, blackAmt){
+  let c = rgb.map(v => v + (1-v)*whiteAmt); // toward white
+  c = c.map(v => v*(1-blackAmt));           // toward black
+  return c;
+}
+function mixFromPercents(r,y,b,w,k){
+  const raw = rybMix(r/100, y/100, b/100);
+  const toned = applyTint(raw, w/100, k/100);
+  return toned.map(v => Math.round(Math.max(0,Math.min(1,v))*255));
+}
+function rgbArrToHex(arr){
+  return '#'+arr.map(v=>v.toString(16).padStart(2,'0')).join('').toUpperCase();
+}
+
+// ---- decompose an arbitrary hex color into an approximate RYB+W+K recipe ----
+function decomposeToRecipe(targetHex){
+  const t = {
+    r: parseInt(targetHex.substr(1,2),16),
+    g: parseInt(targetHex.substr(3,2),16),
+    b: parseInt(targetHex.substr(5,2),16)
+  };
+  let best = null, bestDist = Infinity;
+  const step = 20; // coarse pass, 0..100 in steps of 20
+  for(let r=0; r<=100; r+=step)
+  for(let y=0; y<=100; y+=step)
+  for(let b=0; b<=100; b+=step)
+  for(let w=0; w<=100; w+=step)
+  for(let k=0; k<=100; k+=step){
+    const c = mixFromPercents(r,y,b,w,k);
+    const d = (c[0]-t.r)**2 + (c[1]-t.g)**2 + (c[2]-t.b)**2;
+    if(d < bestDist){ bestDist = d; best = {r,y,b,w,k}; }
+  }
+  // refine pass around the best coarse result
+  const range = step;
+  for(let r=Math.max(0,best.r-range); r<=Math.min(100,best.r+range); r+=5)
+  for(let y=Math.max(0,best.y-range); y<=Math.min(100,best.y+range); y+=5)
+  for(let b=Math.max(0,best.b-range); b<=Math.min(100,best.b+range); b+=5)
+  for(let w=Math.max(0,best.w-range); w<=Math.min(100,best.w+range); w+=5)
+  for(let k=Math.max(0,best.k-range); k<=Math.min(100,best.k+range); k+=5){
+    const c = mixFromPercents(r,y,b,w,k);
+    const d = (c[0]-t.r)**2 + (c[1]-t.g)**2 + (c[2]-t.b)**2;
+    if(d < bestDist){ bestDist = d; best = {r,y,b,w,k}; }
+  }
+  return best;
+}
+
+function renderRecipe(hex){
+  const rec = decomposeToRecipe(hex);
+  const parts = [
+    {name:'แดง', pct:rec.r, color:'#ED1C24'},
+    {name:'เหลือง', pct:rec.y, color:'#FFE300'},
+    {name:'น้ำเงิน', pct:rec.b, color:'#2A5FA8'},
+    {name:'ขาว', pct:rec.w, color:'#F4F2EE'},
+    {name:'ดำ', pct:rec.k, color:'#0A090C'}
+  ].filter(p => p.pct > 0);
+  const recipeRow = document.getElementById('recipeRow');
+  const recipeText = document.getElementById('recipeText');
+  if(parts.length===0){
+    recipeText.innerHTML = '<span style="color:var(--text-muted);">สีนี้ใกล้เคียงสีขาวล้วน แทบไม่ต้องผสมอะไร</span>';
+  } else {
+    recipeText.innerHTML = parts.map(p =>
+      `<span class="recipe-chip"><span class="dot" style="background:${p.color};"></span>${p.name} ${p.pct}%</span>`
+    ).join(' ');
+  }
+  recipeRow.style.display = 'block';
+  recipeRow.dataset.r = rec.r; recipeRow.dataset.y = rec.y; recipeRow.dataset.b = rec.b;
+  recipeRow.dataset.w = rec.w; recipeRow.dataset.k = rec.k;
+}
+
+// ---- Mixing lab sliders ----
+const sldR = document.getElementById('sldR'), sldY = document.getElementById('sldY'),
+      sldB = document.getElementById('sldB'), sldW = document.getElementById('sldW'),
+      sldK = document.getElementById('sldK');
+const pctR = document.getElementById('pctR'), pctY = document.getElementById('pctY'),
+      pctB = document.getElementById('pctB'), pctW = document.getElementById('pctW'),
+      pctK = document.getElementById('pctK');
+const mixPreviewBlock = document.getElementById('mixPreviewBlock');
+const mixHex = document.getElementById('mixHex');
+const mixRgb = document.getElementById('mixRgb');
+const mixCaption = document.getElementById('mixCaption');
+
+let prevMixHsl = null;
+
+function hueName(h){
+  if(h<15 || h>=345) return 'แดง';
+  if(h<45) return 'ส้ม';
+  if(h<70) return 'เหลือง';
+  if(h<170) return 'เขียว';
+  if(h<200) return 'ฟ้าอมเขียว';
+  if(h<255) return 'น้ำเงิน';
+  if(h<290) return 'ม่วง';
+  if(h<345) return 'ชมพู/ม่วงแดง';
+  return 'แดง';
+}
+function rgbToHsl(r,g,b){
+  r/=255; g/=255; b/=255;
+  const max=Math.max(r,g,b), min=Math.min(r,g,b);
+  let h=0, s=0, l=(max+min)/2;
+  const d = max-min;
+  if(d!==0){
+    s = l>0.5 ? d/(2-max-min) : d/(max+min);
+    switch(max){
+      case r: h = (g-b)/d + (g<b?6:0); break;
+      case g: h = (b-r)/d + 2; break;
+      case b: h = (r-g)/d + 4; break;
+    }
+    h*=60;
+  }
+  return {h, s, l};
+}
+
+function updateMix(fromDirectionCheck){
+  const r=+sldR.value, y=+sldY.value, b=+sldB.value, w=+sldW.value, k=+sldK.value;
+  pctR.textContent=r+'%'; pctY.textContent=y+'%'; pctB.textContent=b+'%';
+  pctW.textContent=w+'%'; pctK.textContent=k+'%';
+
+  const rgbArr = mixFromPercents(r,y,b,w,k);
+  const hex = rgbArrToHex(rgbArr);
+  mixPreviewBlock.style.background = hex;
+  mixHex.textContent = hex;
+  mixRgb.textContent = `rgb(${rgbArr[0]}, ${rgbArr[1]}, ${rgbArr[2]})`;
+
+  const hsl = rgbToHsl(rgbArr[0], rgbArr[1], rgbArr[2]);
+
+  if(fromDirectionCheck && prevMixHsl){
+    const dl = hsl.l - prevMixHsl.l;
+    const ds = hsl.s - prevMixHsl.s;
+    const bits = [];
+    if(Math.abs(dl) > 0.02) bits.push(dl>0 ? 'สีสว่างขึ้น' : 'สีเข้มขึ้น');
+    if(Math.abs(ds) > 0.02) bits.push(ds>0 ? 'สีสดขึ้น' : 'สีหม่นลง');
+    if(hsl.s > 0.06){
+      bits.push('โทนเอียงไปทาง' + hueName(hsl.h));
+    }
+    mixCaption.textContent = bits.length ? '→ ' + bits.join(' และ') : 'สีแทบไม่เปลี่ยนจากเดิม';
+  }
+  prevMixHsl = hsl;
+}
+
+[sldR,sldY,sldB,sldW,sldK].forEach(s => s.addEventListener('input', ()=>updateMix(true)));
+
+document.getElementById('resetMixBtn').addEventListener('click', ()=>{
+  [sldR,sldY,sldB,sldW,sldK].forEach(s=>s.value=0);
+  prevMixHsl = null;
+  updateMix(false);
+  mixCaption.textContent = 'เลื่อนแถบด้านซ้ายเพื่อเริ่มผสมสี — จะบอกทิศทางที่สีเปลี่ยนไปให้ทุกครั้ง';
+});
+
+mixHex.addEventListener('click', ()=>copyText(mixHex.textContent));
+
+document.getElementById('loadRecipeBtn').addEventListener('click', ()=>{
+  const row = document.getElementById('recipeRow');
+  if(!row.dataset.r) return;
+  sldR.value = row.dataset.r; sldY.value = row.dataset.y; sldB.value = row.dataset.b;
+  sldW.value = row.dataset.w; sldK.value = row.dataset.k;
+  prevMixHsl = null;
+  updateMix(false);
+  document.getElementById('mixlab').scrollIntoView({behavior:'smooth', block:'start'});
+});
+
+// initial render
+updateMix(false);
 </script>
 
 </body>
