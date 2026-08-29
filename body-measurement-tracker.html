@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Body Measurement Tracker</title>
+
+<style>
+  :root{
+    --accent:#c1440e;
+    --ink:#2b2926;
+    --paper:#f5f0e6;
+    --card:#fffdf9;
+    --line:#e4dccb;
+    --muted:#8a8070;
+  }
+
+  *{
+    box-sizing:border-box;
+  }
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans Thai",Arial,sans-serif;
+  }
+
+  header{
+    background:var(--ink);
+    color:var(--paper);
+    padding:28px 20px 24px;
+    position:relative;
+    overflow:hidden;
+  }
+
+  header::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:6px;
+    background:
+      repeating-linear-gradient(
+        90deg,
+        var(--accent) 0,
+        var(--accent) 1px,
+        transparent 1px,
+        transparent 8px
+      );
+  }
+
+  .header-inner,
+  .container{
+    max-width:720px;
+    margin:0 auto;
+  }
+
+  .eyebrow{
+    color:var(--accent);
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:.18em;
+    margin-bottom:6px;
+  }
+
+  h1{
+    margin:0;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:30px;
+    letter-spacing:-.02em;
+  }
+
+  .subtitle{
+    margin:7px 0 0;
+    opacity:.7;
+    font-size:14px;
+  }
+
+  .container{
+    padding:24px 16px 60px;
+  }
+
+  .card{
+    background:var(--card);
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    padding:18px;
+    margin-bottom:16px;
+  }
+
+  .card.accent{
+    border-color:var(--accent);
+  }
+
+  .card-title{
+    font-size:13px;
+    font-weight:800;
+    margin-bottom:16px;
+  }
+
+  .accent .card-title{
+    color:var(--accent);
+  }
+
+  .gender-buttons{
+    display:flex;
+    gap:10px;
+    margin-bottom:14px;
+  }
+
+  .gender-btn{
+    flex:1;
+    padding:10px;
+    border-radius:8px;
+    border:1.5px solid #d8d0c0;
+    background:transparent;
+    color:var(--ink);
+    font-weight:700;
+    cursor:pointer;
+  }
+
+  .gender-btn.active{
+    border-color:var(--accent);
+    background:var(--accent);
+    color:white;
+  }
+
+  .row{
+    padding:12px 0;
+    border-bottom:1px solid var(--line);
+  }
+
+  .row:last-child{
+    border-bottom:none;
+  }
+
+  .row-top{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+
+  .switch{
+    flex:0 0 auto;
+    width:38px;
+    height:22px;
+    border:none;
+    border-radius:11px;
+    background:#d8d0c0;
+    position:relative;
+    cursor:pointer;
+    padding:0;
+  }
+
+  .switch::after{
+    content:"";
+    position:absolute;
+    top:2px;
+    left:2px;
+    width:18px;
+    height:18px;
+    border-radius:50%;
+    background:white;
+    box-shadow:0 1px 3px rgba(0,0,0,.18);
+    transition:.15s;
+  }
+
+  .switch.on{
+    background:var(--accent);
+  }
+
+  .switch.on::after{
+    left:18px;
+  }
+
+  .label{
+    flex:1;
+    font-size:14px;
+    font-weight:600;
+  }
+
+  .value-label{
+    min-width:90px;
+    text-align:right;
+    color:var(--muted);
+    font-weight:800;
+    font-family:Georgia,serif;
+  }
+
+  .row.enabled .value-label{
+    color:var(--accent);
+  }
+
+  .range-wrap{
+    margin-top:12px;
+  }
+
+  input[type="range"]{
+    width:100%;
+    accent-color:var(--accent);
+  }
+
+  .tape{
+    margin-top:5px;
+    height:16px;
+    background:
+      repeating-linear-gradient(
+        90deg,
+        #3b3428 0,
+        #3b3428 1px,
+        transparent 1px,
+        transparent 6px
+      );
+    opacity:.35;
+  }
+
+  .fine-control{
+    display:grid;
+    grid-template-columns:56px 1fr 56px;
+    gap:8px;
+    margin-top:10px;
+  }
+
+  .small-btn{
+    height:44px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    background:var(--paper);
+    color:var(--ink);
+    font-weight:800;
+    cursor:pointer;
+  }
+
+  .current-value{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:1.5px solid var(--accent);
+    border-radius:8px;
+    background:white;
+    color:var(--accent);
+    font-family:Georgia,serif;
+    font-size:18px;
+    font-weight:800;
+  }
+
+  .range-hint{
+    display:flex;
+    justify-content:space-between;
+    margin-top:5px;
+    color:var(--muted);
+    font-size:10px;
+  }
+
+  .stats{
+    display:flex;
+    gap:22px;
+    flex-wrap:wrap;
+    padding-top:14px;
+    margin-top:14px;
+    border-top:1px dashed var(--line);
+  }
+
+  .stat small{
+    color:var(--muted);
+    font-weight:700;
+  }
+
+  .stat strong{
+    display:block;
+    color:var(--accent);
+    font-size:21px;
+    margin-top:2px;
+  }
+
+  .note{
+    font-size:12px;
+    color:var(--muted);
+    line-height:1.5;
+    margin-top:10px;
+  }
+
+  .actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:20px;
+  }
+
+  .action-btn{
+    flex:1 1 200px;
+    min-height:50px;
+    border-radius:9px;
+    font-size:15px;
+    font-weight:800;
+    cursor:pointer;
+  }
+
+  .export-btn{
+    background:var(--ink);
+    color:white;
+    border:none;
+  }
+
+  .copy-btn{
+    background:transparent;
+    color:var(--ink);
+    border:1.5px solid var(--ink);
+  }
+
+  .result{
+    margin-top:20px;
+    display:none;
+  }
+
+  .result.show{
+    display:block;
+  }
+
+  .result-title{
+    font-size:11px;
+    letter-spacing:.15em;
+    color:var(--muted);
+    font-weight:800;
+    margin-bottom:6px;
+  }
+
+  pre{
+    margin:0;
+    white-space:pre-wrap;
+    word-break:break-word;
+    background:white;
+    border:1.5px solid var(--ink);
+    border-radius:9px;
+    padding:16px;
+    font-family:"Courier New",monospace;
+    font-size:13px;
+    line-height:1.65;
+  }
+
+  @media(max-width:520px){
+    .container{
+      padding:18px 12px 50px;
+    }
+
+    .card{
+      padding:15px;
+    }
+
+    h1{
+      font-size:27px;
+    }
+
+    .fine-control{
+      grid-template-columns:52px 1fr 52px;
+    }
+
+    .value-label{
+      min-width:76px;
+      font-size:14px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="eyebrow">BODY LOG · TAPE MEASURE</div>
+    <h1>บันทึกสัดส่วนร่างกาย</h1>
+    <p class="subtitle">หน่วยนิ้วตามขีดสายวัด · ละเอียด ⅛ นิ้ว</p>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="card accent">
+    <div class="card-title">ข้อมูลทั่วไป</div>
+
+    <div class="gender-buttons">
+      <button class="gender-btn active" id="maleBtn" onclick="setGender('male')">ชาย</button>
+      <button class="gender-btn" id="femaleBtn" onclick="setGender('female')">หญิง</button>
+    </div>
+
+    <div id="generalFields"></div>
+
+    <div class="stats" id="statsBox" style="display:none;">
+      <div class="stat" id="bmiStat" style="display:none;">
+        <small>BMI</small>
+        <strong id="bmiValue">-</strong>
+      </div>
+
+      <div class="stat" id="bfStat" style="display:none;">
+        <small>ไขมันประมาณ</small>
+        <strong id="bfValue">-</strong>
+      </div>
+
+      <div class="stat" id="fatMassStat" style="display:none;">
+        <small>มวลไขมัน</small>
+        <strong id="fatMassValue">-</strong>
+      </div>
+
+      <div class="stat" id="leanMassStat" style="display:none;">
+        <small>Lean Mass</small>
+        <strong id="leanMassValue">-</strong>
+      </div>
+    </div>
+
+    <div class="note" id="bodyFatNote"></div>
+  </div>
+
+  <div id="measurementCards"></div>
+
+  <div class="actions">
+    <button class="action-btn export-btn" onclick="exportData()">
+      Export ข้อมูล
+    </button>
+
+    <button class="action-btn copy-btn" id="copyBtn" onclick="copyText()">
+      คัดลอกข้อความ
+    </button>
+  </div>
+
+  <div class="result" id="resultBox">
+    <div class="result-title">ผลลัพธ์การ EXPORT</div>
+    <pre id="resultText"></pre>
+  </div>
+
+</div>
+
+<script>
+
+// ============================================================
+// CONFIG
+// ============================================================
+
+const TAPE_STEP = 1 / 8;
+
+const FIELDS = [
+  { key:"neck", label:"รอบคอ", group:"ลำตัวบน", min:8, max:25, def:14 },
+  { key:"shoulder", label:"รอบไหล่", group:"ลำตัวบน", min:25, max:70, def:42 },
+  { key:"chest", label:"รอบอก", group:"ลำตัวบน", min:20, max:70, def:38 },
+
+  { key:"waist", label:"รอบเอว", group:"ลำตัวกลาง", min:18, max:70, def:32 },
+  { key:"abdomen", label:"รอบพุง (สะดือ)", group:"ลำตัวกลาง", min:18, max:75, def:34 },
+  { key:"hip", label:"รอบสะโพก", group:"ลำตัวกลาง", min:20, max:75, def:38 },
+
+  { key:"armL", label:"ต้นแขนซ้าย", group:"แขน", min:5, max:30, def:12 },
+  { key:"armR", label:"ต้นแขนขวา", group:"แขน", min:5, max:30, def:12 },
+  { key:"forearmL", label:"ปลายแขนซ้าย", group:"แขน", min:5, max:22, def:10 },
+  { key:"forearmR", label:"ปลายแขนขวา", group:"แขน", min:5, max:22, def:10 },
+
+  { key:"thighL", label:"ต้นขาซ้าย", group:"ขา", min:10, max:45, def:22 },
+  { key:"thighR", label:"ต้นขาขวา", group:"ขา", min:10, max:45, def:22 },
+  { key:"calfL", label:"น่องซ้าย", group:"ขา", min:7, max:30, def:14 },
+  { key:"calfR", label:"น่องขวา", group:"ขา", min:7, max:30, def:14 }
+];
+
+const GROUPS = ["ลำตัวบน","ลำตัวกลาง","แขน","ขา"];
+
+const state = {
+  gender:"male",
+
+  weight:{
+    enabled:true,
+    value:95
+  },
+
+  height:{
+    enabled:true,
+    value:183
+  },
+
+  fields:{}
+};
+
+FIELDS.forEach(field => {
+  state.fields[field.key] = {
+    enabled:false,
+    value:field.def
+  };
+});
+
+// ============================================================
+// HELPERS
+// ============================================================
+
+function clamp(value,min,max){
+  return Math.min(max,Math.max(min,value));
+}
+
+function snapTape(value){
+  return Math.round(value * 8) / 8;
+}
+
+function formatInches(value){
+  const rounded = snapTape(Number(value));
+
+  let whole = Math.floor(rounded);
+  let frac = Math.round((rounded - whole) * 8);
+
+  if(frac === 8){
+    whole++;
+    frac = 0;
+  }
+
+  const fractions = {
+    0:"",
+    1:"⅛",
+    2:"¼",
+    3:"⅜",
+    4:"½",
+    5:"⅝",
+    6:"¾",
+    7:"⅞"
+  };
+
+  return frac === 0
+    ? `${whole}`
+    : `${whole}${fractions[frac]}`;
+}
+
+function formatNumber(value){
+  return Number(value).toFixed(
+    Number(value) % 1 === 0 ? 0 : 1
+  );
+}
+
+// ============================================================
+// GENDER
+// ============================================================
+
+function setGender(gender){
+  state.gender = gender;
+
+  document
+    .getElementById("maleBtn")
+    .classList.toggle("active",gender === "male");
+
+  document
+    .getElementById("femaleBtn")
+    .classList.toggle("active",gender === "female");
+
+  updateCalculations();
+}
+
+// ============================================================
+// CREATE GENERAL CONTROLS
+// ============================================================
+
+function createGeneralRow({
+  key,
+  label,
+  unit,
+  min,
+  max,
+  step
+}){
+
+  const row = document.createElement("div");
+  row.className = "row enabled";
+  row.id = `general-${key}`;
+
+  row.innerHTML = `
+    <div class="row-top">
+      <button class="switch on" id="${key}Switch"></button>
+
+      <div class="label">${label}</div>
+
+      <div class="value-label" id="${key}Label">
+        ${state[key].value} ${unit}
+      </div>
+    </div>
+
+    <div class="range-wrap" id="${key}Controls">
+      <input
+        type="range"
+        id="${key}Range"
+        min="${min}"
+        max="${max}"
+        step="${step}"
+        value="${state[key].value}"
+      >
+
+      <div class="fine-control">
+
+        <button class="small-btn" id="${key}Minus">
+          −
+        </button>
+
+        <div class="current-value" id="${key}Current">
+          ${state[key].value} ${unit}
+        </div>
+
+        <button class="small-btn" id="${key}Plus">
+          +
+        </button>
+
+      </div>
+
+      <div class="range-hint">
+        <span>${min} ${unit}</span>
+        <span>${max} ${unit}</span>
+      </div>
+    </div>
+  `;
+
+  document
+    .getElementById("generalFields")
+    .appendChild(row);
+
+  const range = document.getElementById(`${key}Range`);
+
+  document
+    .getElementById(`${key}Switch`)
+    .onclick = () => {
+
+      state[key].enabled = !state[key].enabled;
+
+      renderGeneral(key,unit);
+      updateCalculations();
+    };
+
+  range.oninput = e => {
+    state[key].value = Number(e.target.value);
+
+    renderGeneral(key,unit);
+    updateCalculations();
+  };
+
+  document
+    .getElementById(`${key}Minus`)
+    .onclick = () => {
+
+      state[key].value =
+        clamp(
+          state[key].value - step,
+          min,
+          max
+        );
+
+      state[key].value =
+        Math.round(state[key].value * 10) / 10;
+
+      range.value = state[key].value;
+
+      renderGeneral(key,unit);
+      updateCalculations();
+    };
+
+  document
+    .getElementById(`${key}Plus`)
+    .onclick = () => {
+
+      state[key].value =
+        clamp(
+          state[key].value + step,
+          min,
+          max
+        );
+
+      state[key].value =
+        Math.round(state[key].value * 10) / 10;
+
+      range.value = state[key].value;
+
+      renderGeneral(key,unit);
+      updateCalculations();
+    };
+}
+
+function renderGeneral(key,unit){
+
+  const item = state[key];
+
+  const row =
+    document.getElementById(`general-${key}`);
+
+  const switchBtn =
+    document.getElementById(`${key}Switch`);
+
+  const controls =
+    document.getElementById(`${key}Controls`);
+
+  row.classList.toggle(
+    "enabled",
+    item.enabled
+  );
+
+  switchBtn.classList.toggle(
+    "on",
+    item.enabled
+  );
+
+  controls.style.display =
+    item.enabled ? "block" : "none";
+
+  document.getElementById(`${key}Label`).textContent =
+    item.enabled
+      ? `${formatNumber(item.value)} ${unit}`
+      : "—";
+
+  document.getElementById(`${key}Current`).textContent =
+    `${formatNumber(item.value)} ${unit}`;
+}
+
+// ============================================================
+// CREATE BODY MEASUREMENT ROW
+// ============================================================
+
+function createMeasurementRow(field){
+
+  const row = document.createElement("div");
+
+  row.className = "row";
+  row.id = `row-${field.key}`;
+
+  row.innerHTML = `
+    <div class="row-top">
+
+      <button
+        class="switch"
+        id="${field.key}Switch"
+      ></button>
+
+      <div class="label">
+        ${field.label}
+      </div>
+
+      <div
+        class="value-label"
+        id="${field.key}Label"
+      >
+        —
+      </div>
+
+    </div>
+
+    <div
+      class="range-wrap"
+      id="${field.key}Controls"
+      style="display:none;"
+    >
+
+      <input
+        type="range"
+        id="${field.key}Range"
+        min="${field.min}"
+        max="${field.max}"
+        step="${TAPE_STEP}"
+        value="${field.def}"
+      >
+
+      <div class="tape"></div>
+
+      <div class="fine-control">
+
+        <button
+          class="small-btn"
+          id="${field.key}Minus"
+        >
+          −⅛
+        </button>
+
+        <div
+          class="current-value"
+          id="${field.key}Current"
+        >
+          ${formatInches(field.def)} นิ้ว
+        </div>
+
+        <button
+          class="small-btn"
+          id="${field.key}Plus"
+        >
+          +⅛
+        </button>
+
+      </div>
+
+      <div class="range-hint">
+        <span>${field.min} นิ้ว</span>
+        <span>ทีละ ⅛ นิ้ว</span>
+        <span>${field.max} นิ้ว</span>
+      </div>
+
+    </div>
+  `;
+
+  const item =
+    state.fields[field.key];
+
+  row
+    .querySelector(`#${field.key}Switch`)
+    .onclick = () => {
+
+      item.enabled = !item.enabled;
+
+      renderMeasurement(field);
+      updateCalculations();
+    };
+
+  row
+    .querySelector(`#${field.key}Range`)
+    .oninput = e => {
+
+      item.value =
+        snapTape(
+          Number(e.target.value)
+        );
+
+      renderMeasurement(field);
+      updateCalculations();
+    };
+
+  row
+    .querySelector(`#${field.key}Minus`)
+    .onclick = () => {
+
+      item.value =
+        clamp(
+          snapTape(
+            item.value - TAPE_STEP
+          ),
+          field.min,
+          field.max
+        );
+
+      renderMeasurement(field);
+      updateCalculations();
+    };
+
+  row
+    .querySelector(`#${field.key}Plus`)
+    .onclick = () => {
+
+      item.value =
+        clamp(
+          snapTape(
+            item.value + TAPE_STEP
+          ),
+          field.min,
+          field.max
+        );
+
+      renderMeasurement(field);
+      updateCalculations();
+    };
+
+  return row;
+}
+
+function renderMeasurement(field){
+
+  const item =
+    state.fields[field.key];
+
+  const row =
+    document.getElementById(
+      `row-${field.key}`
+    );
+
+  const switchBtn =
+    document.getElementById(
+      `${field.key}Switch`
+    );
+
+  const controls =
+    document.getElementById(
+      `${field.key}Controls`
+    );
+
+  const range =
+    document.getElementById(
+      `${field.key}Range`
+    );
+
+  row.classList.toggle(
+    "enabled",
+    item.enabled
+  );
+
+  switchBtn.classList.toggle(
+    "on",
+    item.enabled
+  );
+
+  controls.style.display =
+    item.enabled
+      ? "block"
+      : "none";
+
+  document.getElementById(
+    `${field.key}Label`
+  ).textContent =
+    item.enabled
+      ? `${formatInches(item.value)} นิ้ว`
+      : "—";
+
+  document.getElementById(
+    `${field.key}Current`
+  ).textContent =
+    `${formatInches(item.value)} นิ้ว`;
+
+  range.value =
+    item.value;
+}
+
+// ============================================================
+// BUILD CARDS
+// ============================================================
+
+function buildMeasurementCards(){
+
+  const wrapper =
+    document.getElementById(
+      "measurementCards"
+    );
+
+  GROUPS.forEach(group => {
+
+    const card =
+      document.createElement("div");
+
+    card.className = "card";
+
+    const title =
+      document.createElement("div");
+
+    title.className =
+      "card-title";
+
+    title.textContent =
+      group;
+
+    card.appendChild(title);
+
+    FIELDS
+      .filter(
+        field =>
+          field.group === group
+      )
+      .forEach(field => {
+
+        card.appendChild(
+          createMeasurementRow(field)
+        );
+
+      });
+
+    wrapper.appendChild(card);
+
+  });
+}
+
+// ============================================================
+// CALCULATIONS
+// ============================================================
+
+function getFieldValue(key){
+
+  const field =
+    state.fields[key];
+
+  return field &&
+         field.enabled
+    ? field.value
+    : null;
+}
+
+function calculateBMI(){
+
+  if(
+    !state.weight.enabled ||
+    !state.height.enabled
+  ){
+    return null;
+  }
+
+  const meters =
+    state.height.value / 100;
+
+  if(meters <= 0){
+    return null;
+  }
+
+  return (
+    state.weight.value /
+    (meters * meters)
+  );
+}
+
+function calculateBodyFat(){
+
+  if(!state.height.enabled){
+    return null;
+  }
+
+  const neck =
+    getFieldValue("neck");
+
+  const waist =
+    getFieldValue("waist");
+
+  const hip =
+    getFieldValue("hip");
+
+  if(!neck || !waist){
+    return null;
+  }
+
+  const heightIn =
+    state.height.value / 2.54;
+
+  let result = null;
+
+  if(state.gender === "male"){
+
+    if(waist <= neck){
+      return null;
+    }
+
+    result =
+      86.010 *
+      Math.log10(
+        waist - neck
+      )
+      -
+      70.041 *
+      Math.log10(
+        heightIn
+      )
+      +
+      36.76;
+
+  }else{
+
+    if(!hip){
+      return null;
+    }
+
+    if(
+      waist + hip <= neck
+    ){
+      return null;
+    }
+
+    result =
+      163.205 *
+      Math.log10(
+        waist + hip - neck
+      )
+      -
+      97.684 *
+      Math.log10(
+        heightIn
+      )
+      -
+      78.387;
+
+  }
+
+  if(
+    !Number.isFinite(result)
+  ){
+    return null;
+  }
+
+  return result;
+}
+
+function updateCalculations(){
+
+  const bmi =
+    calculateBMI();
+
+  const bodyFat =
+    calculateBodyFat();
+
+  const statsBox =
+    document.getElementById(
+      "statsBox"
+    );
+
+  const bmiStat =
+    document.getElementById(
+      "bmiStat"
+    );
+
+  const bfStat =
+    document.getElementById(
+      "bfStat"
+    );
+
+  const fatMassStat =
+    document.getElementById(
+      "fatMassStat"
+    );
+
+  const leanMassStat =
+    document.getElementById(
+      "leanMassStat"
+    );
+
+  bmiStat.style.display =
+    bmi !== null
+      ? "block"
+      : "none";
+
+  bfStat.style.display =
+    bodyFat !== null
+      ? "block"
+      : "none";
+
+  fatMassStat.style.display =
+    "none";
+
+  leanMassStat.style.display =
+    "none";
+
+  if(bmi !== null){
+
+    document.getElementById(
+      "bmiValue"
+    ).textContent =
+      bmi.toFixed(1);
+
+  }
+
+  if(bodyFat !== null){
+
+    document.getElementById(
+      "bfValue"
+    ).textContent =
+      `${bodyFat.toFixed(1)}%`;
+
+    if(state.weight.enabled){
+
+      const fatMass =
+        state.weight.value *
+        bodyFat / 100;
+
+      const leanMass =
+        state.weight.value -
+        fatMass;
+
+      document.getElementById(
+        "fatMassValue"
+      ).textContent =
+        `${fatMass.toFixed(1)} kg`;
+
+      document.getElementById(
+        "leanMassValue"
+      ).textContent =
+        `${leanMass.toFixed(1)} kg`;
+
+      fatMassStat.style.display =
+        "block";
+
+      leanMassStat.style.display =
+        "block";
+    }
+  }
+
+  statsBox.style.display =
+    bmi !== null ||
+    bodyFat !== null
+      ? "flex"
+      : "none";
+
+  const note =
+    document.getElementById(
+      "bodyFatNote"
+    );
+
+  if(bodyFat === null){
+
+    if(state.gender === "male"){
+      note.textContent =
+        "การคำนวณ % ไขมันแบบ Navy Method สำหรับผู้ชาย ต้องเปิดส่วนสูง + รอบคอ + รอบเอว";
+    }else{
+      note.textContent =
+        "การคำนวณ % ไขมันแบบ Navy Method สำหรับผู้หญิง ต้องเปิดส่วนสูง + รอบคอ + รอบเอว + รอบสะโพก";
+    }
+
+  }else{
+
+    note.textContent =
+      "ค่าเปอร์เซ็นต์ไขมันเป็นค่าประมาณจากสูตร US Navy Circumference Method";
+
+  }
+}
+
+// ============================================================
+// EXPORT
+// ============================================================
+
+function buildExportText(){
+
+  const lines = [];
+
+  const now =
+    new Date();
+
+  const date =
+    now.toLocaleDateString(
+      "th-TH",
+      {
+        year:"numeric",
+        month:"long",
+        day:"numeric"
+      }
+    );
+
+  lines.push(
+    `บันทึกสัดส่วนร่างกาย — ${date}`
+  );
+
+  lines.push("");
+
+  if(
+    state.weight.enabled ||
+    state.height.enabled
+  ){
+
+    lines.push(
+      "ข้อมูลทั่วไป"
+    );
+
+    lines.push(
+      `เพศ: ${
+        state.gender === "male"
+          ? "ชาย"
+          : "หญิง"
+      }`
+    );
+
+    if(state.weight.enabled){
+
+      lines.push(
+        `น้ำหนัก: ${formatNumber(state.weight.value)} กก.`
+      );
+
+    }
+
+    if(state.height.enabled){
+
+      lines.push(
+        `ส่วนสูง: ${formatNumber(state.height.value)} ซม.`
+      );
+
+    }
+
+    const bmi =
+      calculateBMI();
+
+    if(bmi !== null){
+
+      lines.push(
+        `BMI: ${bmi.toFixed(1)}`
+      );
+
+    }
+
+    lines.push("");
+  }
+
+  GROUPS.forEach(group => {
+
+    const activeFields =
+      FIELDS.filter(
+        field =>
+          field.group === group &&
+          state.fields[field.key].enabled
+      );
+
+    if(
+      activeFields.length === 0
+    ){
+      return;
+    }
+
+    lines.push(group);
+
+    activeFields.forEach(
+      field => {
+
+        lines.push(
+          `${field.label}: ${formatInches(
+            state.fields[field.key].value
+          )} นิ้ว`
+        );
+
+      }
+    );
+
+    lines.push("");
+  });
+
+  const bodyFat =
+    calculateBodyFat();
+
+  if(bodyFat !== null){
+
+    lines.push(
+      "ค่าประมาณองค์ประกอบร่างกาย"
+    );
+
+    lines.push(
+      `เปอร์เซ็นต์ไขมัน (Navy Method): ${bodyFat.toFixed(1)}%`
+    );
+
+    if(state.weight.enabled){
+
+      const fatMass =
+        state.weight.value *
+        bodyFat / 100;
+
+      const leanMass =
+        state.weight.value -
+        fatMass;
+
+      lines.push(
+        `มวลไขมันโดยประมาณ: ${fatMass.toFixed(1)} กก.`
+      );
+
+      lines.push(
+        `มวลไร้ไขมันโดยประมาณ: ${leanMass.toFixed(1)} กก.`
+      );
+    }
+  }
+
+  return lines
+    .join("\n")
+    .trim();
+}
+
+function exportData(){
+
+  const text =
+    buildExportText();
+
+  document.getElementById(
+    "resultText"
+  ).textContent =
+    text;
+
+  const resultBox =
+    document.getElementById(
+      "resultBox"
+    );
+
+  resultBox.classList.add(
+    "show"
+  );
+
+  resultBox.scrollIntoView({
+    behavior:"smooth",
+    block:"start"
+  });
+}
+
+// ============================================================
+// COPY
+// ============================================================
+
+async function copyText(){
+
+  const text =
+    buildExportText();
+
+  document.getElementById(
+    "resultText"
+  ).textContent =
+    text;
+
+  document.getElementById(
+    "resultBox"
+  ).classList.add(
+    "show"
+  );
+
+  const button =
+    document.getElementById(
+      "copyBtn"
+    );
+
+  try{
+
+    await navigator.clipboard.writeText(
+      text
+    );
+
+  }catch(error){
+
+    const textarea =
+      document.createElement(
+        "textarea"
+      );
+
+    textarea.value =
+      text;
+
+    document.body.appendChild(
+      textarea
+    );
+
+    textarea.select();
+
+    document.execCommand(
+      "copy"
+    );
+
+    document.body.removeChild(
+      textarea
+    );
+  }
+
+  button.textContent =
+    "คัดลอกแล้ว ✓";
+
+  setTimeout(() => {
+
+    button.textContent =
+      "คัดลอกข้อความ";
+
+  },1800);
+}
+
+// ============================================================
+// INITIALIZE
+// ============================================================
+
+createGeneralRow({
+  key:"weight",
+  label:"น้ำหนัก",
+  unit:"กก.",
+  min:30,
+  max:200,
+  step:0.5
+});
+
+createGeneralRow({
+  key:"height",
+  label:"ส่วนสูง",
+  unit:"ซม.",
+  min:120,
+  max:220,
+  step:0.5
+});
+
+buildMeasurementCards();
+
+renderGeneral(
+  "weight",
+  "กก."
+);
+
+renderGeneral(
+  "height",
+  "ซม."
+);
+
+FIELDS.forEach(
+  renderMeasurement
+);
+
+updateCalculations();
+
+</script>
+
+</body>
+</html>
