@@ -348,6 +348,32 @@
       font-family: 'Space Grotesk', sans-serif;
     }
 
+    .portal-hub-btn {
+      position: fixed;
+      top: 1.25rem;
+      left: 1.25rem;
+      z-index: 100;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--card-bg);
+      color: var(--text-dark);
+      border: 2px solid var(--card-border);
+      border-radius: 99px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 3px 3px 0px var(--card-border);
+      transition: all 0.2s ease;
+    }
+
+    .portal-hub-btn:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 5px 5px 0px var(--red-primary);
+      color: var(--red-primary);
+    }
+
     @keyframes fadeInDown {
       from { opacity: 0; transform: translateY(-15px); }
       to { opacity: 1; transform: translateY(0); }
@@ -355,6 +381,11 @@
   </style>
 </head>
 <body>
+
+  <!-- Floating Portal Hub Link -->
+  <a href="index.html" class="portal-hub-btn" title="กลับสู่ Showcase Portal">
+    <i class="fa-solid fa-arrow-left"></i> Portal Hub
+  </a>
 
   <!-- Duotone Background Image Overlay -->
   <div class="art-bg-image"></div>
@@ -368,7 +399,7 @@
     <!-- Date Badge Tag -->
     <div class="date-tag">
       <i class="fa-solid fa-heart" style="color:var(--red-primary);"></i>
-      <span>12.06.2026 02:00 AM</span> — PRESENT
+      <span>12.06.2026 02:00 AM</span> — <span>01.09.2026 02:05 AM</span>
     </div>
 
     <!-- Giant Artistic Counter Grid -->
@@ -460,6 +491,8 @@
 
     // Start Date: 12 June 2026 (02:00:00 AM)
     const START_DATE = new Date("2026-06-12T02:00:00");
+    // End/Freeze Target Date: 01 September 2026 (02:05:00 AM)
+    const END_DATE = new Date("2026-09-01T02:05:00");
 
     // Elements
     const daysVal = document.getElementById("daysVal");
@@ -471,10 +504,12 @@
     const heartbeatsVal = document.getElementById("heartbeatsVal");
     const secondsVal = document.getElementById("secondsVal");
 
-    // Update Counter Loop
+    // Update Counter Loop (Frozen at 02:05:00 AM)
     function updateCounter() {
       const now = new Date();
-      const diffMs = Math.max(0, now - START_DATE);
+      // Cap at END_DATE so time freezes at 02:05 AM
+      const currentTarget = now >= END_DATE ? END_DATE : now;
+      const diffMs = Math.max(0, currentTarget - START_DATE);
 
       const secondsTotal = Math.floor(diffMs / 1000);
       const days = Math.floor(secondsTotal / (3600 * 24));
@@ -490,7 +525,7 @@
       // Minimal 60-second minute cycle bar
       const secProgress = (secs / 60) * 100;
       minuteBarFill.style.width = secProgress + '%';
-      minuteSecLabel.textContent = `${secs}s / 60s`;
+      minuteSecLabel.textContent = now >= END_DATE ? `${secs}s / 60s (FROZEN)` : `${secs}s / 60s`;
 
       // Fun stats calculation (approx 70 bpm)
       const heartbeats = Math.floor(secondsTotal * 1.166);
@@ -498,7 +533,9 @@
       heartbeatsVal.textContent = heartbeats.toLocaleString();
       secondsVal.textContent = secondsTotal.toLocaleString();
 
-      requestAnimationFrame(updateCounter);
+      if (now < END_DATE) {
+        requestAnimationFrame(updateCounter);
+      }
     }
 
     // Trigger Heart Burst Confetti on Click
