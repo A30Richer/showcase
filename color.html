@@ -7,7 +7,47 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!--
+================================================================================
+# วัตถุประสงค์ภาพรวมของโปรเจกต์ (Overall Project Objectives)
+================================================================================
+1. ดูดสีจากรูปภาพ (Eyedropper Tool):
+   - ให้ผู้ใช้สามารถอัปโหลดหรือลากวางรูปภาพ แล้วใช้แว่นขยายดิจิทัล (Loupe) ซูมระดับพิกเซล เพื่อเลือกดูดสีที่ต้องการได้อย่างแม่นยำ
+   - บันทึกสีที่ดูดไว้ลงในพาเลตต์ (Palette) และคัดลอกรหัสสี HEX / RGB ได้สะดวกรวดเร็ว
+
+2. ห้องผสมสีตามสัดส่วน 100% (Pure Ratio 100% Color Mixer):
+   - จำลองการผสมสีตามหลักฟิสิกส์ของเม็ดสีจริง (Subtractive Pigment Mixing: RYB + Kubelka-Munk)
+   - กำหนดให้ผลรวมของสัดส่วนสีทั้งหมดในส่วนผสมเป็น "100% พอดีเป๊ะ" เสมือนการตวงปริมาตรรวม 100 ส่วน
+   - มีระบบ Smart Auto-Balance ปรับเกลี่ยสัดส่วนอัตโนมัติเมื่อเลื่อนสไลเดอร์ พร้อมปุ่ม Lock เพื่อตรึงสัดส่วนสีที่ต้องการ
+   - สามารถดึงสีจากรูปภาพที่ดูดไว้มาผสมร่วมกับแม่สีหลักได้
+   - สรุปสูตรผสมสี (Color Recipe) และอัตราส่วนอย่างง่าย (Parts/Drops Ratio) เพื่อนำไปใช้งานผสมสีจริงได้ทันที
+
+================================================================================
+# โครงสร้างและวัตถุประสงค์ของแต่ละส่วน (Component Breakdown)
+================================================================================
+- [CSS / Styling]: ระบบธีมสี Dark Mode โทนสีเน้น (Accent), สไตล์ Glassmorphism, Responsive Grid รองรับทั้งจอคอมและมือถือ
+- [HTML Markup]:
+  1. Header & Actions: โลโก้, สถานะระบบ, ปุ่มเปลี่ยนรูปภาพ
+  2. Dropzone: พื้นที่รับไฟล์ภาพแบบ Drag & Drop
+  3. Workspace Panel: Canvas แสดงภาพ + Side Panel สีล่าสุด + พาเลตต์ประวัติสี
+  4. Mixing Lab Panel: แถบสลับโหมด, Stacked Ratio Bar 100%, สไลเดอร์ควบคุมสัดส่วน, แผงพรีวิวสีและสูตรผสม
+- [JavaScript Architecture]:
+  • ส่วนที่ 1: การจัดการไฟล์ภาพและ Canvas (Image & Canvas Handling)
+  • ส่วนที่ 2: ระบบแว่นขยายและอ่านค่าพิกเซล (Loupe Magnifier & Pixel Reading)
+  • ส่วนที่ 3: ระบบจัดการพาเลตต์สี (Palette Management & Storage)
+  • ส่วนที่ 4: เอนจินผสมสีทางฟิสิกส์ (Physical Subtractive Pigment Engine: Gossett-Chen RYB & Kubelka-Munk K/S)
+  • ส่วนที่ 5: ระบบควบคุมสัดส่วนรวม 100% (100% Pure Ratio & Auto-Balancing Logic)
+  • ส่วนที่ 6: ระบบถอดรหัสสีเป็นสูตรผสม (Color Decomposition & Recipe Calculation)
+  • ส่วนที่ 7: การผูก Event Listeners & UI Synchronization
+================================================================================
+-->
+
 <style>
+  /* ==========================================================================
+     1. ตัวแปรธีมและระบบสีพื้นฐาน (Design Tokens & CSS Variables)
+     วัตถุประสงค์: รวมศูนย์การตั้งค่าสี ระยะขอบ และฟอนต์ เพื่อให้ปรับแต่งธีมได้ง่ายในจุดเดียว
+     ========================================================================== */
   :root{
     --bg:#121014;
     --surface:#1B1920;
@@ -35,6 +75,9 @@
   .mono{ font-family:'JetBrains Mono', monospace; }
   .display{ font-family:'Space Grotesk', sans-serif; }
 
+  /* ==========================================================================
+     2. ส่วนหัวและแถบควบคุมหลัก (Header & Navigation)
+     ========================================================================== */
   header{
     display:flex; align-items:center; justify-content:space-between;
     padding:22px clamp(16px,4vw,48px);
@@ -51,9 +94,7 @@
   .brand span{ color:var(--text-muted); font-size:13px; }
 
   header .actions{ display:flex; gap:10px; }
-  button{
-    font-family:inherit; cursor:pointer;
-  }
+  button{ font-family:inherit; cursor:pointer; }
   .btn{
     background:var(--surface-2);
     border:1px solid var(--border);
@@ -89,7 +130,9 @@
     padding:clamp(20px,4vw,48px);
   }
 
-  /* ---- Empty state / dropzone ---- */
+  /* ==========================================================================
+     3. พื้นที่รับไฟล์ภาพ (Dropzone Upload Area)
+     ========================================================================== */
   #dropzone{
     border:1.5px dashed var(--border);
     border-radius:20px;
@@ -126,7 +169,9 @@
   }
   #fileInput{ display:none; }
 
-  /* ---- Workspace ---- */
+  /* ==========================================================================
+     4. พื้นที่ทำงานดูดสี (Eyedropper Workspace & Canvas)
+     ========================================================================== */
   #workspace{ display:none; gap:28px; }
   .workspace-grid{
     display:grid;
@@ -170,7 +215,7 @@
     border:1px solid rgba(255,255,255,0.08);
   }
 
-  /* Loupe */
+  /* แว่นขยายส่องพิกเซล (Loupe Magnifier) */
   #loupe{
     position:fixed;
     width:120px; height:120px;
@@ -208,7 +253,7 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   }
 
-  /* ---- Side panel ---- */
+  /* แผงด้านข้าง (Side Panel: Current Swatch & Saved Palette) */
   .side{ display:flex; flex-direction:column; gap:18px; }
   .card{
     background:var(--surface);
@@ -325,7 +370,7 @@
     font-size:12px;
   }
 
-  /* ---- Recipe row inside current-color card ---- */
+  /* การ์ดสรุปสูตรผสมสีที่ดูดได้ */
   .recipe-row{
     margin-top:14px;
     padding-top:14px;
@@ -374,9 +419,9 @@
   .load-recipe-btn:hover{ color:var(--accent); border-color:var(--accent); }
   .load-recipe-btn:disabled{ opacity:0.3; cursor:not-allowed; }
 
-  /* ========================================================= */
-  /* ---- Mixing Lab ---- */
-  /* ========================================================= */
+  /* ==========================================================================
+     5. ส่วนห้องผสมสีตามสัดส่วน 100% (Mixing Lab Styling)
+     ========================================================================== */
   #mixlab{
     margin-top:48px;
     padding-top:20px;
@@ -404,7 +449,7 @@
     max-width:620px;
   }
 
-  /* Mode Switcher Tabs */
+  /* แถบสลับโหมดการผสม (Mode Switcher Tabs) */
   .mode-tabs{
     display:flex;
     background:var(--surface);
@@ -433,7 +478,7 @@
     box-shadow:0 2px 8px var(--accent-soft);
   }
 
-  /* Stacked Ratio Bar */
+  /* แถบสัดส่วนสีแบบแบ่งส่วน (Stacked Ratio Bar 100%) */
   .ratio-bar-wrapper{
     background:var(--surface);
     border:1px solid var(--border);
@@ -486,9 +531,7 @@
     position:relative;
     min-width:0;
   }
-  .ratio-bar-segment:hover{
-    filter:brightness(1.15);
-  }
+  .ratio-bar-segment:hover{ filter:brightness(1.15); }
 
   .mixlab-grid{
     display:grid;
@@ -581,9 +624,7 @@
     text-align:right;
     outline:none;
   }
-  .slider-row .pct-input:focus{
-    border-color:var(--accent);
-  }
+  .slider-row .pct-input:focus{ border-color:var(--accent); }
 
   .lock-btn{
     background:none;
@@ -637,7 +678,7 @@
     flex-wrap:wrap;
   }
 
-  /* Mix Preview & Output Card */
+  /* การ์ดพรีวิวสีและสูตรผสม (Mix Output Preview) */
   .mix-preview-card{
     background:var(--surface);
     border:1px solid var(--border);
@@ -723,7 +764,7 @@
     flex-direction:column;
   }
 
-  /* Custom Color Adder Popover/Modal */
+  /* แผงเลือกสีจากพาเลตต์เพิ่มเข้าผสม (Custom Color Drawer) */
   .add-color-drawer{
     background:var(--surface-2);
     border:1px dashed var(--border);
@@ -732,9 +773,7 @@
     margin-top:6px;
     display:none;
   }
-  .add-color-drawer.show{
-    display:block;
-  }
+  .add-color-drawer.show{ display:block; }
   .palette-pick-grid{
     display:flex;
     gap:8px;
@@ -749,12 +788,16 @@
     cursor:pointer;
     transition: transform 0.15s ease;
   }
-  .palette-pick-chip:hover{
-    transform:scale(1.15);
-  }
+  .palette-pick-chip:hover{ transform:scale(1.15); }
 </style>
 </head>
 <body>
+
+<!--
+================================================================================
+# ส่วน HTML โครงสร้างหลัก (Main Markup Layout)
+================================================================================
+-->
 
 <header>
   <div class="brand">
@@ -769,6 +812,7 @@
 
 <main>
 
+  <!-- พื้นที่ Drag & Drop อัปโหลดรูปภาพ -->
   <div id="dropzone">
     <svg class="eyedrop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
       <path d="M14.5 3.5 20.5 9.5 17 13 11 7Z"/>
@@ -781,6 +825,7 @@
     <input type="file" id="fileInput" accept="image/*">
   </div>
 
+  <!-- พื้นที่ส่องและดูดสีจาก Canvas + พาเลตต์ประวัติสี -->
   <div id="workspace">
     <div class="workspace-grid">
       <div class="canvas-panel">
@@ -789,6 +834,7 @@
       </div>
 
       <div class="side">
+        <!-- การ์ดแสดงสีล่าสุดที่คลิกดูด -->
         <div class="card">
           <h3>สีล่าสุดที่ดูด</h3>
           <div class="current-swatch">
@@ -808,6 +854,7 @@
           </div>
         </div>
 
+        <!-- การ์ดประวัติสีที่บันทึกไว้ใน Palette -->
         <div class="card">
           <h3>พาเลตต์ที่เก็บไว้ (<span id="paletteCount">0</span>)</h3>
           <div id="paletteEmpty" class="palette-empty">ยังไม่มีสีที่เก็บไว้ — คลิกบนภาพเพื่อเริ่มเก็บสี แล้วจะมาโผล่ตรงนี้</div>
@@ -818,9 +865,9 @@
     </div>
   </div>
 
-  <!-- ========================================================= -->
-  <!-- ห้องผสมสี (Color Mixing Lab) -->
-  <!-- ========================================================= -->
+  <!-- ========================================================================
+       ห้องผสมสี (Color Mixing Lab) — 100% Pure Ratio & Subtractive Pigment Engine
+       ======================================================================== -->
   <div id="mixlab">
     <div class="mixlab-header">
       <div class="section-heading">
@@ -828,13 +875,14 @@
         <p>ผสมสีแบบเม็ดสีจริง (Subtractive Pigment Mixing) กำหนดสัดส่วนรวม 100% ถ้วนเหมือนผสมสีจริงบนจานสี นำสูตรไปตวงหยดผสมได้ทันที</p>
       </div>
 
+      <!-- สลับโหมดการทำงาน -->
       <div class="mode-tabs">
         <button class="mode-tab active" id="tabRatioMode">🎯 สัดส่วนรวม 100%</button>
         <button class="mode-tab" id="tabFreeMode">🎚️ ปรับอิสระ</button>
       </div>
     </div>
 
-    <!-- Stacked Ratio Bar (Only in 100% mode) -->
+    <!-- แถบสัดส่วนสีกราฟิก 100% Stacked Ratio Bar -->
     <div class="ratio-bar-wrapper" id="ratioBarWrapper">
       <div class="ratio-bar-head">
         <span>📊 แถบสัดส่วนสีในส่วนผสม</span>
@@ -844,17 +892,19 @@
         </div>
       </div>
       <div class="stacked-ratio-bar" id="stackedRatioBar">
-        <!-- Segments dynamically rendered -->
+        <!-- ชิ้นส่วนแถบสีจะถูก Render จาก JavaScript ตามสัดส่วน % -->
       </div>
     </div>
 
     <div class="mixlab-grid">
+      <!-- คอลัมน์ซ้าย: สไลเดอร์และปุ่มควบคุมสัดส่วนแต่ละสี -->
       <div class="mix-controls-panel">
         <div class="sliders-card">
           <div id="sliderList">
-            <!-- Dynamic Sliders (Default: Red, Yellow, Blue, White, Black + Custom Colors) -->
+            <!-- สไลเดอร์สี (แม่สี RYB, ขาว, ดำ + สีที่ผู้ใช้เพิ่มจากภาพ) -->
           </div>
 
+          <!-- Drawer สำหรับเลือกสีจากพาเลตต์เพิ่มเข้าผสม -->
           <div class="add-color-drawer" id="addColorDrawer">
             <div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">เลือกสีจากพาเลตต์ที่ดูดไว้เพื่อเพิ่มเข้าส่วนผสม:</div>
             <div class="palette-pick-grid" id="palettePickGrid"></div>
@@ -872,6 +922,7 @@
         </div>
       </div>
 
+      <!-- คอลัมน์ขวา: พรีวิวผลลัพธ์สีผสม, รหัสสี, สรุปสูตรผสม และปุ่ม Export -->
       <div class="mix-preview-card">
         <div class="mix-preview-block" id="mixPreviewBlock" style="background:#1B1920;"></div>
         
@@ -900,12 +951,19 @@
 
 <footer>ดูดสี & ห้องผสมสี — ทำงานทั้งหมดในเบราว์เซอร์ของคุณ รวดเร็ว ปลอดภัย ไม่เก็บข้อมูล</footer>
 
+<!-- แว่นขยาย Loupe & กล่องแสดงผล Hex ลอยตามเมาส์ -->
 <div id="loupe"><canvas id="loupeCanvas" width="120" height="120"></canvas></div>
 <div id="loupeReadout" class="mono"></div>
 <div id="toast"></div>
 
 <script>
-// ---------- DOM References ----------
+/*
+================================================================================
+# JavaScript Architecture & Implementation
+================================================================================
+*/
+
+// ---------- การอ้างอิง DOM Elements ทั้งหมด ----------
 const dropzone = document.getElementById('dropzone');
 const fileInput = document.getElementById('fileInput');
 const workspace = document.getElementById('workspace');
@@ -930,7 +988,13 @@ let palette = [];
 let imgLoaded = false;
 let latestPickedHex = null;
 
-// ---------- Upload handling ----------
+/* ==========================================================================
+   ส่วนที่ 1: การจัดการไฟล์ภาพและการโหลดขึ้น Canvas (Image & Canvas Handling)
+   วัตถุประสงค์:
+   - จัดการการ Drag & Drop ไฟล์ภาพ หรือคลิกเปิดไฟล์
+   - ย่อขนาดภาพให้พอดีกับจอภาพ (Responsive scale) เพื่อประสิทธิภาพการประมวลผล
+   - สลับหน้าจอจาก Dropzone ไปยัง Workspace อัตโนมัติ
+   ========================================================================== */
 dropzone.addEventListener('click', () => fileInput.click());
 changeBtn.addEventListener('click', () => fileInput.click());
 
@@ -975,7 +1039,13 @@ function loadImage(file){
   reader.readAsDataURL(file);
 }
 
-// ---------- Color reading ----------
+/* ==========================================================================
+   ส่วนที่ 2: ระบบแว่นขยายและอ่านค่าสีพิกเซล (Loupe Magnifier & Pixel Reading)
+   วัตถุประสงค์:
+   - อ่านข้อมูลพิกเซล ImageData (RGBA) ที่ตำแหน่งพิกัดเมาส์
+   - วาดภาพขยาย 11x11 พิกเซลแบบ Pixelated Grid ลงบน Canvas แว่นขยาย
+   - อัปเดตสี Accent ของหน้าเว็บให้เปลี่ยนตามสีที่เลือกแบบ Dynamic
+   ========================================================================== */
 function getPixel(x,y){
   const d = ctx.getImageData(x,y,1,1).data;
   return {r:d[0], g:d[1], b:d[2]};
@@ -1003,7 +1073,7 @@ function hexToRgba(hex, a){
   return `rgba(${rgb.r},${rgb.g},${rgb.b},${a})`;
 }
 
-// ---------- Mouse interaction over canvas ----------
+// Mouse tracking & Magnifier events
 canvas.addEventListener('mouseenter', ()=>{
   loupe.style.display='block';
   loupeReadout.style.display='block';
@@ -1078,7 +1148,12 @@ function commitColor(px){
   showToast('เก็บสี ' + hex + ' แล้ว');
 }
 
-// ---------- Palette ----------
+/* ==========================================================================
+   ส่วนที่ 3: ระบบจัดการพาเลตต์สี (Palette Management & Storage)
+   วัตถุประสงค์:
+   - บันทึกประวัติสีที่ผู้ใช้ดูดมา เก็บได้สูงสุด 32 สี
+   - รองรับการคลิกเพื่อคัดลอกค่าสี และปุ่มลบสีทีละช่อง
+   ========================================================================== */
 function addToPalette(hex){
   if(!palette.includes(hex)){
     palette.unshift(hex);
@@ -1130,7 +1205,6 @@ clearBtn.addEventListener('click', ()=>{
   renderPalettePicker();
 });
 
-// ---------- Copy / toast ----------
 function copyText(text){
   navigator.clipboard.writeText(text).then(()=>{
     showToast('คัดลอก ' + text + ' แล้ว');
@@ -1149,10 +1223,13 @@ function showToast(msg){
 valHex.addEventListener('click', ()=>{ if(valHex.textContent!=='—') copyText(valHex.textContent); });
 valHex.style.cursor='pointer';
 
-// =========================================================
-// ห้องผสมสี — Physical Pigment Engine & 100% Pure Ratio Mode
-// =========================================================
-
+/* ==========================================================================
+   ส่วนที่ 4: เอนจินผสมสีทางฟิสิกส์ (Physical Subtractive Pigment Engine)
+   วัตถุประสงค์:
+   - ผสมสีตามหลักการหักเหแสง/ดูดกลืนแสงของเม็ดสีจริง (Subtractive Pigment)
+   - ใช้แบบจำลอง Gossett-Chen Cube RYB Model ร่วมกับ Kubelka-Munk (K/S)
+   - ป้องกันปัญหาสีเทาหม่นที่เกิดจากการเฉลี่ย RGB ทั่วไป ทำให้ได้สีสดใสสมจริง
+   ========================================================================== */
 const CORNERS = {
   white:  [1, 1, 1],
   blue:   [0.163, 0.373, 0.6],
@@ -1178,7 +1255,7 @@ function rybMix(iR, iY, iB){
   return lerp3(iR, y0, y1);
 }
 
-// Convert RGB (0..255) to Subtractive Pigment Absorption/Scattering (K/S)
+// แปลงค่า RGB เป็นค่าสัมประสิทธิ์การดูดกลืนแสง Kubelka-Munk K/S สำหรับสี Custom
 function rgbToPigment(rgb){
   const r = Math.max(1, Math.min(254, rgb.r)) / 255;
   const g = Math.max(1, Math.min(254, rgb.g)) / 255;
@@ -1201,7 +1278,14 @@ function pigmentToRgb(pigment){
   };
 }
 
-// State for active colors in mixing lab
+/* ==========================================================================
+   ส่วนที่ 5: ระบบควบคุมสัดส่วนรวม 100% (100% Pure Ratio & Auto-Balancing)
+   วัตถุประสงค์:
+   - จัดการโครงสร้างข้อมูลสีในโถผสม (mixColors array)
+   - คำนวณ Auto-balance เมื่อเลื่อนสไลเดอร์ โดยผลรวมทุกสีจะเท่ากับ 100% เสมอ
+   - เคารพการตั้งค่า Lock 🔒 ของแต่ละสี
+   - เรนเดอร์ Dynamic Sliders และ แถบ Stacked Ratio Bar 100%
+   ========================================================================== */
 let isPureRatioMode = true;
 
 let mixColors = [
@@ -1212,7 +1296,7 @@ let mixColors = [
   { id: 'black',  name: 'ดำ',         hex: '#0A090C', pct: 0,  locked: false, isBase: true }
 ];
 
-// Calculate greatest common divisor for simplifying ratio
+// ห.ร.ม. สำหรับทำอัตราส่วนอย่างง่าย (เช่น 40:40:20 -> 2:2:1)
 function gcd(a, b){ return b === 0 ? a : gcd(b, a % b); }
 function findRatioString(parts){
   const nonZero = parts.filter(p => p.pct > 0);
@@ -1225,7 +1309,7 @@ function findRatioString(parts){
   return nonZero.map(p => `${p.name} ${p.pct / g}`).join(' : ');
 }
 
-// Render dynamic slider UI
+// เรนเดอร์ UI รายการสไลเดอร์ทั้งหมด
 function renderSliders(){
   const list = document.getElementById('sliderList');
   list.innerHTML = '';
@@ -1234,12 +1318,12 @@ function renderSliders(){
     const row = document.createElement('div');
     row.className = 'slider-row' + (c.isBase ? '' : ' custom-color-row');
 
-    // Label
+    // ป้ายชื่อและสวอตช์สี
     const label = document.createElement('label');
     label.innerHTML = `<span class="swatch-dot" style="background:${c.hex};"></span><span>${c.name}</span>`;
     label.title = `${c.name} (${c.hex})`;
 
-    // Slider
+    // แถบสไลเดอร์
     const slider = document.createElement('input');
     slider.type = 'range';
     slider.min = '0';
@@ -1247,7 +1331,7 @@ function renderSliders(){
     slider.value = c.pct;
     slider.disabled = (isPureRatioMode && c.locked);
 
-    // Number/Pct input
+    // กล่องพิมพ์ตัวเลข %
     const numInput = document.createElement('input');
     numInput.type = 'number';
     numInput.className = 'pct-input mono';
@@ -1256,7 +1340,7 @@ function renderSliders(){
     numInput.value = c.pct;
     numInput.disabled = (isPureRatioMode && c.locked);
 
-    // Lock button (in 100% mode)
+    // ปุ่ม Lock สัดส่วนสี
     const lockBtn = document.createElement('button');
     lockBtn.className = 'lock-btn' + (c.locked ? ' locked' : '');
     lockBtn.innerHTML = c.locked ? '🔒' : '🔓';
@@ -1268,7 +1352,7 @@ function renderSliders(){
       renderSliders();
     });
 
-    // Slider change handler
+    // Event Handler เมื่อมีการเปลี่ยนค่า
     const onValChange = (newVal) => {
       newVal = Math.max(0, Math.min(100, Math.round(Number(newVal) || 0)));
       if(isPureRatioMode){
@@ -1287,7 +1371,7 @@ function renderSliders(){
     row.appendChild(numInput);
     row.appendChild(lockBtn);
 
-    // Delete button for custom colors
+    // ปุ่มลบสำหรับ Custom Colors ที่เพิ่มจากภาพ
     if(!c.isBase){
       const delBtn = document.createElement('button');
       delBtn.className = 'del-color-btn';
@@ -1308,11 +1392,10 @@ function renderSliders(){
   renderRatioBar();
 }
 
-// Auto balance ratios to always sum to exactly 100%
+// อัลกอริทึม Smart Auto-balance สัดส่วนรวม 100%
 function autoBalanceRatios(targetIdx, targetVal){
   const target = mixColors[targetIdx];
   
-  // Calculate total locked by other colors
   let lockedSum = 0;
   mixColors.forEach((c, idx) => {
     if(idx !== targetIdx && c.locked){
@@ -1320,7 +1403,6 @@ function autoBalanceRatios(targetIdx, targetVal){
     }
   });
 
-  // Clamp target value so it doesn't exceed available room
   const maxAllowed = Math.max(0, 100 - lockedSum);
   targetVal = Math.min(targetVal, maxAllowed);
   target.pct = targetVal;
@@ -1335,7 +1417,6 @@ function autoBalanceRatios(targetIdx, targetVal){
       let runningSum = 0;
       otherUnlocked.forEach((c, i) => {
         if(i === otherUnlocked.length - 1){
-          // Last element takes exact difference to ensure 100% total
           c.pct = Math.max(0, remainingToDistribute - runningSum);
         } else {
           const share = Math.round((c.pct / currentUnlockedSum) * remainingToDistribute);
@@ -1344,7 +1425,6 @@ function autoBalanceRatios(targetIdx, targetVal){
         }
       });
     } else {
-      // Split evenly among other unlocked
       const share = Math.floor(remainingToDistribute / otherUnlocked.length);
       let remainder = remainingToDistribute % otherUnlocked.length;
       otherUnlocked.forEach((c) => {
@@ -1354,7 +1434,6 @@ function autoBalanceRatios(targetIdx, targetVal){
     }
   }
 
-  // Double check integer sum constraint
   fixIntegerTotal();
   renderSliders();
 }
@@ -1372,7 +1451,7 @@ function fixIntegerTotal(){
   }
 }
 
-// Equalize unlocked or all ratios
+// เกลี่ยสัดส่วนทุกสีที่ปลดล็อคให้เท่ากัน
 function equalizeRatios(){
   const active = mixColors.filter(c => !c.locked);
   let lockedSum = 0;
@@ -1392,7 +1471,7 @@ function equalizeRatios(){
   updateMixingDisplay();
 }
 
-// Render the Stacked Ratio Bar
+// เรนเดอร์แท่งสีกราฟิก Stacked Ratio Bar 100%
 function renderRatioBar(){
   const bar = document.getElementById('stackedRatioBar');
   const badge = document.getElementById('totalPctBadge');
@@ -1414,7 +1493,7 @@ function renderRatioBar(){
   });
 }
 
-// Compute Mixed Color from all active colors
+// คำนวณสีผลลัพธ์จากการผสมสีทั้งหมดในโถ
 function computeMixedColor(){
   const active = mixColors.filter(c => c.pct > 0);
   if(active.length === 0){
@@ -1423,7 +1502,6 @@ function computeMixedColor(){
 
   const totalPct = mixColors.reduce((sum, c) => sum + c.pct, 0) || 1;
 
-  // Check if we are mixing pure base RYB + W + K colors
   const hasCustom = active.some(c => !c.isBase);
   const rObj = mixColors.find(c => c.id === 'red');
   const yObj = mixColors.find(c => c.id === 'yellow');
@@ -1431,8 +1509,8 @@ function computeMixedColor(){
   const wObj = mixColors.find(c => c.id === 'white');
   const kObj = mixColors.find(c => c.id === 'black');
 
+  // กรณีเป็นแม่สี RYBWK พื้นฐาน
   if(!hasCustom && rObj && yObj && bObj && wObj && kObj){
-    // Pure Gossett-Chen RYB mixing
     const rVal = rObj.pct;
     const yVal = yObj.pct;
     const bVal = bObj.pct;
@@ -1448,7 +1526,6 @@ function computeMixedColor(){
       baseRgb = [255, 255, 255];
     }
 
-    // Apply White & Black tints
     const wRatio = wVal / totalPct;
     const kRatio = kVal / totalPct;
     
@@ -1463,7 +1540,7 @@ function computeMixedColor(){
     return { ...finalRgb, hex: toHex(finalRgb), total: totalPct };
   }
 
-  // Multi-color Subtractive Pigment Mixing (Absorption/Scattering K/S)
+  // กรณีมีสี Custom ร่วมด้วย (Kubelka-Munk Absorption Blending)
   let mixPigment = { c: 0, m: 0, y: 0 };
   active.forEach(c => {
     const weight = c.pct / totalPct;
@@ -1478,15 +1555,15 @@ function computeMixedColor(){
   return { ...finalRgb, hex: toHex(finalRgb), total: totalPct };
 }
 
-// Update Mixing UI & Preview
+/* ==========================================================================
+   ส่วนที่ 6: การอัปเดต UI พรีวิวผลลัพธ์และคำอธิบายโทนสี (Preview & UI Sync)
+   ========================================================================== */
 const mixPreviewBlock = document.getElementById('mixPreviewBlock');
 const mixHex = document.getElementById('mixHex');
 const mixRgb = document.getElementById('mixRgb');
 const recipeFormulaText = document.getElementById('recipeFormulaText');
 const recipePartsText = document.getElementById('recipePartsText');
 const mixCaption = document.getElementById('mixCaption');
-
-let prevMixedHsl = null;
 
 function updateMixingDisplay(){
   renderRatioBar();
@@ -1496,7 +1573,6 @@ function updateMixingDisplay(){
   mixHex.textContent = mixed.hex;
   mixRgb.textContent = `rgb(${mixed.r}, ${mixed.g}, ${mixed.b})`;
 
-  // Formula text
   const active = mixColors.filter(c => c.pct > 0);
   if(active.length === 0){
     recipeFormulaText.textContent = 'ยังไม่ได้เลือกสัดส่วนสี';
@@ -1506,7 +1582,6 @@ function updateMixingDisplay(){
     recipePartsText.textContent = `อัตราส่วนอย่างง่าย: ${findRatioString(active)}`;
   }
 
-  // Description / Caption
   const hsl = rgbToHsl(mixed.r, mixed.g, mixed.b);
   const hue = hueName(hsl.h);
   let tone = 'สว่างปานกลาง';
@@ -1516,10 +1591,8 @@ function updateMixingDisplay(){
   else if(hsl.s > 0.7) tone = 'โทนสดจัดจ้าน (Vibrant)';
 
   mixCaption.textContent = `โทนสี: ${hue} • ${tone} • ค่าความสว่าง ${(hsl.l * 100).toFixed(0)}%`;
-  prevMixedHsl = hsl;
 }
 
-// HSL Helper
 function hueName(h){
   if(h<15 || h>=345) return 'แดง';
   if(h<45) return 'ส้ม';
@@ -1548,7 +1621,9 @@ function rgbToHsl(r,g,b){
   return {h, s, l};
 }
 
-// Toolbar & Action Buttons
+/* ==========================================================================
+   ส่วนที่ 7: การผูก Event Listeners และฟังก์ชันเสริม (Event Handlers & Utilities)
+   ========================================================================== */
 document.getElementById('equalizeBtn').addEventListener('click', equalizeRatios);
 
 document.getElementById('resetMixBtn').addEventListener('click', () => {
@@ -1579,7 +1654,7 @@ document.getElementById('copyFormulaBtn').addEventListener('click', () => {
 
 mixHex.addEventListener('click', () => copyText(mixHex.textContent));
 
-// Mode Switcher Tabs
+// สลับระหว่างโหมดสัดส่วน 100% กับโหมดปรับอิสระ
 const tabRatioMode = document.getElementById('tabRatioMode');
 const tabFreeMode = document.getElementById('tabFreeMode');
 const ratioBarWrapper = document.getElementById('ratioBarWrapper');
@@ -1601,7 +1676,7 @@ tabFreeMode.addEventListener('click', () => {
   renderSliders();
 });
 
-// Custom Palette Color Adder
+// จัดการการเพิ่มสีจากพาเลตต์ลงในส่วนผสม
 const addColorDrawer = document.getElementById('addColorDrawer');
 const openAddColorBtn = document.getElementById('openAddColorBtn');
 const palettePickGrid = document.getElementById('palettePickGrid');
@@ -1648,19 +1723,17 @@ function addCustomColorToMix(hex){
   showToast(`เพิ่มสี ${hex} เข้าโถผสมแล้ว`);
 }
 
-// Decompose arbitrary color into RYBWK recipe for 100% mode
+// ถอดรหัสสีเป้าหมายให้เป็นสูตรผสม RYBWK สัดส่วนรวม 100%
 function decomposeToRecipe(targetHex){
   const t = hexToRgb(targetHex);
   let best = null, bestDist = Infinity;
   
-  // Search on 100% simplex partition
   const step = 10;
   for(let r=0; r<=100; r+=step)
   for(let y=0; y<=100-r; y+=step)
   for(let b=0; b<=100-r-y; b+=step)
   for(let w=0; w<=100-r-y-b; w+=step){
     const k = 100 - r - y - b - w;
-    // Evaluate RYB mix
     const pigmentSum = r + y + b;
     let base = pigmentSum > 0 ? rybMix(r/pigmentSum, y/pigmentSum, b/pigmentSum).map(v=>v*255) : [255,255,255];
     let toned = base.map(v => v + (255-v)*(w/100));
@@ -1700,6 +1773,7 @@ function renderRecipe(hex){
   recipeRow.dataset.k = rec.k;
 }
 
+// ส่งสูตรที่คำนวณได้เข้าสู่ห้องผสมสี
 document.getElementById('loadRecipeBtn').addEventListener('click', () => {
   const row = document.getElementById('recipeRow');
   if(!row.dataset.r) return;
@@ -1731,7 +1805,7 @@ document.getElementById('addToMixLabBtn').addEventListener('click', () => {
   }
 });
 
-// Initial Setup
+// เริ่มต้นตั้งค่าหน้าเว็บเมื่อโหลดเสร็จ
 renderSliders();
 updateMixingDisplay();
 </script>
