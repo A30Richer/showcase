@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ดูดสี — เครื่องมือดูดสีจากภาพ</title>
+<title>ดูดสี & ห้องผสมสี — เครื่องมือดูดและผสมสีตามสัดส่วน 100%</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#121014;
@@ -62,12 +62,26 @@
     border-radius:999px;
     font-size:13px;
     font-weight:500;
-    transition: border-color 0.2s ease, transform 0.15s ease;
+    transition: all 0.15s ease;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    user-select:none;
   }
   .btn:hover{ border-color:var(--accent); }
   .btn:active{ transform:scale(0.97); }
   .btn:disabled{ opacity:0.35; cursor:not-allowed; }
   .btn:disabled:hover{ border-color:var(--border); }
+  .btn-accent{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#160b10;
+    font-weight:600;
+  }
+  .btn-accent:hover{
+    opacity:0.92;
+    box-shadow:0 4px 14px var(--accent-soft);
+  }
 
   main{
     max-width:1180px;
@@ -79,7 +93,7 @@
   #dropzone{
     border:1.5px dashed var(--border);
     border-radius:20px;
-    min-height:62vh;
+    min-height:55vh;
     display:flex;
     flex-direction:column;
     align-items:center;
@@ -107,7 +121,7 @@
     color:var(--text-muted);
     font-size:15px;
     margin:0 0 22px;
-    max-width:420px;
+    max-width:460px;
     line-height:1.6;
   }
   #fileInput{ display:none; }
@@ -116,7 +130,7 @@
   #workspace{ display:none; gap:28px; }
   .workspace-grid{
     display:grid;
-    grid-template-columns: 1fr 320px;
+    grid-template-columns: 1fr 340px;
     gap:28px;
   }
   @media (max-width: 860px){
@@ -148,11 +162,12 @@
     transform:translateX(-50%);
     font-size:12px;
     color:var(--text-muted);
-    background:rgba(0,0,0,0.4);
-    backdrop-filter: blur(6px);
+    background:rgba(0,0,0,0.5);
+    backdrop-filter: blur(8px);
     padding:6px 14px;
     border-radius:999px;
     pointer-events:none;
+    border:1px solid rgba(255,255,255,0.08);
   }
 
   /* Loupe */
@@ -190,6 +205,7 @@
     font-size:12px;
     display:none;
     white-space:nowrap;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   }
 
   /* ---- Side panel ---- */
@@ -249,9 +265,12 @@
     border-radius:10px;
     border:1px solid rgba(255,255,255,0.1);
     cursor:pointer;
-    transition: transform 0.15s ease;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
-  .palette-item:hover{ transform:scale(1.06); }
+  .palette-item:hover{
+    transform:scale(1.06);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
   .palette-item .remove{
     position:absolute; top:-6px; right:-6px;
     width:18px; height:18px;
@@ -292,6 +311,7 @@
     pointer-events:none;
     transition: opacity 0.25s ease, transform 0.25s ease;
     z-index:100;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
   }
   #toast.show{
     opacity:1;
@@ -300,7 +320,7 @@
 
   footer{
     text-align:center;
-    padding:30px 20px 40px;
+    padding:40px 20px 50px;
     color:var(--text-muted);
     font-size:12px;
   }
@@ -318,7 +338,7 @@
     color:var(--text-muted);
     margin-bottom:6px;
   }
-  .recipe-row .recipe-text{
+  .recipe-text{
     font-size:13px;
     line-height:1.6;
   }
@@ -336,71 +356,187 @@
   .recipe-chip .dot{
     width:9px; height:9px; border-radius:50%; flex-shrink:0;
   }
-  .load-recipe-btn{
+  .card-action-btns{
+    display:flex;
+    gap:8px;
     margin-top:10px;
+    flex-wrap:wrap;
+  }
+  .load-recipe-btn{
     background:none;
     border:1px solid var(--border);
     color:var(--text-muted);
     font-size:12px;
     padding:6px 12px;
     border-radius:999px;
+    transition: all 0.15s ease;
   }
   .load-recipe-btn:hover{ color:var(--accent); border-color:var(--accent); }
   .load-recipe-btn:disabled{ opacity:0.3; cursor:not-allowed; }
-  .load-recipe-btn:disabled:hover{ color:var(--text-muted); border-color:var(--border); }
 
+  /* ========================================================= */
   /* ---- Mixing Lab ---- */
+  /* ========================================================= */
   #mixlab{
-    margin-top:36px;
-    padding-top:6px;
+    margin-top:48px;
+    padding-top:20px;
+    border-top:1px solid var(--border);
   }
-  .section-heading{
+  .mixlab-header{
     display:flex;
-    align-items:baseline;
-    gap:10px;
-    margin-bottom:6px;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:16px;
+    margin-bottom:20px;
+    flex-wrap:wrap;
   }
   .section-heading h2{
-    font-size:22px;
-    font-weight:600;
-    margin:0;
+    font-size:24px;
+    font-weight:700;
+    margin:0 0 6px;
     letter-spacing:-0.01em;
   }
   .section-heading p{
-    margin:0 0 20px;
+    margin:0;
     color:var(--text-muted);
     font-size:13.5px;
     line-height:1.6;
-    max-width:560px;
+    max-width:620px;
   }
+
+  /* Mode Switcher Tabs */
+  .mode-tabs{
+    display:flex;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:999px;
+    padding:4px;
+    gap:4px;
+  }
+  .mode-tab{
+    background:none;
+    border:none;
+    color:var(--text-muted);
+    padding:8px 16px;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:500;
+    transition: all 0.15s ease;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+  }
+  .mode-tab.active{
+    background:var(--accent);
+    color:#121014;
+    font-weight:600;
+    box-shadow:0 2px 8px var(--accent-soft);
+  }
+
+  /* Stacked Ratio Bar */
+  .ratio-bar-wrapper{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:16px 20px;
+    margin-bottom:24px;
+  }
+  .ratio-bar-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+    font-size:13px;
+  }
+  .ratio-bar-head .total-indicator{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-weight:600;
+  }
+  .total-badge{
+    padding:2px 8px;
+    border-radius:6px;
+    font-size:12px;
+    font-weight:600;
+  }
+  .total-badge.ok{
+    background:rgba(52, 199, 89, 0.16);
+    color:#34C759;
+    border:1px solid rgba(52, 199, 89, 0.3);
+  }
+  .total-badge.warn{
+    background:rgba(255, 149, 0, 0.16);
+    color:#FF9500;
+    border:1px solid rgba(255, 149, 0, 0.3);
+  }
+
+  .stacked-ratio-bar{
+    height:22px;
+    background:var(--surface-2);
+    border-radius:999px;
+    display:flex;
+    overflow:hidden;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+    border:1px solid rgba(255,255,255,0.06);
+  }
+  .ratio-bar-segment{
+    height:100%;
+    transition: width 0.15s ease, background 0.15s ease;
+    position:relative;
+    min-width:0;
+  }
+  .ratio-bar-segment:hover{
+    filter:brightness(1.15);
+  }
+
   .mixlab-grid{
     display:grid;
-    grid-template-columns: 1.1fr 0.9fr;
+    grid-template-columns: 1.15fr 0.85fr;
     gap:28px;
     align-items:start;
   }
   @media (max-width: 860px){
     .mixlab-grid{ grid-template-columns: 1fr; }
   }
-  .sliders{
+
+  .mix-controls-panel{
     display:flex;
     flex-direction:column;
-    gap:16px;
+    gap:18px;
   }
+
+  .sliders-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+
   .slider-row{
     display:grid;
-    grid-template-columns: 78px 1fr 46px;
+    grid-template-columns: 100px 1fr 54px 34px;
     align-items:center;
-    gap:12px;
+    gap:10px;
+    padding:4px 0;
+  }
+  .slider-row.custom-color-row{
+    grid-template-columns: 100px 1fr 54px 34px 28px;
   }
   .slider-row label{
     display:flex; align-items:center; gap:8px;
     font-size:13px;
     font-weight:500;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
   }
   .slider-row label .swatch-dot{
-    width:12px; height:12px; border-radius:4px; flex-shrink:0;
-    border:1px solid rgba(255,255,255,0.15);
+    width:14px; height:14px; border-radius:4px; flex-shrink:0;
+    border:1px solid rgba(255,255,255,0.2);
   }
   .slider-row input[type=range]{
     -webkit-appearance:none;
@@ -410,6 +546,7 @@
     border-radius:999px;
     background:var(--surface-2);
     outline:none;
+    transition: background 0.15s ease;
   }
   .slider-row input[type=range]::-webkit-slider-thumb{
     -webkit-appearance:none;
@@ -419,53 +556,201 @@
     border:3px solid var(--surface);
     box-shadow:0 0 0 1px var(--border);
     cursor:pointer;
+    transition: transform 0.1s ease;
   }
-  .slider-row input[type=range]::-moz-range-thumb{
-    width:18px; height:18px;
-    border-radius:50%;
-    background:var(--text);
-    border:3px solid var(--surface);
-    box-shadow:0 0 0 1px var(--border);
-    cursor:pointer;
+  .slider-row input[type=range]::-webkit-slider-thumb:hover{
+    transform:scale(1.15);
   }
-  .slider-row .pct{
-    font-size:12px;
-    color:var(--text-muted);
-    text-align:right;
+  .slider-row input[type=range]:disabled{
+    opacity:0.4;
+    cursor:not-allowed;
   }
-  .mixlab-actions{
-    display:flex; gap:10px; margin-top:6px;
+  .slider-row input[type=range]:disabled::-webkit-slider-thumb{
+    cursor:not-allowed;
+    background:var(--text-muted);
   }
 
+  .slider-row .pct-input{
+    width:100%;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:4px 6px;
+    border-radius:6px;
+    font-size:12px;
+    text-align:right;
+    outline:none;
+  }
+  .slider-row .pct-input:focus{
+    border-color:var(--accent);
+  }
+
+  .lock-btn{
+    background:none;
+    border:1px solid transparent;
+    color:var(--text-muted);
+    border-radius:6px;
+    padding:4px;
+    font-size:13px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition: all 0.15s ease;
+  }
+  .lock-btn:hover{
+    color:var(--text);
+    border-color:var(--border);
+  }
+  .lock-btn.locked{
+    color:var(--accent);
+    background:var(--accent-soft);
+    border-color:var(--accent);
+  }
+
+  .del-color-btn{
+    background:none;
+    border:none;
+    color:var(--text-muted);
+    font-size:14px;
+    cursor:pointer;
+    padding:2px 4px;
+    border-radius:4px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .del-color-btn:hover{
+    color:#FF453A;
+    background:rgba(255,69,58,0.12);
+  }
+
+  .mixlab-toolbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .toolbar-group{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+
+  /* Mix Preview & Output Card */
   .mix-preview-card{
     background:var(--surface);
     border:1px solid var(--border);
     border-radius:var(--radius);
     padding:20px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
   }
   .mix-preview-block{
     width:100%;
-    height:130px;
+    height:140px;
     border-radius:12px;
     border:1px solid rgba(255,255,255,0.12);
-    margin-bottom:16px;
-    transition:background 0.1s ease;
+    transition:background 0.15s ease;
+    box-shadow:0 6px 16px rgba(0,0,0,0.3);
   }
   .mix-values{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-bottom:14px;
+    flex-wrap:wrap;
+    gap:8px;
   }
-  .mix-values .mono{ font-size:15px; font-weight:500; cursor:pointer; }
-  .mix-caption{
+  .mix-values .hex-badge{
+    font-size:18px;
+    font-weight:600;
+    cursor:pointer;
+    padding:4px 10px;
     background:var(--surface-2);
+    border:1px solid var(--border);
+    border-radius:8px;
+    transition: all 0.15s ease;
+  }
+  .mix-values .hex-badge:hover{
+    border-color:var(--accent);
+    color:var(--accent);
+  }
+  .mix-values .rgb-text{
+    color:var(--text-muted);
+    font-size:13px;
+  }
+
+  .recipe-summary-box{
+    background:var(--surface-2);
+    border:1px solid var(--border);
     border-radius:10px;
     padding:12px 14px;
     font-size:13px;
     line-height:1.6;
-    min-height:20px;
+  }
+  .recipe-summary-box .box-title{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    color:var(--text-muted);
+    margin-bottom:6px;
+    font-weight:600;
+  }
+  .formula-text{
     color:var(--text);
+    font-size:13px;
+    margin-bottom:8px;
+  }
+  .ratio-parts-text{
+    font-size:12px;
+    color:var(--text-muted);
+  }
+
+  .mix-caption{
+    background:rgba(255,255,255,0.03);
+    border:1px dashed var(--border);
+    border-radius:10px;
+    padding:10px 14px;
+    font-size:12.5px;
+    line-height:1.6;
+    color:var(--text-muted);
+  }
+
+  .preview-actions{
+    display:flex;
+    gap:8px;
+    flex-direction:column;
+  }
+
+  /* Custom Color Adder Popover/Modal */
+  .add-color-drawer{
+    background:var(--surface-2);
+    border:1px dashed var(--border);
+    border-radius:10px;
+    padding:12px 14px;
+    margin-top:6px;
+    display:none;
+  }
+  .add-color-drawer.show{
+    display:block;
+  }
+  .palette-pick-grid{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-top:8px;
+  }
+  .palette-pick-chip{
+    width:28px;
+    height:28px;
+    border-radius:6px;
+    border:1px solid rgba(255,255,255,0.2);
+    cursor:pointer;
+    transition: transform 0.15s ease;
+  }
+  .palette-pick-chip:hover{
+    transform:scale(1.15);
   }
 </style>
 </head>
@@ -474,11 +759,11 @@
 <header>
   <div class="brand">
     <div class="dot" id="brandDot"></div>
-    <h1 class="display">ดูดสี</h1>
-    <span>เก็บทุกสีจากภาพ ทีละจุด</span>
+    <h1 class="display">ดูดสี & ห้องผสมสี</h1>
+    <span>ดูดสีจากภาพ • ผสมสีตามสัดส่วน 100% บริสุทธิ์</span>
   </div>
   <div class="actions">
-    <button class="btn" id="changeBtn" style="display:none;">เปลี่ยนรูป</button>
+    <button class="btn" id="changeBtn" style="display:none;">🖼️ เปลี่ยนรูป</button>
   </div>
 </header>
 
@@ -491,8 +776,8 @@
       <circle cx="6" cy="18" r="1.4" fill="currentColor" stroke="none"/>
     </svg>
     <h2 class="display">ลากรูปมาวางตรงนี้</h2>
-    <p>หรือคลิกเพื่อเลือกไฟล์จากเครื่อง — รองรับ JPG, PNG, WebP<br>ทุกอย่างประมวลผลในเบราว์เซอร์ ไม่มีการอัปโหลดขึ้นเซิร์ฟเวอร์</p>
-    <button class="btn" style="background:var(--accent); border-color:var(--accent); color:#160b10;">เลือกรูปภาพ</button>
+    <p>หรือคลิกเพื่อเลือกไฟล์จากเครื่อง — รองรับ JPG, PNG, WebP<br>ทุกอย่างประมวลผลในเบราว์เซอร์ของคุณ 100% ปลอดภัย ไม่มีการอัปโหลด</p>
+    <button class="btn btn-accent">📂 เลือกรูปภาพ</button>
     <input type="file" id="fileInput" accept="image/*">
   </div>
 
@@ -505,7 +790,7 @@
 
       <div class="side">
         <div class="card">
-          <h3>สีล่าสุด</h3>
+          <h3>สีล่าสุดที่ดูด</h3>
           <div class="current-swatch">
             <div class="swatch-block" id="currentBlock" style="background:#242229;"></div>
             <div class="current-values" id="currentValues">
@@ -514,9 +799,12 @@
             </div>
           </div>
           <div class="recipe-row" id="recipeRow" style="display:none;">
-            <div class="recipe-label">สูตรผสมโดยประมาณ (แม่สี + ขาว/ดำ)</div>
+            <div class="recipe-label">สูตรผสมโดยประมาณ (สัดส่วน 100%)</div>
             <div class="recipe-text" id="recipeText"></div>
-            <button class="load-recipe-btn" id="loadRecipeBtn">ปรับต่อในห้องผสมสี ↓</button>
+            <div class="card-action-btns">
+              <button class="load-recipe-btn" id="loadRecipeBtn">🧪 ปรับต่อในห้องผสม 100% ↓</button>
+              <button class="load-recipe-btn" id="addToMixLabBtn">➕ ส่งเข้าโถผสม</button>
+            </div>
           </div>
         </div>
 
@@ -530,63 +818,94 @@
     </div>
   </div>
 
+  <!-- ========================================================= -->
+  <!-- ห้องผสมสี (Color Mixing Lab) -->
+  <!-- ========================================================= -->
   <div id="mixlab">
-    <div class="section-heading">
-      <h2 class="display">ห้องผสมสี</h2>
+    <div class="mixlab-header">
+      <div class="section-heading">
+        <h2 class="display">🧪 ห้องผสมสี (Color Mixer)</h2>
+        <p>ผสมสีแบบเม็ดสีจริง (Subtractive Pigment Mixing) กำหนดสัดส่วนรวม 100% ถ้วนเหมือนผสมสีจริงบนจานสี นำสูตรไปตวงหยดผสมได้ทันที</p>
+      </div>
+
+      <div class="mode-tabs">
+        <button class="mode-tab active" id="tabRatioMode">🎯 สัดส่วนรวม 100%</button>
+        <button class="mode-tab" id="tabFreeMode">🎚️ ปรับอิสระ</button>
+      </div>
     </div>
-    <p>ผสมจากแม่สี 3 สี — แดง เหลือง น้ำเงิน — บวกขาวกับดำ แล้วดูว่าสีที่ได้เฟสไปทิศทางไหนเมื่อเพิ่มสัดส่วนแต่ละสี เหมือนผสมสีจริงบนจานสี</p>
+
+    <!-- Stacked Ratio Bar (Only in 100% mode) -->
+    <div class="ratio-bar-wrapper" id="ratioBarWrapper">
+      <div class="ratio-bar-head">
+        <span>📊 แถบสัดส่วนสีในส่วนผสม</span>
+        <div class="total-indicator">
+          <span>สัดส่วนรวม:</span>
+          <span class="total-badge ok mono" id="totalPctBadge">100%</span>
+        </div>
+      </div>
+      <div class="stacked-ratio-bar" id="stackedRatioBar">
+        <!-- Segments dynamically rendered -->
+      </div>
+    </div>
+
     <div class="mixlab-grid">
-      <div class="sliders">
-        <div class="slider-row">
-          <label><span class="swatch-dot" style="background:#ED1C24;"></span>แดง</label>
-          <input type="range" id="sldR" min="0" max="100" value="0">
-          <span class="pct mono" id="pctR">0%</span>
+      <div class="mix-controls-panel">
+        <div class="sliders-card">
+          <div id="sliderList">
+            <!-- Dynamic Sliders (Default: Red, Yellow, Blue, White, Black + Custom Colors) -->
+          </div>
+
+          <div class="add-color-drawer" id="addColorDrawer">
+            <div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">เลือกสีจากพาเลตต์ที่ดูดไว้เพื่อเพิ่มเข้าส่วนผสม:</div>
+            <div class="palette-pick-grid" id="palettePickGrid"></div>
+          </div>
         </div>
-        <div class="slider-row">
-          <label><span class="swatch-dot" style="background:#FFE300;"></span>เหลือง</label>
-          <input type="range" id="sldY" min="0" max="100" value="0">
-          <span class="pct mono" id="pctY">0%</span>
-        </div>
-        <div class="slider-row">
-          <label><span class="swatch-dot" style="background:#2A5FA8;"></span>น้ำเงิน</label>
-          <input type="range" id="sldB" min="0" max="100" value="0">
-          <span class="pct mono" id="pctB">0%</span>
-        </div>
-        <div class="slider-row">
-          <label><span class="swatch-dot" style="background:#F4F2EE; border-color:#665F6E;"></span>ขาว</label>
-          <input type="range" id="sldW" min="0" max="100" value="0">
-          <span class="pct mono" id="pctW">0%</span>
-        </div>
-        <div class="slider-row">
-          <label><span class="swatch-dot" style="background:#0A090C;"></span>ดำ</label>
-          <input type="range" id="sldK" min="0" max="100" value="0">
-          <span class="pct mono" id="pctK">0%</span>
-        </div>
-        <div class="mixlab-actions">
-          <button class="btn" id="resetMixBtn">ล้างเป็นค่าเริ่มต้น</button>
+
+        <div class="mixlab-toolbar">
+          <div class="toolbar-group">
+            <button class="btn" id="equalizeBtn">⚖️ เกลี่ยเท่ากัน</button>
+            <button class="btn" id="openAddColorBtn">➕ เพิ่มสีจากรูป</button>
+          </div>
+          <div class="toolbar-group">
+            <button class="btn" id="resetMixBtn">🔄 รีเซ็ต</button>
+          </div>
         </div>
       </div>
 
       <div class="mix-preview-card">
         <div class="mix-preview-block" id="mixPreviewBlock" style="background:#1B1920;"></div>
+        
         <div class="mix-values">
-          <span class="mono" id="mixHex" title="คลิกเพื่อคัดลอก">#1B1920</span>
-          <span class="mono" id="mixRgb" style="color:var(--text-muted); font-size:13px;">rgb(27, 25, 32)</span>
+          <span class="mono hex-badge" id="mixHex" title="คลิกเพื่อคัดลอก">#1B1920</span>
+          <span class="mono rgb-text" id="mixRgb">rgb(27, 25, 32)</span>
         </div>
-        <div class="mix-caption" id="mixCaption">เลื่อนแถบด้านซ้ายเพื่อเริ่มผสมสี — จะบอกทิศทางที่สีเปลี่ยนไปให้ทุกครั้ง</div>
+
+        <div class="recipe-summary-box">
+          <div class="box-title">📋 สูตรผสมสี (Recipe)</div>
+          <div class="formula-text mono" id="recipeFormulaText">—</div>
+          <div class="ratio-parts-text mono" id="recipePartsText">—</div>
+        </div>
+
+        <div class="mix-caption" id="mixCaption">เลื่อนแถบเพื่อปรับสัดส่วน — จะคำนวณการเบลนด์สีแบบเม็ดสีจริงให้ทันที</div>
+
+        <div class="preview-actions">
+          <button class="btn btn-accent" id="saveMixToPaletteBtn">💾 บันทึกสีนี้ลงในพาเลตต์</button>
+          <button class="btn" id="copyFormulaBtn">📋 คัดลอกสูตรผสม</button>
+        </div>
       </div>
     </div>
   </div>
 
 </main>
 
-<footer>ดูดสี — ทำงานทั้งหมดในเบราว์เซอร์ของคุณ ไม่เก็บภาพหรือสีไว้ที่ไหน</footer>
+<footer>ดูดสี & ห้องผสมสี — ทำงานทั้งหมดในเบราว์เซอร์ของคุณ รวดเร็ว ปลอดภัย ไม่เก็บข้อมูล</footer>
 
 <div id="loupe"><canvas id="loupeCanvas" width="120" height="120"></canvas></div>
 <div id="loupeReadout" class="mono"></div>
 <div id="toast"></div>
 
 <script>
+// ---------- DOM References ----------
 const dropzone = document.getElementById('dropzone');
 const fileInput = document.getElementById('fileInput');
 const workspace = document.getElementById('workspace');
@@ -609,6 +928,7 @@ const brandDot = document.getElementById('brandDot');
 
 let palette = [];
 let imgLoaded = false;
+let latestPickedHex = null;
 
 // ---------- Upload handling ----------
 dropzone.addEventListener('click', () => fileInput.click());
@@ -648,7 +968,7 @@ function loadImage(file){
       imgLoaded = true;
       dropzone.style.display='none';
       workspace.style.display='block';
-      changeBtn.style.display='inline-block';
+      changeBtn.style.display='inline-flex';
     };
     img.src = e.target.result;
   };
@@ -663,6 +983,14 @@ function getPixel(x,y){
 function toHex({r,g,b}){
   return '#' + [r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('').toUpperCase();
 }
+function hexToRgb(hex){
+  const n = hex.replace('#','');
+  return {
+    r: parseInt(n.substring(0,2),16),
+    g: parseInt(n.substring(2,4),16),
+    b: parseInt(n.substring(4,6),16)
+  };
+}
 function toRgbStr({r,g,b}){ return `rgb(${r}, ${g}, ${b})`; }
 
 function setAccent(hex){
@@ -671,9 +999,8 @@ function setAccent(hex){
   document.documentElement.style.setProperty('--accent-soft', soft);
 }
 function hexToRgba(hex, a){
-  const n = hex.replace('#','');
-  const r = parseInt(n.substring(0,2),16), g = parseInt(n.substring(2,4),16), b = parseInt(n.substring(4,6),16);
-  return `rgba(${r},${g},${b},${a})`;
+  const rgb = hexToRgb(hex);
+  return `rgba(${rgb.r},${rgb.g},${rgb.b},${a})`;
 }
 
 // ---------- Mouse interaction over canvas ----------
@@ -709,14 +1036,13 @@ canvas.addEventListener('mousemove', e=>{
 });
 
 function drawLoupe(cx, cy){
-  const region = 11; // pixels sampled
+  const region = 11;
   const half = Math.floor(region/2);
   const sx = Math.max(0, cx-half);
   const sy = Math.max(0, cy-half);
   loupeCtx.imageSmoothingEnabled = false;
   loupeCtx.clearRect(0,0,120,120);
   loupeCtx.drawImage(canvas, sx, sy, region, region, 0, 0, 120, 120);
-  // grid overlay
   loupeCtx.strokeStyle = 'rgba(255,255,255,0.12)';
   loupeCtx.lineWidth = 1;
   const cell = 120/region;
@@ -741,11 +1067,11 @@ canvas.addEventListener('click', e=>{
 
 function commitColor(px){
   const hex = toHex(px);
+  latestPickedHex = hex;
   currentBlock.style.background = hex;
   valHex.textContent = hex;
   valRgb.textContent = toRgbStr(px);
   valRgb.style.color = 'var(--text)';
-  valRgb.style.fontSize = '12px';
   setAccent(hex);
   addToPalette(hex);
   renderRecipe(hex);
@@ -754,13 +1080,17 @@ function commitColor(px){
 
 // ---------- Palette ----------
 function addToPalette(hex){
-  palette.unshift(hex);
-  if(palette.length>24) palette.pop();
-  renderPalette();
+  if(!palette.includes(hex)){
+    palette.unshift(hex);
+    if(palette.length>32) palette.pop();
+    renderPalette();
+    renderPalettePicker();
+  }
 }
 function removeFromPalette(idx){
   palette.splice(idx,1);
   renderPalette();
+  renderPalettePicker();
 }
 function renderPalette(){
   paletteGrid.innerHTML='';
@@ -797,6 +1127,7 @@ function renderPalette(){
 clearBtn.addEventListener('click', ()=>{
   palette=[];
   renderPalette();
+  renderPalettePicker();
 });
 
 // ---------- Copy / toast ----------
@@ -819,8 +1150,9 @@ valHex.addEventListener('click', ()=>{ if(valHex.textContent!=='—') copyText(v
 valHex.style.cursor='pointer';
 
 // =========================================================
-// ห้องผสมสี — RYB paint-mixing engine (Gossett–Chen cube model)
+// ห้องผสมสี — Physical Pigment Engine & 100% Pure Ratio Mode
 // =========================================================
+
 const CORNERS = {
   white:  [1, 1, 1],
   blue:   [0.163, 0.373, 0.6],
@@ -831,8 +1163,9 @@ const CORNERS = {
   orange: [1, 0.5, 0],
   black:  [0.2, 0.094, 0]
 };
+
 function lerp3(t, A, B){
-  const w = t*t*(3-2*t); // cubic smoothstep weighting
+  const w = t*t*(3-2*t);
   return [0,1,2].map(i => A[i] + w*(B[i]-A[i]));
 }
 function rybMix(iR, iY, iB){
@@ -842,91 +1175,351 @@ function rybMix(iR, iY, iB){
   const x3 = lerp3(iB, CORNERS.orange, CORNERS.black);
   const y0 = lerp3(iY, x0, x2);
   const y1 = lerp3(iY, x1, x3);
-  return lerp3(iR, y0, y1); // [r,g,b] 0..1
-}
-function applyTint(rgb, whiteAmt, blackAmt){
-  let c = rgb.map(v => v + (1-v)*whiteAmt); // toward white
-  c = c.map(v => v*(1-blackAmt));           // toward black
-  return c;
-}
-function mixFromPercents(r,y,b,w,k){
-  const raw = rybMix(r/100, y/100, b/100);
-  const toned = applyTint(raw, w/100, k/100);
-  return toned.map(v => Math.round(Math.max(0,Math.min(1,v))*255));
-}
-function rgbArrToHex(arr){
-  return '#'+arr.map(v=>v.toString(16).padStart(2,'0')).join('').toUpperCase();
+  return lerp3(iR, y0, y1);
 }
 
-// ---- decompose an arbitrary hex color into an approximate RYB+W+K recipe ----
-function decomposeToRecipe(targetHex){
-  const t = {
-    r: parseInt(targetHex.substr(1,2),16),
-    g: parseInt(targetHex.substr(3,2),16),
-    b: parseInt(targetHex.substr(5,2),16)
+// Convert RGB (0..255) to Subtractive Pigment Absorption/Scattering (K/S)
+function rgbToPigment(rgb){
+  const r = Math.max(1, Math.min(254, rgb.r)) / 255;
+  const g = Math.max(1, Math.min(254, rgb.g)) / 255;
+  const b = Math.max(1, Math.min(254, rgb.b)) / 255;
+  return {
+    c: (1 - r)**2 / (2 * r),
+    m: (1 - g)**2 / (2 * g),
+    y: (1 - b)**2 / (2 * b)
   };
-  let best = null, bestDist = Infinity;
-  const step = 20; // coarse pass, 0..100 in steps of 20
-  for(let r=0; r<=100; r+=step)
-  for(let y=0; y<=100; y+=step)
-  for(let b=0; b<=100; b+=step)
-  for(let w=0; w<=100; w+=step)
-  for(let k=0; k<=100; k+=step){
-    const c = mixFromPercents(r,y,b,w,k);
-    const d = (c[0]-t.r)**2 + (c[1]-t.g)**2 + (c[2]-t.b)**2;
-    if(d < bestDist){ bestDist = d; best = {r,y,b,w,k}; }
+}
+function pigmentToRgb(pigment){
+  function ksToChannel(ks){
+    const r = 1 + ks - Math.sqrt(ks*ks + 2*ks);
+    return Math.round(Math.max(0, Math.min(255, r * 255)));
   }
-  // refine pass around the best coarse result
-  const range = step;
-  for(let r=Math.max(0,best.r-range); r<=Math.min(100,best.r+range); r+=5)
-  for(let y=Math.max(0,best.y-range); y<=Math.min(100,best.y+range); y+=5)
-  for(let b=Math.max(0,best.b-range); b<=Math.min(100,best.b+range); b+=5)
-  for(let w=Math.max(0,best.w-range); w<=Math.min(100,best.w+range); w+=5)
-  for(let k=Math.max(0,best.k-range); k<=Math.min(100,best.k+range); k+=5){
-    const c = mixFromPercents(r,y,b,w,k);
-    const d = (c[0]-t.r)**2 + (c[1]-t.g)**2 + (c[2]-t.b)**2;
-    if(d < bestDist){ bestDist = d; best = {r,y,b,w,k}; }
-  }
-  return best;
+  return {
+    r: ksToChannel(pigment.c),
+    g: ksToChannel(pigment.m),
+    b: ksToChannel(pigment.y)
+  };
 }
 
-function renderRecipe(hex){
-  const rec = decomposeToRecipe(hex);
-  const parts = [
-    {name:'แดง', pct:rec.r, color:'#ED1C24'},
-    {name:'เหลือง', pct:rec.y, color:'#FFE300'},
-    {name:'น้ำเงิน', pct:rec.b, color:'#2A5FA8'},
-    {name:'ขาว', pct:rec.w, color:'#F4F2EE'},
-    {name:'ดำ', pct:rec.k, color:'#0A090C'}
-  ].filter(p => p.pct > 0);
-  const recipeRow = document.getElementById('recipeRow');
-  const recipeText = document.getElementById('recipeText');
-  if(parts.length===0){
-    recipeText.innerHTML = '<span style="color:var(--text-muted);">สีนี้ใกล้เคียงสีขาวล้วน แทบไม่ต้องผสมอะไร</span>';
-  } else {
-    recipeText.innerHTML = parts.map(p =>
-      `<span class="recipe-chip"><span class="dot" style="background:${p.color};"></span>${p.name} ${p.pct}%</span>`
-    ).join(' ');
+// State for active colors in mixing lab
+let isPureRatioMode = true;
+
+let mixColors = [
+  { id: 'red',    name: 'แดง (RYB)',   hex: '#ED1C24', pct: 40, locked: false, isBase: true },
+  { id: 'yellow', name: 'เหลือง (RYB)', hex: '#FFE300', pct: 40, locked: false, isBase: true },
+  { id: 'blue',   name: 'น้ำเงิน (RYB)', hex: '#2A5FA8', pct: 0,  locked: false, isBase: true },
+  { id: 'white',  name: 'ขาว',        hex: '#F4F2EE', pct: 20, locked: false, isBase: true },
+  { id: 'black',  name: 'ดำ',         hex: '#0A090C', pct: 0,  locked: false, isBase: true }
+];
+
+// Calculate greatest common divisor for simplifying ratio
+function gcd(a, b){ return b === 0 ? a : gcd(b, a % b); }
+function findRatioString(parts){
+  const nonZero = parts.filter(p => p.pct > 0);
+  if(nonZero.length === 0) return '0';
+  let g = nonZero[0].pct;
+  for(let i = 1; i < nonZero.length; i++){
+    g = gcd(g, nonZero[i].pct);
   }
-  recipeRow.style.display = 'block';
-  recipeRow.dataset.r = rec.r; recipeRow.dataset.y = rec.y; recipeRow.dataset.b = rec.b;
-  recipeRow.dataset.w = rec.w; recipeRow.dataset.k = rec.k;
+  g = g || 1;
+  return nonZero.map(p => `${p.name} ${p.pct / g}`).join(' : ');
 }
 
-// ---- Mixing lab sliders ----
-const sldR = document.getElementById('sldR'), sldY = document.getElementById('sldY'),
-      sldB = document.getElementById('sldB'), sldW = document.getElementById('sldW'),
-      sldK = document.getElementById('sldK');
-const pctR = document.getElementById('pctR'), pctY = document.getElementById('pctY'),
-      pctB = document.getElementById('pctB'), pctW = document.getElementById('pctW'),
-      pctK = document.getElementById('pctK');
+// Render dynamic slider UI
+function renderSliders(){
+  const list = document.getElementById('sliderList');
+  list.innerHTML = '';
+
+  mixColors.forEach((c, idx) => {
+    const row = document.createElement('div');
+    row.className = 'slider-row' + (c.isBase ? '' : ' custom-color-row');
+
+    // Label
+    const label = document.createElement('label');
+    label.innerHTML = `<span class="swatch-dot" style="background:${c.hex};"></span><span>${c.name}</span>`;
+    label.title = `${c.name} (${c.hex})`;
+
+    // Slider
+    const slider = document.createElement('input');
+    slider.type = 'range';
+    slider.min = '0';
+    slider.max = '100';
+    slider.value = c.pct;
+    slider.disabled = (isPureRatioMode && c.locked);
+
+    // Number/Pct input
+    const numInput = document.createElement('input');
+    numInput.type = 'number';
+    numInput.className = 'pct-input mono';
+    numInput.min = '0';
+    numInput.max = '100';
+    numInput.value = c.pct;
+    numInput.disabled = (isPureRatioMode && c.locked);
+
+    // Lock button (in 100% mode)
+    const lockBtn = document.createElement('button');
+    lockBtn.className = 'lock-btn' + (c.locked ? ' locked' : '');
+    lockBtn.innerHTML = c.locked ? '🔒' : '🔓';
+    lockBtn.title = c.locked ? 'ปลดล็อคการคำนวณสัดส่วน' : 'ล็อคเปอร์เซ็นต์นี้ไว้';
+    lockBtn.style.display = isPureRatioMode ? 'flex' : 'none';
+
+    lockBtn.addEventListener('click', () => {
+      c.locked = !c.locked;
+      renderSliders();
+    });
+
+    // Slider change handler
+    const onValChange = (newVal) => {
+      newVal = Math.max(0, Math.min(100, Math.round(Number(newVal) || 0)));
+      if(isPureRatioMode){
+        autoBalanceRatios(idx, newVal);
+      } else {
+        c.pct = newVal;
+      }
+      updateMixingDisplay();
+    };
+
+    slider.addEventListener('input', (e) => onValChange(e.target.value));
+    numInput.addEventListener('change', (e) => onValChange(e.target.value));
+
+    row.appendChild(label);
+    row.appendChild(slider);
+    row.appendChild(numInput);
+    row.appendChild(lockBtn);
+
+    // Delete button for custom colors
+    if(!c.isBase){
+      const delBtn = document.createElement('button');
+      delBtn.className = 'del-color-btn';
+      delBtn.innerHTML = '✕';
+      delBtn.title = 'ลบสีนี้ออกจากส่วนผสม';
+      delBtn.addEventListener('click', () => {
+        mixColors.splice(idx, 1);
+        if(isPureRatioMode) equalizeRatios();
+        renderSliders();
+        updateMixingDisplay();
+      });
+      row.appendChild(delBtn);
+    }
+
+    list.appendChild(row);
+  });
+
+  renderRatioBar();
+}
+
+// Auto balance ratios to always sum to exactly 100%
+function autoBalanceRatios(targetIdx, targetVal){
+  const target = mixColors[targetIdx];
+  
+  // Calculate total locked by other colors
+  let lockedSum = 0;
+  mixColors.forEach((c, idx) => {
+    if(idx !== targetIdx && c.locked){
+      lockedSum += c.pct;
+    }
+  });
+
+  // Clamp target value so it doesn't exceed available room
+  const maxAllowed = Math.max(0, 100 - lockedSum);
+  targetVal = Math.min(targetVal, maxAllowed);
+  target.pct = targetVal;
+
+  const remainingToDistribute = 100 - lockedSum - targetVal;
+  const otherUnlocked = mixColors.filter((c, idx) => idx !== targetIdx && !c.locked);
+
+  if(otherUnlocked.length > 0){
+    const currentUnlockedSum = otherUnlocked.reduce((sum, c) => sum + c.pct, 0);
+    
+    if(currentUnlockedSum > 0){
+      let runningSum = 0;
+      otherUnlocked.forEach((c, i) => {
+        if(i === otherUnlocked.length - 1){
+          // Last element takes exact difference to ensure 100% total
+          c.pct = Math.max(0, remainingToDistribute - runningSum);
+        } else {
+          const share = Math.round((c.pct / currentUnlockedSum) * remainingToDistribute);
+          c.pct = Math.max(0, share);
+          runningSum += c.pct;
+        }
+      });
+    } else {
+      // Split evenly among other unlocked
+      const share = Math.floor(remainingToDistribute / otherUnlocked.length);
+      let remainder = remainingToDistribute % otherUnlocked.length;
+      otherUnlocked.forEach((c) => {
+        c.pct = share + (remainder > 0 ? 1 : 0);
+        if(remainder > 0) remainder--;
+      });
+    }
+  }
+
+  // Double check integer sum constraint
+  fixIntegerTotal();
+  renderSliders();
+}
+
+function fixIntegerTotal(){
+  const total = mixColors.reduce((sum, c) => sum + c.pct, 0);
+  const diff = 100 - total;
+  if(diff !== 0){
+    const unlocked = mixColors.filter(c => !c.locked);
+    if(unlocked.length > 0){
+      unlocked[0].pct = Math.max(0, unlocked[0].pct + diff);
+    } else if(mixColors.length > 0){
+      mixColors[0].pct = Math.max(0, mixColors[0].pct + diff);
+    }
+  }
+}
+
+// Equalize unlocked or all ratios
+function equalizeRatios(){
+  const active = mixColors.filter(c => !c.locked);
+  let lockedSum = 0;
+  mixColors.forEach(c => { if(c.locked) lockedSum += c.pct; });
+
+  const remaining = Math.max(0, 100 - lockedSum);
+  if(active.length > 0){
+    const share = Math.floor(remaining / active.length);
+    let rem = remaining % active.length;
+    active.forEach(c => {
+      c.pct = share + (rem > 0 ? 1 : 0);
+      if(rem > 0) rem--;
+    });
+  }
+  fixIntegerTotal();
+  renderSliders();
+  updateMixingDisplay();
+}
+
+// Render the Stacked Ratio Bar
+function renderRatioBar(){
+  const bar = document.getElementById('stackedRatioBar');
+  const badge = document.getElementById('totalPctBadge');
+  bar.innerHTML = '';
+
+  const total = mixColors.reduce((sum, c) => sum + c.pct, 0);
+  badge.textContent = `${total}%`;
+  badge.className = `total-badge mono ${total === 100 ? 'ok' : 'warn'}`;
+
+  mixColors.forEach(c => {
+    if(c.pct > 0){
+      const seg = document.createElement('div');
+      seg.className = 'ratio-bar-segment';
+      seg.style.width = `${(c.pct / (total || 1)) * 100}%`;
+      seg.style.background = c.hex;
+      seg.title = `${c.name}: ${c.pct}%`;
+      bar.appendChild(seg);
+    }
+  });
+}
+
+// Compute Mixed Color from all active colors
+function computeMixedColor(){
+  const active = mixColors.filter(c => c.pct > 0);
+  if(active.length === 0){
+    return { r: 244, g: 242, b: 238, hex: '#F4F2EE', total: 0 };
+  }
+
+  const totalPct = mixColors.reduce((sum, c) => sum + c.pct, 0) || 1;
+
+  // Check if we are mixing pure base RYB + W + K colors
+  const hasCustom = active.some(c => !c.isBase);
+  const rObj = mixColors.find(c => c.id === 'red');
+  const yObj = mixColors.find(c => c.id === 'yellow');
+  const bObj = mixColors.find(c => c.id === 'blue');
+  const wObj = mixColors.find(c => c.id === 'white');
+  const kObj = mixColors.find(c => c.id === 'black');
+
+  if(!hasCustom && rObj && yObj && bObj && wObj && kObj){
+    // Pure Gossett-Chen RYB mixing
+    const rVal = rObj.pct;
+    const yVal = yObj.pct;
+    const bVal = bObj.pct;
+    const wVal = wObj.pct;
+    const kVal = kObj.pct;
+
+    const pigmentSum = rVal + yVal + bVal;
+    let baseRgb;
+    if(pigmentSum > 0){
+      const raw = rybMix(rVal / pigmentSum, yVal / pigmentSum, bVal / pigmentSum);
+      baseRgb = raw.map(v => v * 255);
+    } else {
+      baseRgb = [255, 255, 255];
+    }
+
+    // Apply White & Black tints
+    const wRatio = wVal / totalPct;
+    const kRatio = kVal / totalPct;
+    
+    let toned = baseRgb.map(v => v + (255 - v) * wRatio);
+    toned = toned.map(v => v * (1 - kRatio));
+
+    const finalRgb = {
+      r: Math.round(Math.max(0, Math.min(255, toned[0]))),
+      g: Math.round(Math.max(0, Math.min(255, toned[1]))),
+      b: Math.round(Math.max(0, Math.min(255, toned[2])))
+    };
+    return { ...finalRgb, hex: toHex(finalRgb), total: totalPct };
+  }
+
+  // Multi-color Subtractive Pigment Mixing (Absorption/Scattering K/S)
+  let mixPigment = { c: 0, m: 0, y: 0 };
+  active.forEach(c => {
+    const weight = c.pct / totalPct;
+    const rgb = hexToRgb(c.hex);
+    const p = rgbToPigment(rgb);
+    mixPigment.c += p.c * weight;
+    mixPigment.m += p.m * weight;
+    mixPigment.y += p.y * weight;
+  });
+
+  const finalRgb = pigmentToRgb(mixPigment);
+  return { ...finalRgb, hex: toHex(finalRgb), total: totalPct };
+}
+
+// Update Mixing UI & Preview
 const mixPreviewBlock = document.getElementById('mixPreviewBlock');
 const mixHex = document.getElementById('mixHex');
 const mixRgb = document.getElementById('mixRgb');
+const recipeFormulaText = document.getElementById('recipeFormulaText');
+const recipePartsText = document.getElementById('recipePartsText');
 const mixCaption = document.getElementById('mixCaption');
 
-let prevMixHsl = null;
+let prevMixedHsl = null;
 
+function updateMixingDisplay(){
+  renderRatioBar();
+  const mixed = computeMixedColor();
+  
+  mixPreviewBlock.style.background = mixed.hex;
+  mixHex.textContent = mixed.hex;
+  mixRgb.textContent = `rgb(${mixed.r}, ${mixed.g}, ${mixed.b})`;
+
+  // Formula text
+  const active = mixColors.filter(c => c.pct > 0);
+  if(active.length === 0){
+    recipeFormulaText.textContent = 'ยังไม่ได้เลือกสัดส่วนสี';
+    recipePartsText.textContent = 'เลื่อนแถบเพื่อกำหนดสัดส่วน';
+  } else {
+    recipeFormulaText.textContent = active.map(c => `${c.name} ${c.pct}%`).join(' + ');
+    recipePartsText.textContent = `อัตราส่วนอย่างง่าย: ${findRatioString(active)}`;
+  }
+
+  // Description / Caption
+  const hsl = rgbToHsl(mixed.r, mixed.g, mixed.b);
+  const hue = hueName(hsl.h);
+  let tone = 'สว่างปานกลาง';
+  if(hsl.l > 0.8) tone = 'โทนสว่าง พาสเทล (Tint)';
+  else if(hsl.l < 0.25) tone = 'โทนเข้ม ลึก (Shade)';
+  else if(hsl.s < 0.15) tone = 'โทนหม่น คลาสสิก (Muted)';
+  else if(hsl.s > 0.7) tone = 'โทนสดจัดจ้าน (Vibrant)';
+
+  mixCaption.textContent = `โทนสี: ${hue} • ${tone} • ค่าความสว่าง ${(hsl.l * 100).toFixed(0)}%`;
+  prevMixedHsl = hsl;
+}
+
+// HSL Helper
 function hueName(h){
   if(h<15 || h>=345) return 'แดง';
   if(h<45) return 'ส้ม';
@@ -955,56 +1548,192 @@ function rgbToHsl(r,g,b){
   return {h, s, l};
 }
 
-function updateMix(fromDirectionCheck){
-  const r=+sldR.value, y=+sldY.value, b=+sldB.value, w=+sldW.value, k=+sldK.value;
-  pctR.textContent=r+'%'; pctY.textContent=y+'%'; pctB.textContent=b+'%';
-  pctW.textContent=w+'%'; pctK.textContent=k+'%';
+// Toolbar & Action Buttons
+document.getElementById('equalizeBtn').addEventListener('click', equalizeRatios);
 
-  const rgbArr = mixFromPercents(r,y,b,w,k);
-  const hex = rgbArrToHex(rgbArr);
-  mixPreviewBlock.style.background = hex;
-  mixHex.textContent = hex;
-  mixRgb.textContent = `rgb(${rgbArr[0]}, ${rgbArr[1]}, ${rgbArr[2]})`;
+document.getElementById('resetMixBtn').addEventListener('click', () => {
+  mixColors = [
+    { id: 'red',    name: 'แดง (RYB)',   hex: '#ED1C24', pct: 40, locked: false, isBase: true },
+    { id: 'yellow', name: 'เหลือง (RYB)', hex: '#FFE300', pct: 40, locked: false, isBase: true },
+    { id: 'blue',   name: 'น้ำเงิน (RYB)', hex: '#2A5FA8', pct: 0,  locked: false, isBase: true },
+    { id: 'white',  name: 'ขาว',        hex: '#F4F2EE', pct: 20, locked: false, isBase: true },
+    { id: 'black',  name: 'ดำ',         hex: '#0A090C', pct: 0,  locked: false, isBase: true }
+  ];
+  renderSliders();
+  updateMixingDisplay();
+  showToast('รีเซ็ตห้องผสมสีแล้ว');
+});
 
-  const hsl = rgbToHsl(rgbArr[0], rgbArr[1], rgbArr[2]);
+document.getElementById('saveMixToPaletteBtn').addEventListener('click', () => {
+  const mixed = computeMixedColor();
+  addToPalette(mixed.hex);
+  showToast('บันทึกสีผสม ' + mixed.hex + ' ลงในพาเลตต์แล้ว');
+});
 
-  if(fromDirectionCheck && prevMixHsl){
-    const dl = hsl.l - prevMixHsl.l;
-    const ds = hsl.s - prevMixHsl.s;
-    const bits = [];
-    if(Math.abs(dl) > 0.02) bits.push(dl>0 ? 'สีสว่างขึ้น' : 'สีเข้มขึ้น');
-    if(Math.abs(ds) > 0.02) bits.push(ds>0 ? 'สีสดขึ้น' : 'สีหม่นลง');
-    if(hsl.s > 0.06){
-      bits.push('โทนเอียงไปทาง' + hueName(hsl.h));
-    }
-    mixCaption.textContent = bits.length ? '→ ' + bits.join(' และ') : 'สีแทบไม่เปลี่ยนจากเดิม';
+document.getElementById('copyFormulaBtn').addEventListener('click', () => {
+  const mixed = computeMixedColor();
+  const active = mixColors.filter(c => c.pct > 0);
+  const text = `สูตรผสม: ${active.map(c => `${c.name} ${c.pct}%`).join(' + ')} → ได้สี ${mixed.hex} (อัตราส่วน ${findRatioString(active)})`;
+  copyText(text);
+});
+
+mixHex.addEventListener('click', () => copyText(mixHex.textContent));
+
+// Mode Switcher Tabs
+const tabRatioMode = document.getElementById('tabRatioMode');
+const tabFreeMode = document.getElementById('tabFreeMode');
+const ratioBarWrapper = document.getElementById('ratioBarWrapper');
+
+tabRatioMode.addEventListener('click', () => {
+  isPureRatioMode = true;
+  tabRatioMode.classList.add('active');
+  tabFreeMode.classList.remove('active');
+  ratioBarWrapper.style.display = 'block';
+  equalizeRatios();
+  renderSliders();
+});
+
+tabFreeMode.addEventListener('click', () => {
+  isPureRatioMode = false;
+  tabFreeMode.classList.add('active');
+  tabRatioMode.classList.remove('active');
+  ratioBarWrapper.style.display = 'none';
+  renderSliders();
+});
+
+// Custom Palette Color Adder
+const addColorDrawer = document.getElementById('addColorDrawer');
+const openAddColorBtn = document.getElementById('openAddColorBtn');
+const palettePickGrid = document.getElementById('palettePickGrid');
+
+openAddColorBtn.addEventListener('click', () => {
+  addColorDrawer.classList.toggle('show');
+  renderPalettePicker();
+});
+
+function renderPalettePicker(){
+  palettePickGrid.innerHTML = '';
+  if(palette.length === 0){
+    palettePickGrid.innerHTML = '<span style="font-size:12px; color:var(--text-muted);">ยังไม่มีสีในพาเลตต์ (คลิกดูดสีจากภาพก่อน)</span>';
+    return;
   }
-  prevMixHsl = hsl;
+  palette.forEach(hex => {
+    const chip = document.createElement('div');
+    chip.className = 'palette-pick-chip';
+    chip.style.background = hex;
+    chip.title = `เพิ่มสี ${hex} ลงในโถผสม`;
+    chip.addEventListener('click', () => {
+      addCustomColorToMix(hex);
+      addColorDrawer.classList.remove('show');
+    });
+    palettePickGrid.appendChild(chip);
+  });
 }
 
-[sldR,sldY,sldB,sldW,sldK].forEach(s => s.addEventListener('input', ()=>updateMix(true)));
+function addCustomColorToMix(hex){
+  const id = 'custom_' + Date.now();
+  mixColors.push({
+    id,
+    name: hex,
+    hex: hex,
+    pct: 0,
+    locked: false,
+    isBase: false
+  });
+  if(isPureRatioMode){
+    equalizeRatios();
+  }
+  renderSliders();
+  updateMixingDisplay();
+  showToast(`เพิ่มสี ${hex} เข้าโถผสมแล้ว`);
+}
 
-document.getElementById('resetMixBtn').addEventListener('click', ()=>{
-  [sldR,sldY,sldB,sldW,sldK].forEach(s=>s.value=0);
-  prevMixHsl = null;
-  updateMix(false);
-  mixCaption.textContent = 'เลื่อนแถบด้านซ้ายเพื่อเริ่มผสมสี — จะบอกทิศทางที่สีเปลี่ยนไปให้ทุกครั้ง';
-});
+// Decompose arbitrary color into RYBWK recipe for 100% mode
+function decomposeToRecipe(targetHex){
+  const t = hexToRgb(targetHex);
+  let best = null, bestDist = Infinity;
+  
+  // Search on 100% simplex partition
+  const step = 10;
+  for(let r=0; r<=100; r+=step)
+  for(let y=0; y<=100-r; y+=step)
+  for(let b=0; b<=100-r-y; b+=step)
+  for(let w=0; w<=100-r-y-b; w+=step){
+    const k = 100 - r - y - b - w;
+    // Evaluate RYB mix
+    const pigmentSum = r + y + b;
+    let base = pigmentSum > 0 ? rybMix(r/pigmentSum, y/pigmentSum, b/pigmentSum).map(v=>v*255) : [255,255,255];
+    let toned = base.map(v => v + (255-v)*(w/100));
+    toned = toned.map(v => v * (1 - k/100));
+    
+    const d = (toned[0]-t.r)**2 + (toned[1]-t.g)**2 + (toned[2]-t.b)**2;
+    if(d < bestDist){
+      bestDist = d;
+      best = { r, y, b, w, k };
+    }
+  }
+  return best || { r:20, y:20, b:20, w:20, k:20 };
+}
 
-mixHex.addEventListener('click', ()=>copyText(mixHex.textContent));
+function renderRecipe(hex){
+  const rec = decomposeToRecipe(hex);
+  const parts = [
+    {name:'แดง', pct:rec.r, color:'#ED1C24'},
+    {name:'เหลือง', pct:rec.y, color:'#FFE300'},
+    {name:'น้ำเงิน', pct:rec.b, color:'#2A5FA8'},
+    {name:'ขาว', pct:rec.w, color:'#F4F2EE'},
+    {name:'ดำ', pct:rec.k, color:'#0A090C'}
+  ].filter(p => p.pct > 0);
 
-document.getElementById('loadRecipeBtn').addEventListener('click', ()=>{
+  const recipeRow = document.getElementById('recipeRow');
+  const recipeText = document.getElementById('recipeText');
+  
+  recipeText.innerHTML = parts.map(p =>
+    `<span class="recipe-chip"><span class="dot" style="background:${p.color};"></span>${p.name} ${p.pct}%</span>`
+  ).join(' ');
+
+  recipeRow.style.display = 'block';
+  recipeRow.dataset.r = rec.r;
+  recipeRow.dataset.y = rec.y;
+  recipeRow.dataset.b = rec.b;
+  recipeRow.dataset.w = rec.w;
+  recipeRow.dataset.k = rec.k;
+}
+
+document.getElementById('loadRecipeBtn').addEventListener('click', () => {
   const row = document.getElementById('recipeRow');
   if(!row.dataset.r) return;
-  sldR.value = row.dataset.r; sldY.value = row.dataset.y; sldB.value = row.dataset.b;
-  sldW.value = row.dataset.w; sldK.value = row.dataset.k;
-  prevMixHsl = null;
-  updateMix(false);
-  document.getElementById('mixlab').scrollIntoView({behavior:'smooth', block:'start'});
+  
+  const r = parseInt(row.dataset.r) || 0;
+  const y = parseInt(row.dataset.y) || 0;
+  const b = parseInt(row.dataset.b) || 0;
+  const w = parseInt(row.dataset.w) || 0;
+  const k = parseInt(row.dataset.k) || 0;
+
+  mixColors = [
+    { id: 'red',    name: 'แดง (RYB)',   hex: '#ED1C24', pct: r, locked: false, isBase: true },
+    { id: 'yellow', name: 'เหลือง (RYB)', hex: '#FFE300', pct: y, locked: false, isBase: true },
+    { id: 'blue',   name: 'น้ำเงิน (RYB)', hex: '#2A5FA8', pct: b, locked: false, isBase: true },
+    { id: 'white',  name: 'ขาว',        hex: '#F4F2EE', pct: w, locked: false, isBase: true },
+    { id: 'black',  name: 'ดำ',         hex: '#0A090C', pct: k, locked: false, isBase: true }
+  ];
+
+  renderSliders();
+  updateMixingDisplay();
+  document.getElementById('mixlab').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  showToast('นำสูตรสีที่ดูดได้เข้าสู่ห้องผสม 100% แล้ว');
 });
 
-// initial render
-updateMix(false);
+document.getElementById('addToMixLabBtn').addEventListener('click', () => {
+  if(latestPickedHex){
+    addCustomColorToMix(latestPickedHex);
+    document.getElementById('mixlab').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+});
+
+// Initial Setup
+renderSliders();
+updateMixingDisplay();
 </script>
 
 </body>
