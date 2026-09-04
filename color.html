@@ -200,6 +200,14 @@
     border-radius:6px;
     cursor:none;
     display:block;
+    /* The picker consumes drags to aim the loupe, so the browser must not
+       claim them for scrolling. Without this, touchmove is cancelled the
+       moment the finger moves and the loupe cannot be steered at all. */
+    touch-action:none;
+  }
+  .canvas-hint .touch-only{ display:none; }
+  @media (hover: none){
+    .canvas-hint .touch-only{ display:inline; }
   }
   .canvas-hint{
     position:absolute;
@@ -764,6 +772,24 @@
     flex-direction:column;
   }
 
+  .recipe-accuracy{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-top:10px;
+    padding-top:9px;
+    border-top:1px dashed var(--border);
+    font-size:11.5px;
+    color:var(--text-muted);
+    line-height:1.5;
+  }
+  .recipe-accuracy .acc-swatch{
+    width:22px; height:22px;
+    border-radius:5px;
+    flex-shrink:0;
+    border:1px solid rgba(255,255,255,0.2);
+  }
+
   /* แผงเลือกสีจากพาเลตต์เพิ่มเข้าผสม (Custom Color Drawer) */
   .add-color-drawer{
     background:var(--surface-2);
@@ -830,7 +856,7 @@
     <div class="workspace-grid">
       <div class="canvas-panel">
         <canvas id="imgCanvas"></canvas>
-        <div class="canvas-hint">เลื่อนเมาส์เพื่อส่อง • คลิกเพื่อเก็บสี</div>
+        <div class="canvas-hint">เลื่อนเมาส์เพื่อส่อง • คลิกเพื่อเก็บสี<span class="touch-only"> — บนมือถือ: แตะค้างแล้วลากเพื่อเล็ง ปล่อยนิ้วเพื่อเก็บ</span></div>
       </div>
 
       <div class="side">
@@ -1063,77 +1089,188 @@ function hexToRgb(hex){
 }
 function toRgbStr({r,g,b}){ return `rgb(${r}, ${g}, ${b})`; }
 
+/* สีเน้นของหน้าเว็บเดินตามสีที่ดูดมา แต่ต้องยัง "อ่านออก" เสมอ
+
+   เดิมใส่สีที่ดูดได้ลงไปตรง ๆ พอไปคลิกพิกเซลดำหรือเทาจาง ปุ่มและกรอบทั้งหน้า
+   ก็กลายเป็นดำบนพื้นดำ มองไม่เห็นว่ามีปุ่มอยู่ ตอนนี้เก็บ "เนื้อสี" (hue) ไว้
+   แต่บังคับความสด/ความสว่างให้พอตัดกับพื้นหลัง — ค่าที่แสดงและที่เก็บลง
+   พาเลตต์ยังเป็นสีจริงไม่ถูกแตะ */
+function legibleAccent(hex){
+  const rgbIn = hexToRgb(hex);
+  const {h, s, l} = rgbToHsl(rgbIn.r, rgbIn.g, rgbIn.b);
+  // ขาว-เทา-ดำ ไม่มีเนื้อสีให้รักษา การดันความสดขึ้นจะได้ "แดง" ออกมาเสมอ
+  // เพราะ hue ของสีไร้สีคือ 0 — ใช้เทาสว่างแทน ตรงกับสีที่ดูดได้มากกว่า
+  if(s < 0.08) return toHex(hslToRgb(0, 0, 0.62));
+  return toHex(hslToRgb(h, Math.max(0.45, s), Math.min(0.72, Math.max(0.45, l))));
+}
+function hslToRgb(h, s, l){
+  h = ((h % 360) + 360) % 360 / 360;
+  const f = (p, q, t) => {
+    if(t < 0) t += 1;
+    if(t > 1) t -= 1;
+    if(t < 1/6) return p + (q - p) * 6 * t;
+    if(t < 1/2) return q;
+    if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+    return p;
+  };
+  if(s === 0){
+    const v = Math.round(l * 255);
+    return { r: v, g: v, b: v };
+  }
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+  const p = 2 * l - q;
+  return {
+    r: Math.round(f(p, q, h + 1/3) * 255),
+    g: Math.round(f(p, q, h) * 255),
+    b: Math.round(f(p, q, h - 1/3) * 255)
+  };
+}
+
 function setAccent(hex){
-  document.documentElement.style.setProperty('--accent', hex);
-  const soft = hexToRgba(hex, 0.16);
-  document.documentElement.style.setProperty('--accent-soft', soft);
+  const accent = legibleAccent(hex);
+  document.documentElement.style.setProperty('--accent', accent);
+  document.documentElement.style.setProperty('--accent-soft', hexToRgba(accent, 0.16));
 }
 function hexToRgba(hex, a){
   const rgb = hexToRgb(hex);
   return `rgba(${rgb.r},${rgb.g},${rgb.b},${a})`;
 }
 
-// Mouse tracking & Magnifier events
-canvas.addEventListener('mouseenter', ()=>{
-  loupe.style.display='block';
-  loupeReadout.style.display='block';
-});
-canvas.addEventListener('mouseleave', ()=>{
-  loupe.style.display='none';
-  loupeReadout.style.display='none';
-});
+// ---------- ตำแหน่งพิกเซลจากพิกัดหน้าจอ (ใช้ร่วมกันทั้งเมาส์และนิ้ว) ----------
+const LOUPE_SIZE = 120;
+const LOUPE_REGION = 11;
+
+function pixelAtClient(clientX, clientY){
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  return {
+    x: Math.min(canvas.width - 1,  Math.max(0, Math.floor((clientX - rect.left) * scaleX))),
+    y: Math.min(canvas.height - 1, Math.max(0, Math.floor((clientY - rect.top)  * scaleY)))
+  };
+}
+
+function showLoupe(){
+  loupe.style.display = 'block';
+  loupeReadout.style.display = 'block';
+}
+function hideLoupe(){
+  loupe.style.display = 'none';
+  loupeReadout.style.display = 'none';
+}
+
+/* วางแว่นขยายและป้าย HEX ให้อยู่ในจอเสมอ
+   lift = ระยะยกขึ้นเหนือจุดที่ชี้ (นิ้วต้องยกสูงกว่าเมาส์ เพราะมือบังภาพ) */
+function placeLoupe(clientX, clientY, lift){
+  const pad = 8;
+  const maxX = window.innerWidth  - LOUPE_SIZE - pad;
+  const maxY = window.innerHeight - LOUPE_SIZE - pad;
+  const lx = Math.max(pad, Math.min(maxX, clientX - LOUPE_SIZE / 2));
+  const ly = Math.max(pad, Math.min(maxY, clientY - lift));
+  loupe.style.left = lx + 'px';
+  loupe.style.top  = ly + 'px';
+
+  const rw = loupeReadout.offsetWidth || 64;
+  const rh = loupeReadout.offsetHeight || 26;
+  loupeReadout.style.left = Math.max(pad, Math.min(window.innerWidth - rw - pad,
+                                                   lx + LOUPE_SIZE / 2 - rw / 2)) + 'px';
+  loupeReadout.style.top  = Math.max(pad, ly - rh - 6) + 'px';
+}
+
+/* ส่องพิกเซลที่พิกัดหนึ่ง แล้วคืนค่าสีที่อ่านได้ */
+function aimAt(clientX, clientY, lift){
+  const {x, y} = pixelAtClient(clientX, clientY);
+  drawLoupe(x, y);
+  const px = getPixel(x, y);
+  loupeReadout.textContent = toHex(px);
+  placeLoupe(clientX, clientY, lift);
+  return px;
+}
+
+canvas.addEventListener('mouseenter', showLoupe);
+canvas.addEventListener('mouseleave', hideLoupe);
 
 canvas.addEventListener('mousemove', e=>{
   if(!imgLoaded) return;
-  const rect = canvas.getBoundingClientRect();
-  const scaleX = canvas.width / rect.width;
-  const scaleY = canvas.height / rect.height;
-  const x = Math.min(canvas.width-1, Math.max(0, Math.floor((e.clientX-rect.left)*scaleX)));
-  const y = Math.min(canvas.height-1, Math.max(0, Math.floor((e.clientY-rect.top)*scaleY)));
-
-  drawLoupe(x,y);
-
-  const px = getPixel(x,y);
-  const hex = toHex(px);
-
-  loupe.style.left = (e.clientX - 60) + 'px';
-  loupe.style.top = (e.clientY - 150) + 'px';
-  loupe.style.borderColor = '#fff';
-
-  loupeReadout.textContent = hex;
-  loupeReadout.style.left = (e.clientX - 32) + 'px';
-  loupeReadout.style.top = (e.clientY - 172) + 'px';
+  aimAt(e.clientX, e.clientY, 150);
 });
-
-function drawLoupe(cx, cy){
-  const region = 11;
-  const half = Math.floor(region/2);
-  const sx = Math.max(0, cx-half);
-  const sy = Math.max(0, cy-half);
-  loupeCtx.imageSmoothingEnabled = false;
-  loupeCtx.clearRect(0,0,120,120);
-  loupeCtx.drawImage(canvas, sx, sy, region, region, 0, 0, 120, 120);
-  loupeCtx.strokeStyle = 'rgba(255,255,255,0.12)';
-  loupeCtx.lineWidth = 1;
-  const cell = 120/region;
-  for(let i=1;i<region;i++){
-    loupeCtx.beginPath();
-    loupeCtx.moveTo(i*cell,0); loupeCtx.lineTo(i*cell,120); loupeCtx.stroke();
-    loupeCtx.beginPath();
-    loupeCtx.moveTo(0,i*cell); loupeCtx.lineTo(120,i*cell); loupeCtx.stroke();
-  }
-}
 
 canvas.addEventListener('click', e=>{
   if(!imgLoaded) return;
-  const rect = canvas.getBoundingClientRect();
-  const scaleX = canvas.width / rect.width;
-  const scaleY = canvas.height / rect.height;
-  const x = Math.min(canvas.width-1, Math.max(0, Math.floor((e.clientX-rect.left)*scaleX)));
-  const y = Math.min(canvas.height-1, Math.max(0, Math.floor((e.clientY-rect.top)*scaleY)));
-  const px = getPixel(x,y);
-  commitColor(px);
+  const {x, y} = pixelAtClient(e.clientX, e.clientY);
+  commitColor(getPixel(x, y));
 });
+
+/* ---------- การเล็งด้วยนิ้ว (Touch) ----------
+   บนมือถือไม่มี hover ให้ส่องก่อนกด และนิ้วบังจุดที่แตะพอดี จึงใช้แบบ
+   "แตะค้าง–ลากเพื่อเล็ง–ปล่อยเพื่อเก็บ" ผู้ใช้จึงเห็นสีในแว่นก่อนตัดสินใจ
+   ยกแว่นสูงกว่าเมาส์ เพราะต้องพ้นนิ้วขึ้นไป */
+let touchPixel = null;
+
+function trackTouch(e){
+  const t = e.touches[0];
+  if(!t) return;
+  touchPixel = aimAt(t.clientX, t.clientY, 190);
+}
+
+canvas.addEventListener('touchstart', e=>{
+  if(!imgLoaded) return;
+  e.preventDefault();
+  showLoupe();
+  trackTouch(e);
+}, {passive:false});
+
+canvas.addEventListener('touchmove', e=>{
+  if(!imgLoaded) return;
+  e.preventDefault();
+  trackTouch(e);
+}, {passive:false});
+
+canvas.addEventListener('touchend', e=>{
+  if(!imgLoaded) return;
+  e.preventDefault();
+  hideLoupe();
+  if(touchPixel) commitColor(touchPixel);
+  touchPixel = null;
+}, {passive:false});
+
+canvas.addEventListener('touchcancel', ()=>{
+  hideLoupe();
+  touchPixel = null;
+});
+
+/* วาดภาพขยายรอบพิกเซลเป้าหมาย
+   กากบาทกลางแว่นต้องตรงกับพิกเซลที่ชี้เสมอ รวมถึงตอนอยู่ริมภาพ จึงเลื่อน
+   ปลายทางชดเชยแทนการหนีบพิกัดต้นทาง — การหนีบทำให้ภาพถูกย่อไปกองมุมบนซ้าย
+   และกากบาทไปชี้พิกเซลอื่นโดยที่ค่า HEX ที่อ่านได้เป็นอีกพิกเซลหนึ่ง */
+function drawLoupe(cx, cy){
+  const half = Math.floor(LOUPE_REGION / 2);
+  const cell = LOUPE_SIZE / LOUPE_REGION;
+
+  const wantX = cx - half, wantY = cy - half;
+  const sx = Math.max(0, wantX), sy = Math.max(0, wantY);
+  const ex = Math.min(canvas.width,  wantX + LOUPE_REGION);
+  const ey = Math.min(canvas.height, wantY + LOUPE_REGION);
+  const sw = Math.max(0, ex - sx), sh = Math.max(0, ey - sy);
+
+  loupeCtx.imageSmoothingEnabled = false;
+  loupeCtx.clearRect(0, 0, LOUPE_SIZE, LOUPE_SIZE);
+  loupeCtx.fillStyle = '#000';
+  loupeCtx.fillRect(0, 0, LOUPE_SIZE, LOUPE_SIZE);
+  if(sw > 0 && sh > 0){
+    loupeCtx.drawImage(canvas, sx, sy, sw, sh,
+                       (sx - wantX) * cell, (sy - wantY) * cell, sw * cell, sh * cell);
+  }
+
+  loupeCtx.strokeStyle = 'rgba(255,255,255,0.12)';
+  loupeCtx.lineWidth = 1;
+  for(let i = 1; i < LOUPE_REGION; i++){
+    loupeCtx.beginPath();
+    loupeCtx.moveTo(i * cell, 0); loupeCtx.lineTo(i * cell, LOUPE_SIZE); loupeCtx.stroke();
+    loupeCtx.beginPath();
+    loupeCtx.moveTo(0, i * cell); loupeCtx.lineTo(LOUPE_SIZE, i * cell); loupeCtx.stroke();
+  }
+}
 
 function commitColor(px){
   const hex = toHex(px);
@@ -1154,16 +1291,40 @@ function commitColor(px){
    - บันทึกประวัติสีที่ผู้ใช้ดูดมา เก็บได้สูงสุด 32 สี
    - รองรับการคลิกเพื่อคัดลอกค่าสี และปุ่มลบสีทีละช่อง
    ========================================================================== */
+const PALETTE_KEY = 'colorLab.palette.v1';
+
+/* พาเลตต์ต้องอยู่รอดข้ามการรีเฟรช — ดูดสีมาสามสิบสีแล้วเผลอกดรีโหลดทิ้ง
+   ทั้งหมดคือการเสียงานที่ผู้ใช้ทำมา ห่อ try/catch ไว้เพราะโหมดส่วนตัวของ
+   บางเบราว์เซอร์โยน error ตั้งแต่ตอนอ่าน localStorage */
+function savePalette(){
+  try{
+    localStorage.setItem(PALETTE_KEY, JSON.stringify(palette));
+  }catch(err){ /* เก็บไม่ได้ก็ใช้งานต่อได้ แค่ไม่ค้างข้ามรอบ */ }
+}
+function loadPalette(){
+  try{
+    const raw = localStorage.getItem(PALETTE_KEY);
+    if(!raw) return [];
+    const parsed = JSON.parse(raw);
+    if(!Array.isArray(parsed)) return [];
+    // กรองเฉพาะรหัสสีที่ใช้ได้จริง กันค่าที่ถูกแก้มาจากภายนอก
+    return parsed.filter(v => typeof v === 'string' && /^#[0-9A-F]{6}$/i.test(v))
+                 .slice(0, 32);
+  }catch(err){ return []; }
+}
+
 function addToPalette(hex){
   if(!palette.includes(hex)){
     palette.unshift(hex);
     if(palette.length>32) palette.pop();
+    savePalette();
     renderPalette();
     renderPalettePicker();
   }
 }
 function removeFromPalette(idx){
   palette.splice(idx,1);
+  savePalette();
   renderPalette();
   renderPalettePicker();
 }
@@ -1201,16 +1362,32 @@ function renderPalette(){
 }
 clearBtn.addEventListener('click', ()=>{
   palette=[];
+  savePalette();
   renderPalette();
   renderPalettePicker();
 });
 
 function copyText(text){
-  navigator.clipboard.writeText(text).then(()=>{
-    showToast('คัดลอก ' + text + ' แล้ว');
-  }).catch(()=>{
-    showToast('คัดลอกไม่สำเร็จ');
-  });
+  const ok = ()=> showToast('คัดลอก ' + text + ' แล้ว');
+  // navigator.clipboard ไม่มีอยู่เลยเมื่อเปิดไฟล์แบบ file:// หรือผ่าน http
+  // ธรรมดา ซึ่งเป็นวิธีที่คนเปิดไฟล์นี้จริง ๆ จึงต้องมีทางสำรอง
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).then(ok).catch(()=> legacyCopy(text, ok));
+  }else{
+    legacyCopy(text, ok);
+  }
+}
+function legacyCopy(text, ok){
+  const area = document.createElement('textarea');
+  area.value = text;
+  area.setAttribute('readonly', '');
+  area.style.cssText = 'position:fixed;top:-1000px;opacity:0;';
+  document.body.appendChild(area);
+  area.select();
+  let copied = false;
+  try{ copied = document.execCommand('copy'); }catch(err){ copied = false; }
+  document.body.removeChild(area);
+  copied ? ok() : showToast('คัดลอกไม่สำเร็จ — กดค้างที่รหัสสีเพื่อคัดลอกเองได้');
 }
 let toastTimer;
 function showToast(msg){
@@ -1309,10 +1486,15 @@ function findRatioString(parts){
   return nonZero.map(p => `${p.name} ${p.pct / g}`).join(' : ');
 }
 
-// เรนเดอร์ UI รายการสไลเดอร์ทั้งหมด
+/* เรนเดอร์โครงสร้างสไลเดอร์ใหม่ทั้งหมด
+   เรียกเฉพาะตอน "รายการสีเปลี่ยน" เท่านั้น (เพิ่ม/ลบสี, ล็อก, สลับโหมด, รีเซ็ต)
+   ห้ามเรียกระหว่างลากสไลเดอร์ — ดูคำอธิบายที่ syncSliderValues */
+let sliderRows = [];
+
 function renderSliders(){
   const list = document.getElementById('sliderList');
   list.innerHTML = '';
+  sliderRows = [];
 
   mixColors.forEach((c, idx) => {
     const row = document.createElement('div');
@@ -1360,16 +1542,20 @@ function renderSliders(){
       } else {
         c.pct = newVal;
       }
+      // เขียนทับเฉพาะ "ค่า" ไม่สร้าง DOM ใหม่ ระหว่างลากจึงไม่หลุดมือ
+      syncSliderValues();
       updateMixingDisplay();
     };
 
     slider.addEventListener('input', (e) => onValChange(e.target.value));
+    numInput.addEventListener('input', (e) => onValChange(e.target.value));
     numInput.addEventListener('change', (e) => onValChange(e.target.value));
 
     row.appendChild(label);
     row.appendChild(slider);
     row.appendChild(numInput);
     row.appendChild(lockBtn);
+    sliderRows.push({ color: c, slider, numInput });
 
     // ปุ่มลบสำหรับ Custom Colors ที่เพิ่มจากภาพ
     if(!c.isBase){
@@ -1389,6 +1575,25 @@ function renderSliders(){
     list.appendChild(row);
   });
 
+  renderRatioBar();
+}
+
+/* อัปเดตเฉพาะตัวเลขบนสไลเดอร์ที่มีอยู่แล้ว
+
+   เดิมทุกครั้งที่ขยับสไลเดอร์จะเรียก renderSliders() ซึ่งสั่ง innerHTML = ''
+   แปลว่า <input type=range> ตัวที่นิ้ว/เมาส์กำลังลากอยู่ถูกลบทิ้งกลางคัน
+   เบราว์เซอร์จึงหยุดส่ง event ต่อ ลากได้ทีละขยับเดียวแล้วหลุด ต้องปล่อยแล้ว
+   กดใหม่ทุกครั้ง — ทำให้ส่วนที่เป็นหัวใจของห้องผสมแทบใช้งานไม่ได้
+   ตอนนี้จึงเขียนทับแค่ค่า .value ของ element เดิม โครงสร้าง DOM คงอยู่ */
+function syncSliderValues(){
+  sliderRows.forEach(row => {
+    const v = String(row.color.pct);
+    if(row.slider.value !== v) row.slider.value = v;
+    // ไม่แตะช่องที่ผู้ใช้กำลังพิมพ์อยู่ ไม่งั้นตัวเลขจะเด้งใต้เคอร์เซอร์
+    if(document.activeElement !== row.numInput && row.numInput.value !== v){
+      row.numInput.value = v;
+    }
+  });
   renderRatioBar();
 }
 
@@ -1434,21 +1639,30 @@ function autoBalanceRatios(targetIdx, targetVal){
     }
   }
 
-  fixIntegerTotal();
-  renderSliders();
+  fixIntegerTotal(targetIdx);
 }
 
-function fixIntegerTotal(){
-  const total = mixColors.reduce((sum, c) => sum + c.pct, 0);
-  const diff = 100 - total;
-  if(diff !== 0){
-    const unlocked = mixColors.filter(c => !c.locked);
-    if(unlocked.length > 0){
-      unlocked[0].pct = Math.max(0, unlocked[0].pct + diff);
-    } else if(mixColors.length > 0){
-      mixColors[0].pct = Math.max(0, mixColors[0].pct + diff);
-    }
+/* ปัดเศษให้ผลรวมกลับมาเป็น 100 พอดี
+
+   เดิมยัดส่วนต่างลงสีที่ปลดล็อกตัวแรกเสมอ ซึ่งบ่อยครั้งคือสีที่ผู้ใช้เพิ่ง
+   ตั้งค่าเอง — พิมพ์ 50 แล้วช่องนั้นเด้งเป็น 51 เอง ตอนนี้จึงไล่หาสีอื่นที่
+   ปลดล็อกอยู่ก่อน แล้วค่อยย้อนกลับมาที่สีเป้าหมายเป็นทางเลือกสุดท้าย */
+function fixIntegerTotal(protectIdx){
+  let diff = 100 - mixColors.reduce((sum, c) => sum + c.pct, 0);
+  if(diff === 0) return;
+
+  const unlocked = mixColors.map((c, idx) => ({c, idx})).filter(o => !o.c.locked);
+  const order = unlocked.filter(o => o.idx !== protectIdx)
+                        .concat(unlocked.filter(o => o.idx === protectIdx));
+
+  for(const o of order){
+    if(diff === 0) break;
+    const next = Math.max(0, Math.min(100, o.c.pct + diff));
+    diff -= (next - o.c.pct);
+    o.c.pct = next;
   }
+  // ถ้าล็อกไว้จนไม่มีที่ให้ปรับ ปล่อยให้ป้ายรวมขึ้นเตือนตามจริง
+  // ดีกว่าแอบแก้ตัวเลขที่ผู้ใช้สั่งล็อกเอาไว้
 }
 
 // เกลี่ยสัดส่วนทุกสีที่ปลดล็อคให้เท่ากัน
@@ -1467,7 +1681,7 @@ function equalizeRatios(){
     });
   }
   fixIntegerTotal();
-  renderSliders();
+  syncSliderValues();
   updateMixingDisplay();
 }
 
@@ -1493,6 +1707,29 @@ function renderRatioBar(){
   });
 }
 
+/* สีที่ได้จากแม่สี RYB + ขาว + ดำ ตามสัดส่วนที่ให้มา
+
+   ฟังก์ชันเดียวที่ทั้งห้องผสมและตัวถอดสูตรใช้ร่วมกัน เดิมสูตรนี้ถูกเขียนซ้ำ
+   สองที่ ถ้าแก้ที่หนึ่งลืมอีกที่ สูตรที่ถอดได้จะพาไปสู่สีคนละสีกับที่พรีวิว */
+function baseMixRgb(r, y, b, w, k){
+  const sum = r + y + b + w + k;
+  if(sum <= 0) return { r: 255, g: 255, b: 255 };
+
+  const pigmentSum = r + y + b;
+  const raw = pigmentSum > 0
+    ? rybMix(r / pigmentSum, y / pigmentSum, b / pigmentSum).map(v => v * 255)
+    : [255, 255, 255];
+
+  // ขาว/ดำ คิดเทียบกับปริมาณของกลุ่มแม่สีด้วยกันเอง
+  let toned = raw.map(v => v + (255 - v) * (w / sum));
+  toned = toned.map(v => v * (1 - k / sum));
+  return {
+    r: Math.round(Math.max(0, Math.min(255, toned[0]))),
+    g: Math.round(Math.max(0, Math.min(255, toned[1]))),
+    b: Math.round(Math.max(0, Math.min(255, toned[2])))
+  };
+}
+
 // คำนวณสีผลลัพธ์จากการผสมสีทั้งหมดในโถ
 function computeMixedColor(){
   const active = mixColors.filter(c => c.pct > 0);
@@ -1501,55 +1738,45 @@ function computeMixedColor(){
   }
 
   const totalPct = mixColors.reduce((sum, c) => sum + c.pct, 0) || 1;
+  const pctOf = id => {
+    const found = mixColors.find(c => c.id === id);
+    return found ? found.pct : 0;
+  };
 
-  const hasCustom = active.some(c => !c.isBase);
-  const rObj = mixColors.find(c => c.id === 'red');
-  const yObj = mixColors.find(c => c.id === 'yellow');
-  const bObj = mixColors.find(c => c.id === 'blue');
-  const wObj = mixColors.find(c => c.id === 'white');
-  const kObj = mixColors.find(c => c.id === 'black');
+  const rVal = pctOf('red'),   yVal = pctOf('yellow'), bVal = pctOf('blue');
+  const wVal = pctOf('white'), kVal = pctOf('black');
+  const basePct = rVal + yVal + bVal + wVal + kVal;
+  const customs = active.filter(c => !c.isBase);
 
-  // กรณีเป็นแม่สี RYBWK พื้นฐาน
-  if(!hasCustom && rObj && yObj && bObj && wObj && kObj){
-    const rVal = rObj.pct;
-    const yVal = yObj.pct;
-    const bVal = bObj.pct;
-    const wVal = wObj.pct;
-    const kVal = kObj.pct;
-
-    const pigmentSum = rVal + yVal + bVal;
-    let baseRgb;
-    if(pigmentSum > 0){
-      const raw = rybMix(rVal / pigmentSum, yVal / pigmentSum, bVal / pigmentSum);
-      baseRgb = raw.map(v => v * 255);
-    } else {
-      baseRgb = [255, 255, 255];
-    }
-
-    const wRatio = wVal / totalPct;
-    const kRatio = kVal / totalPct;
-    
-    let toned = baseRgb.map(v => v + (255 - v) * wRatio);
-    toned = toned.map(v => v * (1 - kRatio));
-
-    const finalRgb = {
-      r: Math.round(Math.max(0, Math.min(255, toned[0]))),
-      g: Math.round(Math.max(0, Math.min(255, toned[1]))),
-      b: Math.round(Math.max(0, Math.min(255, toned[2])))
-    };
-    return { ...finalRgb, hex: toHex(finalRgb), total: totalPct };
+  // แม่สีล้วน — ใช้ลูกบาศก์ RYB ตรง ๆ
+  if(customs.length === 0){
+    const rgb = baseMixRgb(rVal, yVal, bVal, wVal, kVal);
+    return { ...rgb, hex: toHex(rgb), total: totalPct };
   }
 
-  // กรณีมีสี Custom ร่วมด้วย (Kubelka-Munk Absorption Blending)
+  /* มีสีจากภาพร่วมด้วย
+
+     เดิมพอมีสี custom เข้ามาแม้แต่ 1% ระบบจะทิ้งลูกบาศก์ RYB ทั้งดุ้น แล้ว
+     หันไปคิด Kubelka-Munk จากค่า HEX ของทุกสีรวมถึงแม่สีเอง ผลคือสีในจอ
+     กระโดดเปลี่ยนทันทีที่เลื่อนสไลเดอร์สีใหม่จาก 0 ไป 1 ทั้งที่แทบไม่ได้
+     เติมอะไรลงไปเลย
+
+     ตอนนี้ผลลัพธ์ของแม่สีถูกยุบเป็น "เม็ดสีหนึ่งก้อน" ก่อน แล้วจึงผสมกับสี
+     จากภาพด้วย K/S ตามน้ำหนัก เมื่อสัดส่วนสี custom เข้าใกล้ 0 ผลลัพธ์จึง
+     ลู่กลับไปหาสีของแม่สีพอดี ไม่มีรอยต่อ */
   let mixPigment = { c: 0, m: 0, y: 0 };
-  active.forEach(c => {
-    const weight = c.pct / totalPct;
-    const rgb = hexToRgb(c.hex);
+  const addPigment = (rgb, weight) => {
+    if(weight <= 0) return;
     const p = rgbToPigment(rgb);
     mixPigment.c += p.c * weight;
     mixPigment.m += p.m * weight;
     mixPigment.y += p.y * weight;
-  });
+  };
+
+  if(basePct > 0){
+    addPigment(baseMixRgb(rVal, yVal, bVal, wVal, kVal), basePct / totalPct);
+  }
+  customs.forEach(c => addPigment(hexToRgb(c.hex), c.pct / totalPct));
 
   const finalRgb = pigmentToRgb(mixPigment);
   return { ...finalRgb, hex: toHex(finalRgb), total: totalPct };
@@ -1583,7 +1810,8 @@ function updateMixingDisplay(){
   }
 
   const hsl = rgbToHsl(mixed.r, mixed.g, mixed.b);
-  const hue = hueName(hsl.h);
+  // สีเทา/ขาว/ดำ ไม่มีเนื้อสี — เดิมคำนวณ hue ออกมาเป็น 0 แล้วรายงานว่า "แดง"
+  const hue = hsl.s < 0.06 ? 'ไม่มีเนื้อสี (ขาว-เทา-ดำ)' : hueName(hsl.h);
   let tone = 'สว่างปานกลาง';
   if(hsl.l > 0.8) tone = 'โทนสว่าง พาสเทล (Tint)';
   else if(hsl.l < 0.25) tone = 'โทนเข้ม ลึก (Shade)';
@@ -1659,13 +1887,27 @@ const tabRatioMode = document.getElementById('tabRatioMode');
 const tabFreeMode = document.getElementById('tabFreeMode');
 const ratioBarWrapper = document.getElementById('ratioBarWrapper');
 
+/* ปรับสัดส่วนที่มีอยู่ให้รวมเป็น 100 โดยรักษาอัตราส่วนเดิมไว้
+   เดิมตอนสลับกลับมาโหมด 100% จะเรียก equalizeRatios() ซึ่งเกลี่ยทุกสีเท่ากันหมด
+   งานที่ผู้ใช้ค่อย ๆ ปรับมาในโหมดอิสระจึงหายทั้งหมดเพียงเพราะกดสลับแท็บ */
+function normalizeToHundred(){
+  const total = mixColors.reduce((sum, c) => sum + c.pct, 0);
+  if(total <= 0){ equalizeRatios(); return; }
+  mixColors.forEach(c => {
+    c.pct = Math.max(0, Math.min(100, Math.round(c.pct / total * 100)));
+  });
+  fixIntegerTotal();
+  syncSliderValues();
+  updateMixingDisplay();
+}
+
 tabRatioMode.addEventListener('click', () => {
   isPureRatioMode = true;
   tabRatioMode.classList.add('active');
   tabFreeMode.classList.remove('active');
   ratioBarWrapper.style.display = 'block';
-  equalizeRatios();
   renderSliders();
+  normalizeToHundred();
 });
 
 tabFreeMode.addEventListener('click', () => {
@@ -1706,6 +1948,14 @@ function renderPalettePicker(){
 }
 
 function addCustomColorToMix(hex){
+  // สีเดิมที่อยู่ในโถแล้วไม่ต้องเพิ่มซ้ำ — สไลเดอร์สองแถวสีเดียวกันควบคุมยาก
+  // และทำให้สูตรที่คัดลอกออกไปอ่านไม่รู้เรื่อง
+  const existing = mixColors.find(c => !c.isBase && c.hex.toUpperCase() === hex.toUpperCase());
+  if(existing){
+    showToast(`สี ${hex} อยู่ในโถผสมอยู่แล้ว`);
+    return;
+  }
+
   const id = 'custom_' + Date.now();
   mixColors.push({
     id,
@@ -1723,29 +1973,62 @@ function addCustomColorToMix(hex){
   showToast(`เพิ่มสี ${hex} เข้าโถผสมแล้ว`);
 }
 
-// ถอดรหัสสีเป้าหมายให้เป็นสูตรผสม RYBWK สัดส่วนรวม 100%
+/* ---------- ระยะห่างของสีแบบที่ตาคนมองเห็นจริง (CIELAB ΔE) ----------
+   ระยะแบบ RGB ตรง ๆ ไม่ตรงกับสายตา: ห่างเท่ากันในโทนเขียวตาแทบไม่เห็นต่าง
+   แต่ในโทนน้ำเงินเห็นชัด สูตรที่เลือกมาด้วย RGB จึงเพี้ยนในบางโทน */
+function srgbToLinear(v){
+  v /= 255;
+  return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+}
+function rgbToLab({r, g, b}){
+  const R = srgbToLinear(r), G = srgbToLinear(g), B = srgbToLinear(b);
+  const X = (R * 0.4124 + G * 0.3576 + B * 0.1805) / 0.95047;
+  const Y = (R * 0.2126 + G * 0.7152 + B * 0.0722);
+  const Z = (R * 0.0193 + G * 0.1192 + B * 0.9505) / 1.08883;
+  const f = t => t > 0.008856 ? Math.cbrt(t) : (7.787 * t + 16 / 116);
+  const fx = f(X), fy = f(Y), fz = f(Z);
+  return { L: 116 * fy - 16, a: 500 * (fx - fy), bb: 200 * (fy - fz) };
+}
+function deltaE(p, q){
+  return Math.sqrt((p.L - q.L) ** 2 + (p.a - q.a) ** 2 + (p.bb - q.bb) ** 2);
+}
+
+/* ถอดรหัสสีเป้าหมายให้เป็นสูตรผสม RYBWK สัดส่วนรวม 100%
+
+   ค้นสองรอบ: หยาบทั้งช่วงก่อน แล้วละเอียดรอบ ๆ คำตอบที่ดีที่สุด เดิมเดิน
+   ทีละ 10% รอบเดียว สูตรที่ได้จึงถูกปัดเป็นขั้น 10% ตลอด ("แดง 30 เหลือง 20")
+   ซึ่งหยาบเกินกว่าจะเอาไปตวงผสมจริงตามที่วัตถุประสงค์ตั้งไว้ */
 function decomposeToRecipe(targetHex){
-  const t = hexToRgb(targetHex);
-  let best = null, bestDist = Infinity;
-  
-  const step = 10;
-  for(let r=0; r<=100; r+=step)
-  for(let y=0; y<=100-r; y+=step)
-  for(let b=0; b<=100-r-y; b+=step)
-  for(let w=0; w<=100-r-y-b; w+=step){
-    const k = 100 - r - y - b - w;
-    const pigmentSum = r + y + b;
-    let base = pigmentSum > 0 ? rybMix(r/pigmentSum, y/pigmentSum, b/pigmentSum).map(v=>v*255) : [255,255,255];
-    let toned = base.map(v => v + (255-v)*(w/100));
-    toned = toned.map(v => v * (1 - k/100));
-    
-    const d = (toned[0]-t.r)**2 + (toned[1]-t.g)**2 + (toned[2]-t.b)**2;
-    if(d < bestDist){
-      bestDist = d;
-      best = { r, y, b, w, k };
+  const targetLab = rgbToLab(hexToRgb(targetHex));
+  let best = { r: 20, y: 20, b: 20, w: 20, k: 20 };
+  let bestDelta = Infinity;
+
+  function scan(step, around){
+    const span = step * 5;
+    const lo = v => around ? Math.max(0, v - span) : 0;
+    const hi = v => around ? Math.min(100, v + span) : 100;
+
+    for(let r = lo(around?.r ?? 0); r <= hi(around?.r ?? 0); r += step)
+    for(let y = lo(around?.y ?? 0); y <= Math.min(hi(around?.y ?? 0), 100 - r); y += step)
+    for(let b = lo(around?.b ?? 0); b <= Math.min(hi(around?.b ?? 0), 100 - r - y); b += step)
+    for(let w = lo(around?.w ?? 0); w <= Math.min(hi(around?.w ?? 0), 100 - r - y - b); w += step){
+      const k = 100 - r - y - b - w;
+      if(k < 0) continue;
+      const d = deltaE(rgbToLab(baseMixRgb(r, y, b, w, k)), targetLab);
+      if(d < bestDelta){
+        bestDelta = d;
+        best = { r, y, b, w, k };
+      }
     }
   }
-  return best || { r:20, y:20, b:20, w:20, k:20 };
+
+  scan(10, null);
+  scan(2, best);
+
+  const achieved = baseMixRgb(best.r, best.y, best.b, best.w, best.k);
+  best.delta = bestDelta;
+  best.hex = toHex(achieved);
+  return best;
 }
 
 function renderRecipe(hex){
@@ -1760,10 +2043,24 @@ function renderRecipe(hex){
 
   const recipeRow = document.getElementById('recipeRow');
   const recipeText = document.getElementById('recipeText');
-  
+
+  /* บอกด้วยว่าสูตรนี้เข้าใกล้สีเป้าหมายแค่ไหน แม่สี 5 สีผสมไม่ได้ทุกสีบนโลก
+     (สีนีออน สีฟ้าสด ฯลฯ อยู่นอกช่วงที่เม็ดสีทำได้) ถ้าไม่บอก ผู้ใช้จะเอาสูตร
+     ไปตวงจริงแล้วมางงว่าทำไมสีไม่ตรง */
+  const d = rec.delta;
+  const grade = d <= 2  ? { text: 'ตรงแทบไม่เห็นต่าง', color: '#4ADE80' }
+              : d <= 5  ? { text: 'ใกล้เคียงมาก',      color: '#A3E635' }
+              : d <= 10 ? { text: 'พอไหว เห็นต่างนิดหน่อย', color: '#FBBF24' }
+              :           { text: 'ผสมจากแม่สีชุดนี้ไม่ถึง', color: '#F87171' };
+
   recipeText.innerHTML = parts.map(p =>
     `<span class="recipe-chip"><span class="dot" style="background:${p.color};"></span>${p.name} ${p.pct}%</span>`
-  ).join(' ');
+  ).join(' ') +
+    `<div class="recipe-accuracy">` +
+      `<span class="acc-swatch" style="background:${rec.hex};"></span>` +
+      `<span>สูตรนี้จะได้ <span class="mono">${rec.hex}</span> — ` +
+      `<b style="color:${grade.color};">${grade.text}</b> (ΔE ${d.toFixed(1)})</span>` +
+    `</div>`;
 
   recipeRow.style.display = 'block';
   recipeRow.dataset.r = rec.r;
@@ -1806,6 +2103,9 @@ document.getElementById('addToMixLabBtn').addEventListener('click', () => {
 });
 
 // เริ่มต้นตั้งค่าหน้าเว็บเมื่อโหลดเสร็จ
+palette = loadPalette();
+renderPalette();
+renderPalettePicker();
 renderSliders();
 updateMixingDisplay();
 </script>
