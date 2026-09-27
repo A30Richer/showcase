@@ -8,7 +8,7 @@ BEFORE making ANY `git commit`, `git push`, or uploading ANY file to GitHub or p
 1. **AUTOMATIC PRE-COMMIT SECRET INSPECTION**:
    - Always run a pattern audit searching for:
      - `TELEGRAM_BOT_TOKEN`, `GH_TOKEN`, `GITHUB_TOKEN`, `GITHUB_PAT`, `API_KEY`, `SECRET`, `PASSWORD`, `PRIVATE_KEY`
-     - Telegram Chat IDs (e.g. `ALLOWED_CHAT_IDS`, `6649449367`, or personal user IDs)
+     - Telegram Chat IDs (e.g. `ALLOWED_CHAT_IDS` values, or personal user IDs)
      - Private IP addresses, private credentials, or SSH private keys (`id_rsa`, `id_ed25519`)
      - Live `.env` files containing actual active tokens.
 
