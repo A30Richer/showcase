@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy · A30 video publishing tools</title>
+  <meta name="description" content="Privacy policy for the personal video publishing tools that upload videos to the owner's YouTube channels.">
+  <style>
+    :root {
+      --bg-dark: #07090e;
+      --bg-surface: #0e131f;
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --accent-gold: #f59e0b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      font: 16px/1.65 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 48px 20px 64px;
+    }
+    article {
+      background: var(--bg-surface);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 28px 24px;
+    }
+    h1 { margin: 0 0 4px; font-size: 1.8rem; }
+    h2 { margin: 28px 0 8px; font-size: 1.15rem; color: var(--accent-gold); }
+    p, li { color: var(--text-muted); }
+    ul { padding-left: 1.2em; }
+    a { color: var(--accent-gold); }
+    code { color: var(--text-main); }
+    .updated { margin: 0 0 20px; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <article>
+      <h1>Privacy Policy</h1>
+      <p class="updated">Effective 28 September 2026</p>
+
+      <p>This policy covers the personal video publishing tools run by
+        <a href="https://github.com/A30Richer">A30Richer</a>. The tools turn videos
+        that the owner produces into YouTube uploads on the owner's own channels.
+        They are not offered as a service to the public.</p>
+
+      <h2>What the tools access</h2>
+      <ul>
+        <li>The tools request one Google permission:
+          <code>https://www.googleapis.com/auth/youtube.upload</code>. It lets them
+          upload a video and set its title, description, tags and privacy.</li>
+        <li>They do not read, change or delete existing videos, comments,
+          subscribers, analytics or any other channel data, and they do not
+          access Gmail, Drive, contacts or any other Google service.</li>
+      </ul>
+
+      <h2>How Google user data is used</h2>
+      <ul>
+        <li>The OAuth tokens that Google issues are used only to upload videos to
+          the channel of the account that granted access.</li>
+        <li>Tokens are stored on infrastructure controlled by the owner (the
+          owner's own device and private CI secrets). They are never sold, shared
+          with third parties, or used for advertising.</li>
+        <li>No personal data of other people is collected through Google sign-in.</li>
+      </ul>
+
+      <h2>Limited Use</h2>
+      <p>The use and transfer of information received from Google APIs adheres to the
+        <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>,
+        including the Limited Use requirements.</p>
+
+      <h2>Retention and removal</h2>
+      <p>Tokens are kept only while uploads are needed. Access can be revoked at any
+        time from <a href="https://myaccount.google.com/permissions">Google Account → Third-party connections</a>,
+        after which the stored token stops working and is deleted.</p>
+
+      <h2>Contact</h2>
+      <p>Questions about this policy: <a href="https://github.com/A30Richer">github.com/A30Richer</a>.</p>
+    </article>
+  </main>
+</body>
+</html>
